@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <title>PUNKtionary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Smooth caption animation */
+    .caption-enter {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .caption-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="bg-black text-white font-sans">
+
+  <main class="pt-24 max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+    <!-- Primary Column -->
+    <section class="lg:col-span-2 space-y-8">
+
+      <!-- Image Carousel -->
+      <div class="relative w-full h-64 sm:h-96 overflow-hidden rounded-lg">
+        <!-- Image -->
+        <img id="carouselImage" 
+             src="/images/home/Monstress_eugene_carousel5.png" 
+             class="absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000" />
+
+        <!-- Overlay -->
+        <div id="carouselOverlay" class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-6">
+          <div id="captionWrapper" class="caption-enter caption-enter-active">
+            <h2 id="carouselCaption" class="text-2xl font-semibold mb-2">Monstress tours PNW with Pie.</h2>
+            <a id="carouselLink" href="https://www.instagram.com/monstress.labs/" class="inline-block bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition">
+              Instagram
+            </a>
+          </div>
+        </div>
+
+        <!-- Navigation Dots -->
+        <div id="carouselDots" class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          <!-- Dots will be added dynamically -->
+        </div>
+      </div>
+
+      <!-- Welcome Text -->
+      <section class="py-8">
+        <h1 class="text-5xl font-bold mb-4">Welcome to PUNKtionary</h1>
+        <p class="text-gray-300 text-lg max-w-3xl">
+          Discover bands, venues, and resources that keep your local scene alive.
+        </p>
+      </section>
+
+      <!-- Additional Content -->
+      <section class="py-8">
+        <h2 class="text-3xl font-semibold mb-4">Latest Updates</h2>
+        <p class="text-gray-400">Check out new bands, upcoming venues, and resources in your area. This section can hold articles, featured posts, or announcements.</p>
+      </section>
+    </section>
+
+    <!-- Sidebar -->
+    <aside class="lg:col-span-1 space-y-8">
+      <section class="bg-gray-900 rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Featured Bands</h2>
+        <ul class="space-y-3 text-gray-300">
+          <li>Band A</li>
+          <li>Band B</li>
+          <li>Band C</li>
+          <li>Band D</li>
+        </ul>
+      </section>
+
+      <section class="bg-gray-900 rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Featured Venues</h2>
+        <ul class="space-y-3 text-gray-300">
+          <li>Venue X</li>
+          <li>Venue Y</li>
+          <li>Venue Z</li>
+        </ul>
+      </section>
+    </aside>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-8 text-center text-gray-500 border-t border-gray-800 mt-24">
+    © 2025 PUNKtionary. All rights reserved.
+  </footer>
+
+<script src="/navbar.js" defer></script>
+
+<!-- Carousel Script -->
+<script>
+const slides = [
+  {
+    image: '/images/home/Dead_Pioneers_carousel1.webp',
+    caption: 'Dead Pioneers fundraising for new record',
+    link: 'https://www.instagram.com/reel/DQC_v_ggGm6/',
+    linkText: 'Instagram'
+  },
+  {
+    image: '/images/home/lambrinigirls_carousel3.jpg',
+    caption: 'Lambrini Girls - God\'s Country at The Crocodile',
+    link: 'https://youtu.be/99r-0hlL3JM?si=AxAI82jLXEjgco1X',
+    linkText: 'YouTube'
+  },
+  {
+    image: '/images/home/nofunbar_carousel4.avif',
+    caption: 'Local Scene Highlight — No Fun Bar - Portland, OR',
+    link: 'https://www.nofunportland.com/',
+    linkText: 'Visit'
+  },
+  {
+    image: '/images/home/subjunctives_carousel6.jpg',
+    caption: 'Subjunctives preparing a new LP',
+    link: 'https://www.thesubjunctives.com/',
+    linkText: 'Website'
+  },
+  {
+    image: '/images/home/converge_carousel2.jpg',
+    caption: 'Converge performing Concubine at El Corazon',
+    link: 'https://youtu.be/_whdfIUI43M?si=W4Sa3_0kl7tjTt8L',
+    linkText: 'YouTube'
+  },
+  {
+    image: '/images/home/grrrizzly_carousel7.jpg',
+    caption: 'Olympia\'s Grrrizzly on west coast tour',
+    link: 'https://www.instagram.com/grrrizzlyband/',
+    linkText: 'Follow'
+  }
+];
+
+let currentIndex = 0;
+const imageEl = document.getElementById('carouselImage');
+const captionWrapper = document.getElementById('captionWrapper');
+const captionEl = document.getElementById('carouselCaption');
+const linkEl = document.getElementById('carouselLink');
+const dotsContainer = document.getElementById('carouselDots');
+
+// Create dots dynamically
+slides.forEach((_, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'w-3 h-3 rounded-full cursor-pointer transition ' + (i === 0 ? 'bg-white' : 'bg-gray-600 hover:bg-gray-400');
+  dot.addEventListener('click', () => showSlide(i));
+  dotsContainer.appendChild(dot);
+});
+
+const dots = dotsContainer.querySelectorAll('div');
+
+function showSlide(index) {
+  imageEl.classList.add('opacity-0');
+  captionWrapper.classList.remove('caption-enter-active');
+  currentIndex = index;
+
+  setTimeout(() => {
+    const slide = slides[currentIndex];
+    imageEl.src = slide.image;
+    captionEl.textContent = slide.caption;
+    linkEl.href = slide.link;
+    linkEl.textContent = slide.linkText;
+
+    imageEl.classList.remove('opacity-0');
+    captionWrapper.classList.add('caption-enter');
+    setTimeout(() => captionWrapper.classList.add('caption-enter-active'), 10);
+
+    dots.forEach((d, i) => d.className = 'w-3 h-3 rounded-full cursor-pointer transition ' + 
+      (i === currentIndex ? 'bg-white' : 'bg-gray-600 hover:bg-gray-400'));
+  }, 1000);
+}
+
+function nextSlide() {
+  const nextIndex = (currentIndex + 1) % slides.length;
+  showSlide(nextIndex);
+}
+
+setInterval(nextSlide, 5000); // rotate every 5 seconds
+</script>
+
+</body>
+</html>

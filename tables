@@ -1,0 +1,81 @@
+DROP TABLE IF EXISTS bands;
+
+CREATE TABLE bands (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    genre VARCHAR(100),             -- New explicit genre column
+    photo_references JSON,          -- Store multiple image URLs as JSON
+    albums JSON,                    -- Store album names as JSON
+    links JSON,                     -- Store multiple links as JSON
+    active BOOLEAN DEFAULT TRUE,
+    city VARCHAR(100),
+    state VARCHAR(100),
+    country VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_bands_name (name),
+    INDEX idx_bands_city_state (city, state),
+    INDEX idx_bands_genre (genre)
+);
+
+USE prod_punk;
+INSERT INTO bands (
+  name, genre, photo_references, albums, links, active, city, state, country
+)
+VALUES (
+  'The Screaming Ferrets',
+  'Punk Rock',
+  JSON_ARRAY('https://example.com/photos/ferrets1.jpg','https://example.com/photos/ferrets2.jpg'),
+  JSON_ARRAY('Ferret Fever','Tunnel of Sound'),
+  JSON_OBJECT('website','https://thescreamingferrets.com','spotify','https://spotify.com/ferrets'),
+  TRUE,
+  'Seattle',
+  'WA',
+  'USA'
+);
+
+
+
+
+DROP TABLE IF EXISTS venues;
+
+CREATE TABLE venues (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(100),               -- New explicit type column (Club, Bar, etc.)
+    age_restriction ENUM('All Ages','21+','18+','Mixed') DEFAULT 'All Ages',  -- New explicit column
+    street_address VARCHAR(255),
+    city VARCHAR(100),
+    state VARCHAR(100),
+    postal_code VARCHAR(20),
+    country VARCHAR(100),
+    capacity INT,
+    links JSON,                      -- Store website or social media links as JSON
+    booking_contact VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_venues_name (name),
+    INDEX idx_venues_city_state (city, state),
+    INDEX idx_venues_type (type),
+    INDEX idx_venues_age_restriction (age_restriction)
+);
+
+USE prod_punk;
+
+INSERT INTO venues (
+    name, type, age_restriction, street_address, city, state, postal_code, country, capacity, links, booking_contact
+)
+VALUES (
+    'The Riot Room',                  -- Venue name
+    'Club',                           -- Type
+    '21+',                            -- Age restriction
+    '123 Punk Ave',                   -- Street address
+    'Portland',                       -- City
+    'OR',                             -- State
+    '97205',                          -- Postal code
+    'USA',                            -- Country
+    250,                              -- Capacity
+    '["https://theriotroom.com","https://instagram.com/theriotroom"]',  -- JSON links
+    'bookings@theriotroom.com'        -- Booking contact
+);
+
