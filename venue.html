@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <title>Venue Details | PUNKtionary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/punk-styles.css">
+</head>
+<body class="bg-black text-white font-sans">
+  
+  <!-- Include Navbar -->
+  <div id="navbar-container"></div>
+
+  <main class="pt-24 max-w-5xl mx-auto px-6 pb-24">
+    
+    <!-- Back Button -->
+    <div class="mb-8">
+      <a href="/venues.html" class="punk-link inline-flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Back to Venues
+      </a>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="text-center py-24">
+      <div class="inline-block w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-gray-400 mt-4 text-lg">Loading venue details...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="hidden text-center py-24">
+      <h2 class="text-3xl font-bold mb-4 text-pink-500">Venue Not Found</h2>
+      <p class="text-gray-400 mb-8">The venue you're looking for doesn't exist or has been removed.</p>
+      <a href="/venues.html" class="punk-button">Browse All Venues</a>
+    </div>
+
+    <!-- Venue Details Container -->
+    <div id="venueDetails" class="hidden">
+      
+      <!-- Header Section -->
+      <div class="mb-12">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <h1 id="venueName" class="text-6xl font-bold mb-4"></h1>
+            <div id="venueAge" class="mb-4"></div>
+          </div>
+        </div>
+        
+        <div class="punk-divider"></div>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column - Main Info -->
+        <div class="lg:col-span-2 space-y-8">
+          
+          <!-- Basic Info Card -->
+          <div class="punk-card p-6">
+            <h2 class="text-3xl font-bold mb-6 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+              Venue Info
+            </h2>
+            
+            <div class="space-y-4">
+              <div id="typeSection" class="hidden">
+                <h3 class="text-pink-500 font-bold uppercase tracking-wide text-sm mb-2">Type</h3>
+                <p id="venueType" class="text-xl text-gray-300"></p>
+              </div>
+
+              <div id="capacitySection" class="hidden">
+                <h3 class="text-pink-500 font-bold uppercase tracking-wide text-sm mb-2">Capacity</h3>
+                <p id="venueCapacity" class="text-xl text-gray-300"></p>
+              </div>
+
+              <div id="locationSection" class="hidden">
+                <h3 class="text-pink-500 font-bold uppercase tracking-wide text-sm mb-2">Location</h3>
+                <div id="venueLocation" class="text-gray-300"></div>
+              </div>
+
+              <div id="countrySection" class="hidden">
+                <h3 class="text-pink-500 font-bold uppercase tracking-wide text-sm mb-2">Country</h3>
+                <p id="venueCountry" class="text-xl text-gray-300"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Info Card -->
+          <div id="contactCard" class="punk-card p-6 hidden">
+            <h2 class="text-3xl font-bold mb-6 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+              Booking Contact
+            </h2>
+            <div id="venueContact" class="text-gray-300 text-lg"></div>
+          </div>
+        </div>
+
+        <!-- Right Column - Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+          
+          <!-- Links Card -->
+          <div id="linksCard" class="punk-card p-6 hidden">
+            <h2 class="text-2xl font-bold mb-4 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+              Links
+            </h2>
+            <div id="venueLinks" class="space-y-3"></div>
+          </div>
+
+          <!-- Metadata Card -->
+          <div class="punk-card p-6">
+            <h2 class="text-2xl font-bold mb-4 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+              Info
+            </h2>
+            <div class="space-y-2 text-sm text-gray-400">
+              <p><strong class="text-pink-500">Added:</strong> <span id="venueCreated"></span></p>
+              <p><strong class="text-pink-500">Updated:</strong> <span id="venueUpdated"></span></p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-12 text-center text-gray-500 border-t-2 border-pink-500/50">
+    <div class="max-w-6xl mx-auto px-6">
+      <p class="mb-4">© 2025 PUNKtionary. All rights reserved.</p>
+      <div class="flex justify-center gap-6 text-sm">
+        <a href="/about.html" class="punk-link">About</a>
+        <a href="/contact.html" class="punk-link">Contact</a>
+        <a href="/submit-venue.html" class="punk-link">Submit</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Load Navbar -->
+  <script>
+    fetch('/navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+        if (typeof initNavbar === 'function') {
+          initNavbar();
+        }
+      })
+      .catch(error => console.error('Error loading navbar:', error));
+  </script>
+
+  <script src="/navbar.js"></script>
+  
+  <script>
+    // Get venue ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const venueId = urlParams.get('id');
+
+    if (!venueId) {
+      showError();
+    } else {
+      loadVenueDetails(venueId);
+    }
+
+    async function loadVenueDetails(id) {
+      const loadingState = document.getElementById('loadingState');
+      const errorState = document.getElementById('errorState');
+      const venueDetails = document.getElementById('venueDetails');
+
+      try {
+        const response = await fetch(`get_venue.php?id=${id}`);
+        
+        if (!response.ok) {
+          throw new Error('Venue not found');
+        }
+
+        const venue = await response.json();
+        
+        // Hide loading, show details
+        loadingState.classList.add('hidden');
+        venueDetails.classList.remove('hidden');
+
+        // Update page title
+        document.title = `${venue.name} | PUNKtionary`;
+
+        // Populate venue details
+        displayVenueDetails(venue);
+
+      } catch (error) {
+        console.error('Error loading venue:', error);
+        showError();
+      }
+    }
+
+    function displayVenueDetails(venue) {
+      // Name
+      document.getElementById('venueName').textContent = venue.name;
+      
+      // Age restriction badge
+      if (venue.age_restriction) {
+        document.getElementById('venueAge').innerHTML = `<span class="punk-badge text-lg px-4 py-2">${venue.age_restriction}</span>`;
+      }
+
+      // Type
+      if (venue.type) {
+        document.getElementById('typeSection').classList.remove('hidden');
+        document.getElementById('venueType').textContent = venue.type;
+      }
+
+      // Capacity
+      if (venue.capacity) {
+        document.getElementById('capacitySection').classList.remove('hidden');
+        document.getElementById('venueCapacity').textContent = venue.capacity;
+      }
+
+      // Location (address + city/state)
+      const locationParts = [];
+      if (venue.street_address) locationParts.push(venue.street_address);
+      
+      const cityState = [venue.city, venue.state].filter(Boolean).join(', ');
+      if (cityState) locationParts.push(cityState);
+      
+      if (venue.postal_code) locationParts.push(venue.postal_code);
+
+      if (locationParts.length > 0) {
+        document.getElementById('locationSection').classList.remove('hidden');
+        document.getElementById('venueLocation').innerHTML = locationParts.map(part => 
+          `<p class="text-lg">${part}</p>`
+        ).join('');
+      }
+
+      // Country
+      if (venue.country) {
+        document.getElementById('countrySection').classList.remove('hidden');
+        document.getElementById('venueCountry').textContent = venue.country;
+      }
+
+      // Booking Contact
+      if (venue.booking_contact) {
+        document.getElementById('contactCard').classList.remove('hidden');
+        document.getElementById('venueContact').textContent = venue.booking_contact;
+      }
+
+      // Links
+      if (venue.links) {
+        try {
+          const links = JSON.parse(venue.links);
+          const linksHtml = Object.entries(links).map(([platform, url]) => 
+            `<a href="${url}" target="_blank" rel="noopener noreferrer" class="punk-button-outline block text-center">
+              ${platform}
+            </a>`
+          ).join('');
+          
+          if (linksHtml) {
+            document.getElementById('linksCard').classList.remove('hidden');
+            document.getElementById('venueLinks').innerHTML = linksHtml;
+          }
+        } catch (e) {
+          // If not JSON, treat as single link
+          if (venue.links.trim()) {
+            document.getElementById('linksCard').classList.remove('hidden');
+            document.getElementById('venueLinks').innerHTML = 
+              `<a href="${venue.links}" target="_blank" rel="noopener noreferrer" class="punk-button-outline block text-center">
+                Website
+              </a>`;
+          }
+        }
+      }
+
+      // Dates
+      if (venue.created_at) {
+        const createdDate = new Date(venue.created_at);
+        document.getElementById('venueCreated').textContent = createdDate.toLocaleDateString();
+      }
+      if (venue.updated_at) {
+        const updatedDate = new Date(venue.updated_at);
+        document.getElementById('venueUpdated').textContent = updatedDate.toLocaleDateString();
+      }
+    }
+
+    function showError() {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('errorState').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

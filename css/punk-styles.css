@@ -181,12 +181,14 @@ h2 {
   position: relative;
 }
 
-/* Hover effect only for band summary cards */
-.band-summary-card {
+/* Hover effect only for band/venue summary cards */
+.band-summary-card,
+.venue-summary-card {
   transition: all 0.3s ease;
 }
 
-.band-summary-card:hover {
+.band-summary-card:hover,
+.venue-summary-card:hover {
   background: #0f0f0f; /* Darker background on hover */
   border-color: var(--punk-pink-bright);
   box-shadow: 0 0 20px rgba(255, 0, 110, 0.25);
