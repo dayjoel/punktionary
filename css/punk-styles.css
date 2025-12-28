@@ -188,7 +188,9 @@ h2 {
 
 .band-summary-card:hover {
   background: #0f0f0f; /* Darker background on hover */
-  box-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
+  border-color: var(--punk-pink-bright);
+  box-shadow: 0 0 20px rgba(255, 0, 110, 0.25);
+  transform: translateY(-2px);
 }
 
 /* Links with punk style */
