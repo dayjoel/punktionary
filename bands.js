@@ -131,7 +131,7 @@ function displayBands(bands) {
 
 function createBandCard(band) {
   const card = document.createElement('div');
-  card.className = 'punk-card p-5 cursor-pointer transition-all';
+  card.className = 'punk-card band-summary-card p-5 cursor-pointer';
   
   // Parse links if they exist
   let socialLinks = '';
