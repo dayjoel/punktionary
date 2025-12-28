@@ -123,6 +123,28 @@ async function submitForm(type, form) {
       }
     }
 
+    // Process link fields (convert to JSON object)
+    const links = {};
+    const linkFields = ['website', 'bandcamp', 'instagram', 'facebook', 'x'];
+    
+    linkFields.forEach(platform => {
+      const fieldName = `link_${platform}`;
+      const url = formData.get(fieldName);
+      if (url && url.trim()) {
+        // Capitalize platform name properly
+        const platformName = platform === 'x' ? 'X' : 
+                            platform.charAt(0).toUpperCase() + platform.slice(1);
+        links[platformName] = url.trim();
+      }
+      // Remove individual link fields from formData
+      formData.delete(fieldName);
+    });
+
+    // Add links as JSON if any exist
+    if (Object.keys(links).length > 0) {
+      formData.set('links', JSON.stringify(links));
+    }
+
     // Determine endpoint
     const endpoint = `submit_${type}.php`;
     
