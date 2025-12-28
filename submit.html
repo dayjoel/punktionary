@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <title>Submit | PUNKtionary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/punk-styles.css">
+</head>
+<body class="bg-black text-white font-sans">
+  
+  <!-- Include Navbar -->
+  <div id="navbar-container"></div>
+
+  <main class="pt-24 max-w-3xl mx-auto px-6 pb-24">
+    
+    <div class="mb-12">
+      <h1 class="text-5xl font-bold mb-4">Submit to PUNKtionary</h1>
+      <p class="text-gray-300 text-lg">
+        Help grow the directory by submitting bands, venues, or resources.
+      </p>
+    </div>
+
+    <div class="punk-divider mb-8"></div>
+
+    <!-- Type Selector -->
+    <div class="punk-card p-6 mb-8">
+      <h2 class="text-2xl font-bold mb-4 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+        What would you like to submit?
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <button type="button" id="selectBand" class="punk-button-outline text-center py-4 submit-type-btn active">
+          Band
+        </button>
+        <button type="button" id="selectVenue" class="punk-button-outline text-center py-4 submit-type-btn">
+          Venue
+        </button>
+        <button type="button" id="selectResource" class="punk-button-outline text-center py-4 submit-type-btn">
+          Resource
+        </button>
+      </div>
+    </div>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="hidden punk-card p-6 mb-8 border-pink-500">
+      <h3 class="text-2xl font-bold mb-2 text-pink-500">Success!</h3>
+      <p class="text-gray-300 mb-4">Your submission has been received. Thank you for contributing to PUNKtionary!</p>
+      <button id="submitAnother" class="punk-button-outline">Submit Another</button>
+    </div>
+
+    <!-- Error Message -->
+    <div id="errorMessage" class="hidden punk-card p-6 mb-8 border-red-500">
+      <h3 class="text-2xl font-bold mb-2 text-red-500">Error</h3>
+      <p id="errorText" class="text-gray-300"></p>
+    </div>
+
+    <!-- Band Form -->
+    <form id="bandForm" class="punk-card p-6 submit-form">
+      <h2 class="text-3xl font-bold mb-6 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+        Submit a Band
+      </h2>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Band Name *</label>
+          <input type="text" name="name" required class="punk-input" placeholder="Enter band name" />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Genre</label>
+            <input type="text" name="genre" class="punk-input" placeholder="e.g. Hardcore, Punk Rock" />
+          </div>
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">City</label>
+            <input type="text" name="city" class="punk-input" placeholder="City" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">State</label>
+            <input type="text" name="state" class="punk-input" placeholder="State" />
+          </div>
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Country</label>
+            <input type="text" name="country" class="punk-input" placeholder="Country" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Albums</label>
+          <input type="text" name="albums" class="punk-input" placeholder="Comma-separated album names" />
+          <p class="text-xs text-gray-500 mt-1">e.g. Album One, Album Two, Album Three</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Links (JSON format)</label>
+          <textarea name="links" class="punk-input" rows="3" placeholder='{"Bandcamp": "https://...", "Instagram": "https://..."}'></textarea>
+          <p class="text-xs text-gray-500 mt-1">Optional: JSON format with platform names and URLs</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Photo URLs</label>
+          <input type="text" name="photo_references" class="punk-input" placeholder="Comma-separated photo URLs" />
+          <p class="text-xs text-gray-500 mt-1">Optional: Direct links to band photos</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Currently Active?</label>
+          <div class="flex gap-6">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="active" value="1" class="accent-pink-500" checked />
+              <span>Yes</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="active" value="0" class="accent-pink-500" />
+              <span>No</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="punk-button w-full mt-6">Submit Band</button>
+      </div>
+    </form>
+
+    <!-- Venue Form -->
+    <form id="venueForm" class="punk-card p-6 submit-form hidden">
+      <h2 class="text-3xl font-bold mb-6 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+        Submit a Venue
+      </h2>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Venue Name *</label>
+          <input type="text" name="name" required class="punk-input" placeholder="Enter venue name" />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Type</label>
+            <input type="text" name="type" class="punk-input" placeholder="e.g. Club, Bar, DIY Space" />
+          </div>
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Capacity</label>
+            <input type="number" name="capacity" class="punk-input" placeholder="Capacity" min="0" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Street Address</label>
+          <input type="text" name="street_address" class="punk-input" placeholder="Street address" />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">City</label>
+            <input type="text" name="city" class="punk-input" placeholder="City" />
+          </div>
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">State</label>
+            <input type="text" name="state" class="punk-input" placeholder="State" />
+          </div>
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Postal Code</label>
+            <input type="text" name="postal_code" class="punk-input" placeholder="Postal code" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Country</label>
+          <input type="text" name="country" class="punk-input" placeholder="Country" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Age Restriction</label>
+          <div class="flex flex-wrap gap-4">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="age_restriction" value="All Ages" class="accent-pink-500" />
+              <span>All Ages</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="age_restriction" value="21+" class="accent-pink-500" />
+              <span>21+</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="age_restriction" value="18+" class="accent-pink-500" />
+              <span>18+</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="age_restriction" value="Mixed" class="accent-pink-500" />
+              <span>Mixed</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Booking Contact</label>
+          <input type="text" name="booking_contact" class="punk-input" placeholder="Email or phone for booking" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Links (JSON format)</label>
+          <textarea name="links" class="punk-input" rows="3" placeholder='{"Website": "https://...", "Facebook": "https://..."}'></textarea>
+          <p class="text-xs text-gray-500 mt-1">Optional: JSON format with platform names and URLs</p>
+        </div>
+
+        <button type="submit" class="punk-button w-full mt-6">Submit Venue</button>
+      </div>
+    </form>
+
+    <!-- Resource Form -->
+    <form id="resourceForm" class="punk-card p-6 submit-form hidden">
+      <h2 class="text-3xl font-bold mb-6 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+        Submit a Resource
+      </h2>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Resource Name *</label>
+          <input type="text" name="name" required class="punk-input" placeholder="Enter resource name" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Link *</label>
+          <input type="url" name="link" required class="punk-input" placeholder="https://..." />
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Description *</label>
+          <textarea name="description" required class="punk-input" rows="5" placeholder="Describe this resource..."></textarea>
+        </div>
+
+        <button type="submit" class="punk-button w-full mt-6">Submit Resource</button>
+      </div>
+    </form>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-12 text-center text-gray-500 border-t-2 border-pink-500/50 mt-24">
+    <div class="max-w-6xl mx-auto px-6">
+      <p class="mb-4">© 2025 PUNKtionary. All rights reserved.</p>
+      <div class="flex justify-center gap-6 text-sm">
+        <a href="/about.html" class="punk-link">About</a>
+        <a href="/contact.html" class="punk-link">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Load Navbar -->
+  <script>
+    fetch('/navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+        if (typeof initNavbar === 'function') {
+          initNavbar();
+        }
+      })
+      .catch(error => console.error('Error loading navbar:', error));
+  </script>
+
+  <script src="/navbar.js"></script>
+  <script src="/submit.js"></script>
+</body>
+</html>
