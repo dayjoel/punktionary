@@ -23,20 +23,28 @@ function initNavbar() {
   const submitArrow = document.getElementById('submitArrow');
   
   if (submitBtn && submitMenu) {
+    console.log('Submit button and menu found');
     submitBtn.addEventListener('click', function(e) {
       e.stopPropagation();
+      e.preventDefault();
       const isHidden = submitMenu.classList.contains('hidden');
+      
+      console.log('Submit button clicked, isHidden:', isHidden);
       
       if (isHidden) {
         submitMenu.classList.remove('hidden');
         setTimeout(() => submitMenu.classList.remove('opacity-0'), 10);
         if (submitArrow) submitArrow.style.transform = 'rotate(180deg)';
+        console.log('Opening submit menu');
       } else {
         submitMenu.classList.add('opacity-0');
         setTimeout(() => submitMenu.classList.add('hidden'), 200);
         if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';
+        console.log('Closing submit menu');
       }
     });
+  } else {
+    console.warn('Submit button or menu not found', {submitBtn, submitMenu});
   }
 
   // User dropdown
@@ -59,13 +67,25 @@ function initNavbar() {
   }
 
   // Close dropdowns when clicking outside
-  document.addEventListener('click', function() {
-    if (submitMenu && !submitMenu.classList.contains('hidden')) {
+  document.addEventListener('click', function(e) {
+    console.log('Document clicked, target:', e.target);
+    
+    // Don't close if clicking on the submit button or inside the submit menu
+    const clickedSubmitButton = e.target.closest('#submitButton');
+    const clickedInsideSubmitMenu = e.target.closest('#submitMenu');
+    
+    if (!clickedSubmitButton && !clickedInsideSubmitMenu && submitMenu && !submitMenu.classList.contains('hidden')) {
+      console.log('Closing submit menu from outside click');
       submitMenu.classList.add('opacity-0');
       setTimeout(() => submitMenu.classList.add('hidden'), 200);
       if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';
     }
-    if (userMenu && !userMenu.classList.contains('hidden')) {
+    
+    // Don't close if clicking on the user button or inside the user menu
+    const clickedUserButton = e.target.closest('#userButton');
+    const clickedInsideUserMenu = e.target.closest('#userMenu');
+    
+    if (!clickedUserButton && !clickedInsideUserMenu && userMenu && !userMenu.classList.contains('hidden')) {
       userMenu.classList.add('opacity-0');
       setTimeout(() => userMenu.classList.add('hidden'), 200);
     }
