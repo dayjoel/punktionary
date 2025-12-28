@@ -228,13 +228,50 @@
       // Albums
       if (band.albums) {
         document.getElementById('albumsCard').classList.remove('hidden');
-        document.getElementById('bandAlbums').textContent = band.albums;
+        try {
+          const albums = JSON.parse(band.albums);
+          if (Array.isArray(albums) && albums.length > 0) {
+            const albumsList = albums.map(album => 
+              `<li class="text-gray-300 border-l-3 border-pink-500 pl-4 py-2">${album}</li>`
+            ).join('');
+            document.getElementById('bandAlbums').innerHTML = `<ul class="space-y-2">${albumsList}</ul>`;
+          } else {
+            document.getElementById('bandAlbums').textContent = band.albums;
+          }
+        } catch (e) {
+          // If not JSON, just display as text
+          document.getElementById('bandAlbums').textContent = band.albums;
+        }
       }
 
       // Photos
       if (band.photo_references) {
         document.getElementById('photosCard').classList.remove('hidden');
-        document.getElementById('bandPhotos').innerHTML = `<p class="text-gray-400">${band.photo_references}</p>`;
+        try {
+          const photos = JSON.parse(band.photo_references);
+          if (Array.isArray(photos) && photos.length > 0) {
+            const photosHtml = photos.map(photoUrl => 
+              `<div class="mb-4">
+                <img src="${photoUrl}" alt="${band.name}" class="w-full rounded border-2 border-pink-500 shadow-lg shadow-pink-500/20" loading="lazy" />
+              </div>`
+            ).join('');
+            document.getElementById('bandPhotos').innerHTML = photosHtml;
+          } else if (typeof photos === 'string') {
+            // Single photo URL
+            document.getElementById('bandPhotos').innerHTML = 
+              `<img src="${photos}" alt="${band.name}" class="w-full rounded border-2 border-pink-500 shadow-lg shadow-pink-500/20" loading="lazy" />`;
+          } else {
+            document.getElementById('bandPhotos').innerHTML = `<p class="text-gray-400">${band.photo_references}</p>`;
+          }
+        } catch (e) {
+          // If not JSON, check if it's a single URL
+          if (band.photo_references.startsWith('http')) {
+            document.getElementById('bandPhotos').innerHTML = 
+              `<img src="${band.photo_references}" alt="${band.name}" class="w-full rounded border-2 border-pink-500 shadow-lg shadow-pink-500/20" loading="lazy" />`;
+          } else {
+            document.getElementById('bandPhotos').innerHTML = `<p class="text-gray-400">${band.photo_references}</p>`;
+          }
+        }
       }
 
       // Links
