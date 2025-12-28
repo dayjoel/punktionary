@@ -106,20 +106,32 @@ async function submitForm(type, form) {
     const formData = new FormData(form);
     
     // Process albums field for bands (convert comma-separated to JSON array)
-    if (type === 'band' && formData.get('albums')) {
+    if (type === 'band') {
       const albumsStr = formData.get('albums');
-      if (albumsStr.trim()) {
+      if (albumsStr && albumsStr.trim()) {
         const albumsArray = albumsStr.split(',').map(a => a.trim()).filter(a => a);
-        formData.set('albums', JSON.stringify(albumsArray));
+        if (albumsArray.length > 0) {
+          formData.set('albums', JSON.stringify(albumsArray));
+        } else {
+          formData.delete('albums'); // Remove empty field
+        }
+      } else {
+        formData.delete('albums'); // Remove empty field
       }
     }
 
     // Process photo_references field for bands (convert comma-separated to JSON array)
-    if (type === 'band' && formData.get('photo_references')) {
+    if (type === 'band') {
       const photosStr = formData.get('photo_references');
-      if (photosStr.trim()) {
+      if (photosStr && photosStr.trim()) {
         const photosArray = photosStr.split(',').map(p => p.trim()).filter(p => p);
-        formData.set('photo_references', JSON.stringify(photosArray));
+        if (photosArray.length > 0) {
+          formData.set('photo_references', JSON.stringify(photosArray));
+        } else {
+          formData.delete('photo_references'); // Remove empty field
+        }
+      } else {
+        formData.delete('photo_references'); // Remove empty field
       }
     }
 
