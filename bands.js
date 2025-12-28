@@ -131,7 +131,7 @@ function displayBands(bands) {
 
 function createBandCard(band) {
   const card = document.createElement('div');
-  card.className = 'punk-card p-5 cursor-pointer transition-all hover:scale-105';
+  card.className = 'punk-card p-5 cursor-pointer transition-all';
   
   // Parse links if they exist
   let socialLinks = '';
@@ -165,7 +165,6 @@ function createBandCard(band) {
     <div class="space-y-2 text-sm">
       ${band.genre ? `<p class="text-gray-300"><span class="text-pink-500 font-bold">Genre:</span> ${band.genre}</p>` : ''}
       ${band.city || band.state ? `<p class="text-gray-300"><span class="text-pink-500 font-bold">Location:</span> ${[band.city, band.state].filter(Boolean).join(', ')}</p>` : ''}
-      ${band.albums ? `<p class="text-gray-300"><span class="text-pink-500 font-bold">Albums:</span> ${band.albums}</p>` : ''}
     </div>
 
     ${socialLinks ? `<div class="mt-4 pt-4 border-t border-gray-700">${socialLinks}</div>` : ''}

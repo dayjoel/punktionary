@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <title>Band Details | PUNKtionary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/punk-styles.css">
+</head>
+<body class="bg-black text-white font-sans">
+  
+  <!-- Include Navbar -->
+  <div id="navbar-container"></div>
+
+  <main class="pt-24 max-w-5xl mx-auto px-6 pb-24">
+    
+    <!-- Back Button -->
+    <div class="mb-8">
+      <a href="/bands.html" class="punk-link inline-flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Back to Bands
+      </a>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="text-center py-24">
+      <div class="inline-block w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-gray-400 mt-4 text-lg">Loading band details...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="hidden text-center py-24">
+      <h2 class="text-3xl font-bold mb-4 text-pink-500">Band Not Found</h2>
+      <p class="text-gray-400 mb-8">The band you're looking for doesn't exist or has been removed.</p>
+      <a href="/bands.html" class="punk-button">Browse All Bands</a>
+    </div>
+
+    <!-- Band Details Container -->
+    <div id="bandDetails" class="hidden">
+      
+      <!-- Header Section -->
+      <div class="mb-12">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <h1 id="bandName" class="text-6xl font-bold mb-4"></h1>
+            <div id="bandStatus" class="mb-4"></div>
+          </div>
+        </div>
+        
+        <div class="punk-divider"></div>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column - Main Info -->
+        <div class="lg:col-span-2 space-y-8">
+          
+          <!-- Basic Info Card -->
+          <div class="punk-card p-6">
+            <h2 class="text-3xl font-bold mb-6 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+              Band Info
+            </h2>
+            
+            <div class="space-y-4">
+              <div id="genreSection" class="hidden">
+                <h3 class="text-pink-500 font-bold uppercase tracking-wide text-sm mb-2">Genre</h3>
+                <p id="bandGenre" class="text-xl text-gray-300"></p>
+              </div>
+
+              <div id="locationSection" class="hidden">
+                <h3 class="text-pink-500 font-bold uppercase tracking-wide text-sm mb-2">Location</h3>
+                <p id="bandLocation" class="text-xl text-gray-300"></p>
+              </div>
+
+              <div id="countrySection" class="hidden">
+                <h3 class="text-pink-500 font-bold uppercase tracking-wide text-sm mb-2">Country</h3>
+                <p id="bandCountry" class="text-xl text-gray-300"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Albums Card -->
+          <div id="albumsCard" class="punk-card p-6 hidden">
+            <h2 class="text-3xl font-bold mb-6 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+              Albums
+            </h2>
+            <div id="bandAlbums" class="text-gray-300 text-lg"></div>
+          </div>
+
+          <!-- Photo References -->
+          <div id="photosCard" class="punk-card p-6 hidden">
+            <h2 class="text-3xl font-bold mb-6 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+              Photos
+            </h2>
+            <div id="bandPhotos" class="text-gray-300"></div>
+          </div>
+        </div>
+
+        <!-- Right Column - Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+          
+          <!-- Links Card -->
+          <div id="linksCard" class="punk-card p-6 hidden">
+            <h2 class="text-2xl font-bold mb-4 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+              Links
+            </h2>
+            <div id="bandLinks" class="space-y-3"></div>
+          </div>
+
+          <!-- Metadata Card -->
+          <div class="punk-card p-6">
+            <h2 class="text-2xl font-bold mb-4 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+              Info
+            </h2>
+            <div class="space-y-2 text-sm text-gray-400">
+              <p><strong class="text-pink-500">Added:</strong> <span id="bandCreated"></span></p>
+              <p><strong class="text-pink-500">Updated:</strong> <span id="bandUpdated"></span></p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-12 text-center text-gray-500 border-t-2 border-pink-500/50">
+    <div class="max-w-6xl mx-auto px-6">
+      <p class="mb-4">© 2025 PUNKtionary. All rights reserved.</p>
+      <div class="flex justify-center gap-6 text-sm">
+        <a href="/about.html" class="punk-link">About</a>
+        <a href="/contact.html" class="punk-link">Contact</a>
+        <a href="/submit-band.html" class="punk-link">Submit</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Load Navbar -->
+  <script>
+    fetch('/navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+        if (typeof initNavbar === 'function') {
+          initNavbar();
+        }
+      })
+      .catch(error => console.error('Error loading navbar:', error));
+  </script>
+
+  <script src="/navbar.js"></script>
+  
+  <script>
+    // Get band ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const bandId = urlParams.get('id');
+
+    if (!bandId) {
+      showError();
+    } else {
+      loadBandDetails(bandId);
+    }
+
+    async function loadBandDetails(id) {
+      const loadingState = document.getElementById('loadingState');
+      const errorState = document.getElementById('errorState');
+      const bandDetails = document.getElementById('bandDetails');
+
+      try {
+        const response = await fetch(`get_band.php?id=${id}`);
+        
+        if (!response.ok) {
+          throw new Error('Band not found');
+        }
+
+        const band = await response.json();
+        
+        // Hide loading, show details
+        loadingState.classList.add('hidden');
+        bandDetails.classList.remove('hidden');
+
+        // Update page title
+        document.title = `${band.name} | PUNKtionary`;
+
+        // Populate band details
+        displayBandDetails(band);
+
+      } catch (error) {
+        console.error('Error loading band:', error);
+        showError();
+      }
+    }
+
+    function displayBandDetails(band) {
+      // Name and status
+      document.getElementById('bandName').textContent = band.name;
+      
+      const statusBadge = band.active ? 
+        '<span class="punk-badge text-lg px-4 py-2">Active</span>' : 
+        '<span class="inline-block bg-gray-700 text-gray-300 px-4 py-2 text-sm font-bold uppercase">Inactive</span>';
+      document.getElementById('bandStatus').innerHTML = statusBadge;
+
+      // Genre
+      if (band.genre) {
+        document.getElementById('genreSection').classList.remove('hidden');
+        document.getElementById('bandGenre').textContent = band.genre;
+      }
+
+      // Location
+      const locationParts = [band.city, band.state].filter(Boolean);
+      if (locationParts.length > 0) {
+        document.getElementById('locationSection').classList.remove('hidden');
+        document.getElementById('bandLocation').textContent = locationParts.join(', ');
+      }
+
+      // Country
+      if (band.country) {
+        document.getElementById('countrySection').classList.remove('hidden');
+        document.getElementById('bandCountry').textContent = band.country;
+      }
+
+      // Albums
+      if (band.albums) {
+        document.getElementById('albumsCard').classList.remove('hidden');
+        document.getElementById('bandAlbums').textContent = band.albums;
+      }
+
+      // Photos
+      if (band.photo_references) {
+        document.getElementById('photosCard').classList.remove('hidden');
+        document.getElementById('bandPhotos').innerHTML = `<p class="text-gray-400">${band.photo_references}</p>`;
+      }
+
+      // Links
+      if (band.links) {
+        try {
+          const links = JSON.parse(band.links);
+          const linksHtml = Object.entries(links).map(([platform, url]) => 
+            `<a href="${url}" target="_blank" rel="noopener noreferrer" class="punk-button-outline block text-center">
+              ${platform}
+            </a>`
+          ).join('');
+          
+          if (linksHtml) {
+            document.getElementById('linksCard').classList.remove('hidden');
+            document.getElementById('bandLinks').innerHTML = linksHtml;
+          }
+        } catch (e) {
+          // If not JSON, treat as single link
+          if (band.links.trim()) {
+            document.getElementById('linksCard').classList.remove('hidden');
+            document.getElementById('bandLinks').innerHTML = 
+              `<a href="${band.links}" target="_blank" rel="noopener noreferrer" class="punk-button-outline block text-center">
+                Website
+              </a>`;
+          }
+        }
+      }
+
+      // Dates
+      if (band.created_at) {
+        const createdDate = new Date(band.created_at);
+        document.getElementById('bandCreated').textContent = createdDate.toLocaleDateString();
+      }
+      if (band.updated_at) {
+        const updatedDate = new Date(band.updated_at);
+        document.getElementById('bandUpdated').textContent = updatedDate.toLocaleDateString();
+      }
+    }
+
+    function showError() {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('errorState').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
