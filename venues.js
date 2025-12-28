@@ -3,6 +3,7 @@
 let currentPage = 1;
 let currentPerPage = 12;
 let currentFilters = {};
+let currentSort = 'name_asc';
 
 document.addEventListener('DOMContentLoaded', function() {
   initVenues();
@@ -39,6 +40,14 @@ function initVenues() {
       loadVenues({ featured: true });
     });
   }
+
+  // Sort selector
+  const sortSelect = document.getElementById('sortSelect');
+  sortSelect.addEventListener('change', function() {
+    currentSort = this.value;
+    currentPage = 1;
+    loadVenues(currentFilters);
+  });
 
   // Per page selector
   const perPageSelect = document.getElementById('perPageSelect');
@@ -81,6 +90,7 @@ async function loadVenues(filters = {}) {
     const params = new URLSearchParams({
       page: currentPage,
       per_page: currentPerPage,
+      sort: currentSort,
       ...filters
     });
 

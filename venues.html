@@ -110,19 +110,32 @@
         <div class="lg:col-span-3">
           
           <!-- Top Controls -->
-          <div class="flex justify-between items-center mb-6">
+          <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
             <div id="resultsCount" class="text-gray-400">
               Loading...
             </div>
             
-            <!-- Per Page Selector -->
-            <div class="flex items-center gap-3">
-              <label class="text-sm text-gray-400 uppercase tracking-wide">Show:</label>
-              <select id="perPageSelect" class="punk-input py-2 px-3 w-20">
-                <option value="12" selected>12</option>
-                <option value="24">24</option>
-                <option value="48">48</option>
-              </select>
+            <div class="flex flex-wrap items-center gap-4">
+              <!-- Sort Selector -->
+              <div class="flex items-center gap-3">
+                <label class="text-sm text-gray-400 uppercase tracking-wide">Sort:</label>
+                <select id="sortSelect" class="punk-input py-2 px-3">
+                  <option value="name_asc">A-Z</option>
+                  <option value="name_desc">Z-A</option>
+                  <option value="newest">Newest</option>
+                  <option value="oldest">Oldest</option>
+                </select>
+              </div>
+              
+              <!-- Per Page Selector -->
+              <div class="flex items-center gap-3">
+                <label class="text-sm text-gray-400 uppercase tracking-wide">Show:</label>
+                <select id="perPageSelect" class="punk-input py-2 px-3 w-20">
+                  <option value="12" selected>12</option>
+                  <option value="24">24</option>
+                  <option value="48">48</option>
+                </select>
+              </div>
             </div>
           </div>
 

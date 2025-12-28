@@ -24,6 +24,7 @@ $city = isset($_GET['city']) ? trim($_GET['city']) : '';
 $state = isset($_GET['state']) ? trim($_GET['state']) : '';
 $active = isset($_GET['active']) ? $_GET['active'] : 'any';
 $featured = isset($_GET['featured']) ? filter_var($_GET['featured'], FILTER_VALIDATE_BOOLEAN) : false;
+$sort = isset($_GET['sort']) ? $_GET['sort'] : 'name_asc';
 
 // Build base query
 $sql = "SELECT id, name, genre, city, state, active, albums, links, photo_references FROM bands WHERE 1=1";
@@ -65,11 +66,21 @@ if ($active === 'yes') {
 }
 
 // TODO: Add featured logic when you have a featured field in DB
-// For now, just order by created_at for "featured"
-if ($featured) {
-    $sql .= " ORDER BY created_at DESC";
-} else {
-    $sql .= " ORDER BY name ASC";
+// Apply sorting
+switch ($sort) {
+    case 'name_desc':
+        $sql .= " ORDER BY name DESC";
+        break;
+    case 'newest':
+        $sql .= " ORDER BY created_at DESC";
+        break;
+    case 'oldest':
+        $sql .= " ORDER BY created_at ASC";
+        break;
+    case 'name_asc':
+    default:
+        $sql .= " ORDER BY name ASC";
+        break;
 }
 
 // Get total count

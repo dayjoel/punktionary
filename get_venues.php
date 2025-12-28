@@ -26,6 +26,7 @@ $age = isset($_GET['age']) ? trim($_GET['age']) : '';
 $capacityMin = isset($_GET['capacity_min']) ? intval($_GET['capacity_min']) : 0;
 $capacityMax = isset($_GET['capacity_max']) ? intval($_GET['capacity_max']) : 0;
 $featured = isset($_GET['featured']) ? filter_var($_GET['featured'], FILTER_VALIDATE_BOOLEAN) : false;
+$sort = isset($_GET['sort']) ? $_GET['sort'] : 'name_asc';
 
 // Build base query
 $sql = "SELECT id, name, type, city, state, capacity, age_restriction, links, street_address FROM venues WHERE 1=1";
@@ -78,10 +79,21 @@ if ($capacityMax > 0) {
 }
 
 // Order
-if ($featured) {
-    $sql .= " ORDER BY created_at DESC";
-} else {
-    $sql .= " ORDER BY name ASC";
+// Apply sorting
+switch ($sort) {
+    case 'name_desc':
+        $sql .= " ORDER BY name DESC";
+        break;
+    case 'newest':
+        $sql .= " ORDER BY created_at DESC";
+        break;
+    case 'oldest':
+        $sql .= " ORDER BY created_at ASC";
+        break;
+    case 'name_asc':
+    default:
+        $sql .= " ORDER BY name ASC";
+        break;
 }
 
 // Get total count
