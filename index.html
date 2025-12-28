@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-  <title>PUNKtionary</title>
+  <title>PUNKtionary - Your Local Punk Scene Directory</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/punk-styles.css">
+
   <style>
     /* Smooth caption animation */
     .caption-enter {
@@ -18,170 +20,322 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Carousel enhancements */
+    .carousel-container {
+      position: relative;
+      border: 3px solid var(--punk-pink);
+      box-shadow: 0 0 30px rgba(255, 0, 110, 0.3);
+    }
+
+    /* Featured section cards */
+    .featured-card {
+      background: var(--punk-gray);
+      border: 2px solid var(--punk-pink);
+    }
+
+    /* Dot indicators with punk style */
+    .carousel-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 0;
+      border: 2px solid var(--punk-pink);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    }
+
+    .carousel-dot:hover {
+      background: rgba(255, 0, 110, 0.5);
+      transform: scale(1.2);
+    }
+
+    .carousel-dot.active {
+      background: var(--punk-pink);
+      box-shadow: 0 0 10px rgba(255, 0, 110, 0.8);
+    }
+
+    /* Hero glow effect */
+    .hero-glow {
+      position: relative;
+    }
+
+    .hero-glow::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, var(--punk-pink), transparent, var(--punk-pink));
+      z-index: -1;
+      opacity: 0.3;
+      animation: rotate-gradient 3s linear infinite;
+    }
+
+    @keyframes rotate-gradient {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body class="bg-black text-white font-sans">
 
+  <!-- Include Navbar -->
+  <div id="navbar-container"></div>
+
   <main class="pt-24 max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-12">
 
     <!-- Primary Column -->
-    <section class="lg:col-span-2 space-y-8">
+    <section class="lg:col-span-2 space-y-12">
 
       <!-- Image Carousel -->
-      <div class="relative w-full h-64 sm:h-96 overflow-hidden rounded-lg">
+      <div class="carousel-container relative w-full h-64 sm:h-96 overflow-hidden">
         <!-- Image -->
         <img id="carouselImage" 
              src="/images/home/Monstress_eugene_carousel5.png" 
+             alt="Featured content"
              class="absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000" />
 
         <!-- Overlay -->
-        <div id="carouselOverlay" class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-6">
+        <div id="carouselOverlay" class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/80 to-transparent p-6">
           <div id="captionWrapper" class="caption-enter caption-enter-active">
-            <h2 id="carouselCaption" class="text-2xl font-semibold mb-2">Monstress tours PNW with Pie.</h2>
-            <a id="carouselLink" href="https://www.instagram.com/monstress.labs/" class="inline-block bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition">
+            <h2 id="carouselCaption" class="text-2xl font-bold mb-3 text-white" style="font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em;">
+              Monstress tours PNW with Pie.
+            </h2>
+            <a id="carouselLink" 
+               href="https://www.instagram.com/monstress.labs/" 
+               target="_blank"
+               rel="noopener noreferrer"
+               class="punk-button inline-block">
               Instagram
             </a>
           </div>
         </div>
 
         <!-- Navigation Dots -->
-        <div id="carouselDots" class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <div id="carouselDots" class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-10">
           <!-- Dots will be added dynamically -->
         </div>
       </div>
 
       <!-- Welcome Text -->
-      <section class="py-8">
-        <h1 class="text-5xl font-bold mb-4">Welcome to PUNKtionary</h1>
-        <p class="text-gray-300 text-lg max-w-3xl">
+      <section class="punk-hero py-8">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6">Welcome to PUNKtionary</h1>
+        <p class="text-gray-300 text-xl max-w-3xl leading-relaxed">
           Discover bands, venues, and resources that keep your local scene alive.
         </p>
+        <div class="flex gap-4 mt-8">
+          <a href="/bands.html" class="punk-button">Explore Bands</a>
+          <a href="/venues.html" class="punk-button-outline">Find Venues</a>
+        </div>
       </section>
 
-      <!-- Additional Content -->
+      <!-- Latest Updates -->
       <section class="py-8">
-        <h2 class="text-3xl font-semibold mb-4">Latest Updates</h2>
-        <p class="text-gray-400">Check out new bands, upcoming venues, and resources in your area. This section can hold articles, featured posts, or announcements.</p>
+        <h2 class="text-4xl font-semibold mb-6">Latest Updates</h2>
+        <div class="punk-divider"></div>
+        
+        <div class="space-y-4 mt-8">
+          <div class="punk-card">
+            <h3 class="text-xl font-bold mb-2" style="font-family: 'Bebas Neue', sans-serif;">New Bands Added</h3>
+            <p class="text-gray-400">Check out the latest additions to our band directory. From hardcore to pop-punk, discover your next favorite act.</p>
+            <a href="/bands.html" class="punk-link inline-block mt-3">View all bands →</a>
+          </div>
+          
+          <div class="punk-card">
+            <h3 class="text-xl font-bold mb-2" style="font-family: 'Bebas Neue', sans-serif;">Upcoming Shows</h3>
+            <p class="text-gray-400">Stay tuned for venue updates and show announcements. Don't miss out on what's happening in your local scene.</p>
+            <a href="/venues.html" class="punk-link inline-block mt-3">Browse venues →</a>
+          </div>
+          
+          <div class="punk-card">
+            <h3 class="text-xl font-bold mb-2" style="font-family: 'Bebas Neue', sans-serif;">Scene Resources</h3>
+            <p class="text-gray-400">Looking for recording studios, promoters, or DIY spaces? Our resources section has what you need.</p>
+            <a href="/resources.html" class="punk-link inline-block mt-3">Explore resources →</a>
+          </div>
+        </div>
       </section>
     </section>
 
     <!-- Sidebar -->
     <aside class="lg:col-span-1 space-y-8">
-      <section class="bg-gray-900 rounded-lg p-6">
-        <h2 class="text-2xl font-semibold mb-4">Featured Bands</h2>
-        <ul class="space-y-3 text-gray-300">
-          <li>Band A</li>
-          <li>Band B</li>
-          <li>Band C</li>
-          <li>Band D</li>
+      <!-- Featured Bands -->
+      <section class="featured-card p-6">
+        <h2 class="text-2xl font-semibold mb-4 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+          Featured Bands
+        </h2>
+        <ul class="punk-list space-y-2">
+          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
+            <a href="/bands.html" class="block">Band A</a>
+          </li>
+          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
+            <a href="/bands.html" class="block">Band B</a>
+          </li>
+          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
+            <a href="/bands.html" class="block">Band C</a>
+          </li>
+          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
+            <a href="/bands.html" class="block">Band D</a>
+          </li>
         </ul>
+        <a href="/bands.html" class="punk-button-outline w-full text-center mt-6 block">
+          View All Bands
+        </a>
       </section>
 
-      <section class="bg-gray-900 rounded-lg p-6">
-        <h2 class="text-2xl font-semibold mb-4">Featured Venues</h2>
-        <ul class="space-y-3 text-gray-300">
-          <li>Venue X</li>
-          <li>Venue Y</li>
-          <li>Venue Z</li>
+      <!-- Featured Venues -->
+      <section class="featured-card p-6">
+        <h2 class="text-2xl font-semibold mb-4 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+          Featured Venues
+        </h2>
+        <ul class="punk-list space-y-2">
+          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
+            <a href="/venues.html" class="block">Venue X</a>
+          </li>
+          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
+            <a href="/venues.html" class="block">Venue Y</a>
+          </li>
+          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
+            <a href="/venues.html" class="block">Venue Z</a>
+          </li>
         </ul>
+        <a href="/venues.html" class="punk-button-outline w-full text-center mt-6 block">
+          View All Venues
+        </a>
+      </section>
+
+      <!-- Quick Search -->
+      <section class="featured-card p-6">
+        <h2 class="text-2xl font-semibold mb-4 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+          Quick Search
+        </h2>
+        <p class="text-gray-400 text-sm mb-4">Find what you're looking for</p>
+        <a href="/search.html" class="punk-button w-full text-center block">
+          Search Directory
+        </a>
       </section>
     </aside>
 
   </main>
 
   <!-- Footer -->
-  <footer class="py-8 text-center text-gray-500 border-t border-gray-800 mt-24">
-    © 2025 PUNKtionary. All rights reserved.
+  <footer class="py-12 text-center text-gray-500 border-t-2 border-pink-500/50 mt-24">
+    <div class="max-w-6xl mx-auto px-6">
+      <p class="mb-4">© 2025 PUNKtionary. All rights reserved.</p>
+      <div class="flex justify-center gap-6 text-sm">
+        <a href="/about.html" class="punk-link">About</a>
+        <a href="/contact.html" class="punk-link">Contact</a>
+        <a href="/submit-band.html" class="punk-link">Submit</a>
+      </div>
+    </div>
   </footer>
 
-<script src="/navbar.js" defer></script>
+  <!-- Load Navbar -->
+  <script>
+    fetch('/navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+      })
+      .catch(error => console.error('Error loading navbar:', error));
+  </script>
 
-<!-- Carousel Script -->
-<script>
-const slides = [
-  {
-    image: '/images/home/Dead_Pioneers_carousel1.webp',
-    caption: 'Dead Pioneers fundraising for new record',
-    link: 'https://www.instagram.com/reel/DQC_v_ggGm6/',
-    linkText: 'Instagram'
-  },
-  {
-    image: '/images/home/lambrinigirls_carousel3.jpg',
-    caption: 'Lambrini Girls - God\'s Country at The Crocodile',
-    link: 'https://youtu.be/99r-0hlL3JM?si=AxAI82jLXEjgco1X',
-    linkText: 'YouTube'
-  },
-  {
-    image: '/images/home/nofunbar_carousel4.avif',
-    caption: 'Local Scene Highlight — No Fun Bar - Portland, OR',
-    link: 'https://www.nofunportland.com/',
-    linkText: 'Visit'
-  },
-  {
-    image: '/images/home/subjunctives_carousel6.jpg',
-    caption: 'Subjunctives preparing a new LP',
-    link: 'https://www.thesubjunctives.com/',
-    linkText: 'Website'
-  },
-  {
-    image: '/images/home/converge_carousel2.jpg',
-    caption: 'Converge performing Concubine at El Corazon',
-    link: 'https://youtu.be/_whdfIUI43M?si=W4Sa3_0kl7tjTt8L',
-    linkText: 'YouTube'
-  },
-  {
-    image: '/images/home/grrrizzly_carousel7.jpg',
-    caption: 'Olympia\'s Grrrizzly on west coast tour',
-    link: 'https://www.instagram.com/grrrizzlyband/',
-    linkText: 'Follow'
-  }
-];
+<script src="/navbar.js"></script>
 
-let currentIndex = 0;
-const imageEl = document.getElementById('carouselImage');
-const captionWrapper = document.getElementById('captionWrapper');
-const captionEl = document.getElementById('carouselCaption');
-const linkEl = document.getElementById('carouselLink');
-const dotsContainer = document.getElementById('carouselDots');
+  <!-- Carousel Script -->
+  <script>
+    const slides = [
+      {
+        image: '/images/home/Dead_Pioneers_carousel1.webp',
+        caption: 'Dead Pioneers fundraising for new record',
+        link: 'https://www.instagram.com/reel/DQC_v_ggGm6/',
+        linkText: 'Instagram'
+      },
+      {
+        image: '/images/home/lambrinigirls_carousel3.jpg',
+        caption: 'Lambrini Girls - God\'s Country at The Crocodile',
+        link: 'https://youtu.be/99r-0hlL3JM?si=AxAI82jLXEjgco1X',
+        linkText: 'YouTube'
+      },
+      {
+        image: '/images/home/nofunbar_carousel4.avif',
+        caption: 'Local Scene Highlight — No Fun Bar - Portland, OR',
+        link: 'https://www.nofunportland.com/',
+        linkText: 'Visit'
+      },
+      {
+        image: '/images/home/subjunctives_carousel6.jpg',
+        caption: 'Subjunctives preparing a new LP',
+        link: 'https://www.thesubjunctives.com/',
+        linkText: 'Website'
+      },
+      {
+        image: '/images/home/converge_carousel2.jpg',
+        caption: 'Converge performing Concubine at El Corazon',
+        link: 'https://youtu.be/_whdfIUI43M?si=W4Sa3_0kl7tjTt8L',
+        linkText: 'YouTube'
+      },
+      {
+        image: '/images/home/grrrizzly_carousel7.jpg',
+        caption: 'Olympia\'s Grrrizzly on west coast tour',
+        link: 'https://www.instagram.com/grrrizzlyband/',
+        linkText: 'Follow'
+      }
+    ];
 
-// Create dots dynamically
-slides.forEach((_, i) => {
-  const dot = document.createElement('div');
-  dot.className = 'w-3 h-3 rounded-full cursor-pointer transition ' + (i === 0 ? 'bg-white' : 'bg-gray-600 hover:bg-gray-400');
-  dot.addEventListener('click', () => showSlide(i));
-  dotsContainer.appendChild(dot);
-});
+    let currentIndex = 0;
+    const imageEl = document.getElementById('carouselImage');
+    const captionWrapper = document.getElementById('captionWrapper');
+    const captionEl = document.getElementById('carouselCaption');
+    const linkEl = document.getElementById('carouselLink');
+    const dotsContainer = document.getElementById('carouselDots');
 
-const dots = dotsContainer.querySelectorAll('div');
+    // Create dots dynamically with punk style
+    slides.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => showSlide(i));
+      dotsContainer.appendChild(dot);
+    });
 
-function showSlide(index) {
-  imageEl.classList.add('opacity-0');
-  captionWrapper.classList.remove('caption-enter-active');
-  currentIndex = index;
+    const dots = dotsContainer.querySelectorAll('div');
 
-  setTimeout(() => {
-    const slide = slides[currentIndex];
-    imageEl.src = slide.image;
-    captionEl.textContent = slide.caption;
-    linkEl.href = slide.link;
-    linkEl.textContent = slide.linkText;
+    function showSlide(index) {
+      imageEl.classList.add('opacity-0');
+      captionWrapper.classList.remove('caption-enter-active');
+      currentIndex = index;
 
-    imageEl.classList.remove('opacity-0');
-    captionWrapper.classList.add('caption-enter');
-    setTimeout(() => captionWrapper.classList.add('caption-enter-active'), 10);
+      setTimeout(() => {
+        const slide = slides[currentIndex];
+        imageEl.src = slide.image;
+        imageEl.alt = slide.caption;
+        captionEl.textContent = slide.caption;
+        linkEl.href = slide.link;
+        linkEl.textContent = slide.linkText;
 
-    dots.forEach((d, i) => d.className = 'w-3 h-3 rounded-full cursor-pointer transition ' + 
-      (i === currentIndex ? 'bg-white' : 'bg-gray-600 hover:bg-gray-400'));
-  }, 1000);
-}
+        imageEl.classList.remove('opacity-0');
+        captionWrapper.classList.add('caption-enter');
+        setTimeout(() => captionWrapper.classList.add('caption-enter-active'), 10);
 
-function nextSlide() {
-  const nextIndex = (currentIndex + 1) % slides.length;
-  showSlide(nextIndex);
-}
+        dots.forEach((d, i) => {
+          if (i === currentIndex) {
+            d.classList.add('active');
+          } else {
+            d.classList.remove('active');
+          }
+        });
+      }, 1000);
+    }
 
-setInterval(nextSlide, 5000); // rotate every 5 seconds
-</script>
+    function nextSlide() {
+      const nextIndex = (currentIndex + 1) % slides.length;
+      showSlide(nextIndex);
+    }
+
+    setInterval(nextSlide, 5000); // rotate every 5 seconds
+  </script>
 
 </body>
 </html>

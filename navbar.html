@@ -1,121 +1,246 @@
 <!-- navbar.html -->
-<header class="fixed top-0 left-0 w-full bg-black text-white border-b border-gray-800 z-50">
+<header class="punk-nav fixed top-0 left-0 w-full bg-black text-white border-b-2 border-pink-500 z-50 shadow-lg shadow-pink-500/20">
   <div class="max-w-7xl mx-auto flex items-center justify-between px-6 h-16">
     <!-- Logo -->
-    <a href="/" class="flex items-center space-x-2 outline-none">
+    <a href="/" class="flex items-center space-x-2 outline-none logo-container">
       <img
         src="/images/punktionarylogo_small.png"
         alt="PUNKtionary Logo"
-        class="h-10 w-auto object-contain border-0"
-        style="border:0;"
+        class="h-10 w-auto object-contain"
       />
     </a>
 
     <!-- Desktop Nav -->
-    <ul class="hidden md:flex items-center space-x-8 text-sm uppercase tracking-wide">
-      <li><a href="/" class="hover:text-pink-500 transition">Home</a></li>
-      <li><a href="/bands.html" class="hover:text-pink-500 transition">Bands</a></li>
-      <li><a href="/venues.html" class="hover:text-pink-500 transition">Venues</a></li>
-      <li><a href="/resources.html" class="hover:text-pink-500 transition">Resources</a></li>
-      <li><a href="/search.html" class="hover:text-pink-500 transition">Search</a></li>
-      <li class="relative">
-        <button id="submitButton" class="hover:text-pink-500 flex items-center gap-1">
-          Submit
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mt-0.5" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-        <ul id="submitMenu"
-          class="hidden absolute right-0 bg-black border border-gray-700 rounded-lg mt-2 w-36 py-2 transition-all opacity-0">
-          <li><a href="/submit-band.html" class="block px-4 py-2 hover:bg-gray-800">Band</a></li>
-          <li><a href="/submit-venue.html" class="block px-4 py-2 hover:bg-gray-800">Venue</a></li>
-          <li><a href="/submit-resource.html" class="block px-4 py-2 hover:bg-gray-800">Resource</a></li>
-        </ul>
-      </li>
-    </ul>
+    <nav>
+      <ul class="hidden md:flex items-center space-x-8 text-sm uppercase tracking-widest font-bold">
+        <li><a href="/" class="nav-link block" data-page="home">Home</a></li>
+        <li><a href="/bands.html" class="nav-link block" data-page="bands">Bands</a></li>
+        <li><a href="/venues.html" class="nav-link block" data-page="venues">Venues</a></li>
+        <li><a href="/resources.html" class="nav-link block" data-page="resources">Resources</a></li>
+        <li><a href="/search.html" class="nav-link block" data-page="search">Search</a></li>
+        <li class="relative">
+          <button id="submitButton" class="nav-link flex items-center gap-1 cursor-pointer">
+            Submit
+            <svg id="submitArrow" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mt-0.5 transition-transform" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <ul id="submitMenu"
+            class="hidden absolute right-0 bg-black border-2 border-pink-500 rounded-none mt-2 w-40 py-2 shadow-lg shadow-pink-500/30 opacity-0 transition-opacity duration-200">
+            <li><a href="/submit-band.html" class="block px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Band</a></li>
+            <li><a href="/submit-venue.html" class="block px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Venue</a></li>
+            <li><a href="/submit-resource.html" class="block px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Resource</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
 
     <!-- User Dropdown (Desktop) -->
     <div class="hidden md:flex items-center relative">
-      <button id="userButton" class="hover:text-pink-500 flex items-center gap-1 relative z-10">
+      <button id="userButton" class="nav-link flex items-center gap-1 relative z-10">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M5.121 17.804A9 9 0 1118.88 17.804M15 11a3 3 0 11-6 0 3 3 0z" />
+            d="M5.121 17.804A9 9 0 1118.88 17.804M15 11a3 3 0 11-6 0 3 3 0 11-6 0z" />
         </svg>
       </button>
       <ul id="userMenu"
-        class="hidden absolute top-full right-0 bg-black border border-gray-700 rounded-lg mt-2 w-36 py-2 transition-all opacity-0">
+        class="hidden absolute top-full right-0 bg-black border-2 border-pink-500 rounded-none mt-2 w-36 py-2 shadow-lg shadow-pink-500/30">
         <li>
-          <button id="loginBtn" class="w-full text-left px-4 py-2 hover:bg-gray-800">Login</button>
+          <button id="loginBtn" class="w-full text-left px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Login</button>
         </li>
-        <li><a href="/register.html" class="block px-4 py-2 hover:bg-gray-800">Register</a></li>
+        <li><a href="/register.html" class="block px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Register</a></li>
       </ul>
     </div>
 
     <!-- Hamburger (Mobile Only) -->
     <button id="menuToggle" class="md:hidden block focus:outline-none text-white relative z-20" aria-label="Open menu" aria-expanded="false">
       <div class="flex flex-col justify-center items-center w-6 h-6">
-        <span class="block h-0.5 w-6 bg-white transform transition duration-300 origin-center"></span>
-        <span class="block h-0.5 w-6 bg-white mt-1 transform transition duration-300 origin-center"></span>
-        <span class="block h-0.5 w-6 bg-white mt-1 transform transition duration-300 origin-center"></span>
+        <span class="hamburger-line block h-0.5 w-6 bg-pink-500 transform transition duration-300 origin-center"></span>
+        <span class="hamburger-line block h-0.5 w-6 bg-pink-500 mt-1.5 transform transition duration-300 origin-center"></span>
+        <span class="hamburger-line block h-0.5 w-6 bg-pink-500 mt-1.5 transform transition duration-300 origin-center"></span>
       </div>
     </button>
   </div>
 
   <!-- Mobile Backdrop -->
   <div id="mobileBackdrop"
-    class="fixed inset-0 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-10 md:hidden"></div>
+    class="fixed inset-0 bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-10 md:hidden"></div>
 
   <!-- Mobile Menu (Right Slide-In) -->
   <div id="mobileMenu"
-    class="fixed top-0 right-0 w-64 h-full bg-black border-l border-gray-800 transform translate-x-full transition-transform duration-300 ease-in-out z-20 md:hidden">
-    <nav class="flex flex-col space-y-4 p-6 mt-16">
-      <a href="/" class="hover:text-pink-500">Home</a>
-      <a href="/bands.html" class="hover:text-pink-500">Bands</a>
-      <a href="/venues.html" class="hover:text-pink-500">Venues</a>
-      <a href="/resources.html" class="hover:text-pink-500">Resources</a>
-      <a href="/search.html" class="hover:text-pink-500">Search</a>
-      <hr class="border-gray-700 my-2" />
-      <a href="/submit-band.html" class="hover:text-pink-500">Submit Band</a>
-      <a href="/submit-venue.html" class="hover:text-pink-500">Submit Venue</a>
-      <a href="/submit-resource.html" class="hover:text-pink-500">Submit Resource</a>
-      <hr class="border-gray-700 my-2" />
-      <button id="mobileLoginBtn" class="hover:text-pink-500 text-left">Login</button>
+    class="fixed top-0 right-0 w-64 h-full bg-black border-l-2 border-pink-500 transform translate-x-full transition-transform duration-300 ease-in-out z-20 md:hidden shadow-2xl shadow-pink-500/20">
+    <nav class="flex flex-col space-y-4 p-6 mt-16 uppercase tracking-wide font-bold text-sm">
+      <a href="/" class="mobile-nav-link" data-page="home">Home</a>
+      <a href="/bands.html" class="mobile-nav-link" data-page="bands">Bands</a>
+      <a href="/venues.html" class="mobile-nav-link" data-page="venues">Venues</a>
+      <a href="/resources.html" class="mobile-nav-link" data-page="resources">Resources</a>
+      <a href="/search.html" class="mobile-nav-link" data-page="search">Search</a>
+      <hr class="border-pink-500/50 my-2" />
+      <a href="/submit-band.html" class="mobile-nav-link">Submit Band</a>
+      <a href="/submit-venue.html" class="mobile-nav-link">Submit Venue</a>
+      <a href="/submit-resource.html" class="mobile-nav-link">Submit Resource</a>
+      <hr class="border-pink-500/50 my-2" />
+      <button id="mobileLoginBtn" class="mobile-nav-link text-left">Login</button>
+      <a href="/register.html" class="mobile-nav-link">Register</a>
+      
+      <!-- Google Sign-In Mobile -->
+      <div id="mobileGoogleSignInBtn" class="w-full mt-4"></div>
     </nav>
   </div>
 
   <!-- Login Overlay -->
-  <div id="loginOverlay" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-    <div class="bg-gray-900 rounded-lg p-8 w-80 border border-gray-700">
-      <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
-
-      <!-- Traditional login -->
-      <p class="text-gray-400 mb-4">Other signin methods coming soon!</p>
-
-<!-- Mobile Menu (Right Slide-In) -->
-<div id="mobileMenu"
-    class="fixed top-0 right-0 w-64 h-full bg-black border-l border-gray-800 transform translate-x-full transition-transform duration-300 ease-in-out z-20 md:hidden">
-  <nav class="flex flex-col space-y-4 p-6 mt-16">
-    <a href="/" class="hover:text-pink-500">Home</a>
-    <a href="/bands.html" class="hover:text-pink-500">Bands</a>
-    <a href="/venues.html" class="hover:text-pink-500">Venues</a>
-    <a href="/resources.html" class="hover:text-pink-500">Resources</a>
-    <a href="/search.html" class="hover:text-pink-500">Search</a>
-    <hr class="border-gray-700 my-2" />
-    <a href="/submit-band.html" class="hover:text-pink-500">Submit Band</a>
-    <a href="/submit-venue.html" class="hover:text-pink-500">Submit Venue</a>
-    <a href="/submit-resource.html" class="hover:text-pink-500">Submit Resource</a>
-    <hr class="border-gray-700 my-2" />
-    <button id="mobileLoginBtn" class="hover:text-pink-500 text-left mb-2">Login</button>
-
-    <!-- Google Sign-In Mobile -->
-    <div id="mobileGoogleSignInBtn" class="w-full mt-2"></div>
-  </nav>
-</div>
-
+  <div id="loginOverlay" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+    <div class="bg-gray-900 rounded-none p-8 w-80 border-2 border-pink-500 shadow-2xl shadow-pink-500/30 relative">
+      <button id="closeLogin" class="absolute top-4 right-4 text-pink-500 hover:text-white transition-colors text-2xl font-bold">&times;</button>
+      <h2 class="text-2xl font-bold mb-6 text-center uppercase tracking-wider">Login</h2>
+      
+      <p class="text-gray-400 mb-4 text-sm text-center">Other signin methods coming soon!</p>
+      
       <!-- Google Sign-In -->
-      <div id="googleSignInBtn" class="w-full"></div><p>
+      <div id="googleSignInBtn" class="w-full"></div>
     </div>
   </div>
 </header>
+
+<script>
+// Active page highlighting
+document.addEventListener('DOMContentLoaded', function() {
+  const currentPath = window.location.pathname;
+  const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+  
+  navLinks.forEach(link => {
+    const linkPath = link.getAttribute('href');
+    if (linkPath === currentPath || (currentPath === '/' && linkPath === '/') || 
+        (currentPath.includes(link.dataset.page) && link.dataset.page)) {
+      link.classList.add('active');
+    }
+  });
+
+  // Submit dropdown
+  const submitBtn = document.getElementById('submitButton');
+  const submitMenu = document.getElementById('submitMenu');
+  const submitArrow = document.getElementById('submitArrow');
+  
+  if (submitBtn && submitMenu) {
+    submitBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const isHidden = submitMenu.classList.contains('hidden');
+      
+      if (isHidden) {
+        submitMenu.classList.remove('hidden');
+        setTimeout(() => submitMenu.classList.remove('opacity-0'), 10);
+        if (submitArrow) submitArrow.style.transform = 'rotate(180deg)';
+      } else {
+        submitMenu.classList.add('opacity-0');
+        setTimeout(() => submitMenu.classList.add('hidden'), 200);
+        if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';
+      }
+    });
+  }
+
+  // User dropdown
+  const userBtn = document.getElementById('userButton');
+  const userMenu = document.getElementById('userMenu');
+  
+  if (userBtn && userMenu) {
+    userBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const isHidden = userMenu.classList.contains('hidden');
+      
+      if (isHidden) {
+        userMenu.classList.remove('hidden');
+        setTimeout(() => userMenu.classList.remove('opacity-0'), 10);
+      } else {
+        userMenu.classList.add('opacity-0');
+        setTimeout(() => userMenu.classList.add('hidden'), 200);
+      }
+    });
+  }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', function() {
+    if (submitMenu && !submitMenu.classList.contains('hidden')) {
+      submitMenu.classList.add('opacity-0');
+      setTimeout(() => submitMenu.classList.add('hidden'), 200);
+      if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';
+    }
+    if (userMenu && !userMenu.classList.contains('hidden')) {
+      userMenu.classList.add('opacity-0');
+      setTimeout(() => userMenu.classList.add('hidden'), 200);
+    }
+  });
+
+  // Mobile menu toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileBackdrop = document.getElementById('mobileBackdrop');
+  
+  if (menuToggle && mobileMenu && mobileBackdrop) {
+    menuToggle.addEventListener('click', function() {
+      const isOpen = !mobileMenu.classList.contains('translate-x-full');
+      
+      if (isOpen) {
+        // Close menu
+        mobileMenu.classList.add('translate-x-full');
+        mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        
+        // Reset hamburger
+        const lines = menuToggle.querySelectorAll('.hamburger-line');
+        lines[0].style.transform = 'rotate(0) translateY(0)';
+        lines[1].style.opacity = '1';
+        lines[2].style.transform = 'rotate(0) translateY(0)';
+      } else {
+        // Open menu
+        mobileMenu.classList.remove('translate-x-full');
+        mobileBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+        menuToggle.setAttribute('aria-expanded', 'true');
+        
+        // Animate to X
+        const lines = menuToggle.querySelectorAll('.hamburger-line');
+        lines[0].style.transform = 'rotate(45deg) translateY(8px)';
+        lines[1].style.opacity = '0';
+        lines[2].style.transform = 'rotate(-45deg) translateY(-8px)';
+      }
+    });
+
+    // Close menu when clicking backdrop
+    mobileBackdrop.addEventListener('click', function() {
+      mobileMenu.classList.add('translate-x-full');
+      mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      
+      const lines = menuToggle.querySelectorAll('.hamburger-line');
+      lines[0].style.transform = 'rotate(0) translateY(0)';
+      lines[1].style.opacity = '1';
+      lines[2].style.transform = 'rotate(0) translateY(0)';
+    });
+  }
+
+  // Login overlay
+  const loginBtns = document.querySelectorAll('#loginBtn, #mobileLoginBtn');
+  const loginOverlay = document.getElementById('loginOverlay');
+  const closeLogin = document.getElementById('closeLogin');
+  
+  loginBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      loginOverlay?.classList.remove('hidden');
+      // Close mobile menu if open
+      if (mobileMenu) mobileMenu.classList.add('translate-x-full');
+      if (mobileBackdrop) mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
+    });
+  });
+
+  closeLogin?.addEventListener('click', function() {
+    loginOverlay?.classList.add('hidden');
+  });
+
+  loginOverlay?.addEventListener('click', function(e) {
+    if (e.target === loginOverlay) {
+      loginOverlay.classList.add('hidden');
+    }
+  });
+});
+</script>

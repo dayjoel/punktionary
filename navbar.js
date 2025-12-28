@@ -1,182 +1,144 @@
-// navbar.js
-async function loadNavbar() {
-  const response = await fetch('/navbar.html');
-  const navbarHTML = await response.text();
-  document.body.insertAdjacentHTML('afterbegin', navbarHTML);
+// navbar.js - Navbar functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Wait a bit for navbar to be loaded if it's fetched
+  setTimeout(initNavbar, 100);
+});
 
-  // Element references
-  const submitButton = document.getElementById('submitButton');
+function initNavbar() {
+  // Active page highlighting
+  const currentPath = window.location.pathname;
+  const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+  
+  navLinks.forEach(link => {
+    const linkPath = link.getAttribute('href');
+    if (linkPath === currentPath || (currentPath === '/' && linkPath === '/') || 
+        (currentPath.includes(link.dataset.page) && link.dataset.page)) {
+      link.classList.add('active');
+    }
+  });
+
+  // Submit dropdown
+  const submitBtn = document.getElementById('submitButton');
   const submitMenu = document.getElementById('submitMenu');
-  const userButton = document.getElementById('userButton');
+  const submitArrow = document.getElementById('submitArrow');
+  
+  if (submitBtn && submitMenu) {
+    submitBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const isHidden = submitMenu.classList.contains('hidden');
+      
+      if (isHidden) {
+        submitMenu.classList.remove('hidden');
+        setTimeout(() => submitMenu.classList.remove('opacity-0'), 10);
+        if (submitArrow) submitArrow.style.transform = 'rotate(180deg)';
+      } else {
+        submitMenu.classList.add('opacity-0');
+        setTimeout(() => submitMenu.classList.add('hidden'), 200);
+        if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';
+      }
+    });
+  }
+
+  // User dropdown
+  const userBtn = document.getElementById('userButton');
   const userMenu = document.getElementById('userMenu');
-  const loginBtn = document.getElementById('loginBtn');
-  const loginOverlay = document.getElementById('loginOverlay');
-  const loginCancel = document.getElementById('loginCancel');
+  
+  if (userBtn && userMenu) {
+    userBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const isHidden = userMenu.classList.contains('hidden');
+      
+      if (isHidden) {
+        userMenu.classList.remove('hidden');
+        setTimeout(() => userMenu.classList.remove('opacity-0'), 10);
+      } else {
+        userMenu.classList.add('opacity-0');
+        setTimeout(() => userMenu.classList.add('hidden'), 200);
+      }
+    });
+  }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', function() {
+    if (submitMenu && !submitMenu.classList.contains('hidden')) {
+      submitMenu.classList.add('opacity-0');
+      setTimeout(() => submitMenu.classList.add('hidden'), 200);
+      if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';
+    }
+    if (userMenu && !userMenu.classList.contains('hidden')) {
+      userMenu.classList.add('opacity-0');
+      setTimeout(() => userMenu.classList.add('hidden'), 200);
+    }
+  });
+
+  // Mobile menu toggle
   const menuToggle = document.getElementById('menuToggle');
   const mobileMenu = document.getElementById('mobileMenu');
   const mobileBackdrop = document.getElementById('mobileBackdrop');
-  const mobileLoginBtn = document.getElementById('mobileLoginBtn');
-  const bars = menuToggle?.querySelectorAll('span');
-
-  let submitOpen = false, userOpen = false, mobileOpen = false;
-
-  // ----- Dropdown Toggles -----
-  function toggleSubmit() {
-    if (!submitMenu) return;
-    submitMenu.classList.toggle('hidden');
-    submitMenu.classList.toggle('opacity-0');
-    submitOpen = !submitOpen;
-  }
-
-  function toggleUser() {
-    if (!userMenu) return;
-    userMenu.classList.toggle('hidden');
-    userMenu.classList.toggle('opacity-0');
-    userOpen = !userOpen;
-  }
-
-  submitButton?.addEventListener('click', e => { e.stopPropagation(); toggleSubmit(); });
-  userButton?.addEventListener('click', e => { e.stopPropagation(); toggleUser(); });
-
-  // Close dropdowns on outside click
-  document.addEventListener('click', e => {
-    if (submitOpen && !submitButton.contains(e.target) && !submitMenu.contains(e.target)) toggleSubmit();
-    if (userOpen && !userButton.contains(e.target) && !userMenu.contains(e.target)) toggleUser();
-  });
-
-  // ----- Login Overlay -----
-  loginBtn?.addEventListener('click', () => {
-    loginOverlay.classList.remove('hidden');
-    loginOverlay.classList.add('flex');
-    if (userOpen) toggleUser();
-  });
-
-  mobileLoginBtn?.addEventListener('click', () => {
-    loginOverlay.classList.remove('hidden');
-    loginOverlay.classList.add('flex');
-    if (mobileOpen) {
-      mobileOpen = false;
-      closeMobile();
-    }
-  });
-
-  loginCancel?.addEventListener('click', () => {
-    loginOverlay.classList.add('hidden');
-    loginOverlay.classList.remove('flex');
-  });
-
-  loginOverlay?.addEventListener('click', e => {
-    if (e.target === loginOverlay) {
-      loginOverlay.classList.add('hidden');
-      loginOverlay.classList.remove('flex');
-    }
-  });
-
-  // ----- Mobile Menu Toggle -----
-  function openMobile() {
-    mobileMenu.classList.remove('translate-x-full');
-    mobileMenu.classList.add('translate-x-0');
-    mobileBackdrop.classList.remove('opacity-0', 'pointer-events-none');
-    mobileBackdrop.classList.add('opacity-100');
-    menuToggle?.setAttribute('aria-expanded', 'true');
-
-    if (bars && bars.length === 3) {
-      bars[0].classList.add('rotate-45', 'translate-y-1.5');
-      bars[1].classList.add('opacity-0');
-      bars[2].classList.add('-rotate-45', '-translate-y-1.5');
-    }
-  }
-
-  function closeMobile() {
-    mobileMenu.classList.add('translate-x-full');
-    mobileMenu.classList.remove('translate-x-0');
-    mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
-    mobileBackdrop.classList.remove('opacity-100');
-    menuToggle?.setAttribute('aria-expanded', 'false');
-
-    if (bars && bars.length === 3) {
-      bars[0].classList.remove('rotate-45', 'translate-y-1.5');
-      bars[1].classList.remove('opacity-0');
-      bars[2].classList.remove('-rotate-45', '-translate-y-1.5');
-    }
-  }
-
-  menuToggle?.addEventListener('click', e => {
-    e.stopPropagation();
-    mobileOpen = !mobileOpen;
-    mobileOpen ? openMobile() : closeMobile();
-  });
-
-  mobileBackdrop?.addEventListener('click', () => {
-    if (mobileOpen) {
-      mobileOpen = false;
-      closeMobile();
-    }
-  });
-
-  mobileMenu?.querySelectorAll('a, button')?.forEach(el => {
-    el.addEventListener('click', () => {
-      if (mobileOpen) {
-        mobileOpen = false;
-        closeMobile();
+  
+  if (menuToggle && mobileMenu && mobileBackdrop) {
+    menuToggle.addEventListener('click', function() {
+      const isOpen = !mobileMenu.classList.contains('translate-x-full');
+      
+      if (isOpen) {
+        // Close menu
+        mobileMenu.classList.add('translate-x-full');
+        mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        
+        // Reset hamburger
+        const lines = menuToggle.querySelectorAll('.hamburger-line');
+        lines[0].style.transform = 'rotate(0) translateY(0)';
+        lines[1].style.opacity = '1';
+        lines[2].style.transform = 'rotate(0) translateY(0)';
+      } else {
+        // Open menu
+        mobileMenu.classList.remove('translate-x-full');
+        mobileBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+        menuToggle.setAttribute('aria-expanded', 'true');
+        
+        // Animate to X
+        const lines = menuToggle.querySelectorAll('.hamburger-line');
+        lines[0].style.transform = 'rotate(45deg) translateY(8px)';
+        lines[1].style.opacity = '0';
+        lines[2].style.transform = 'rotate(-45deg) translateY(-8px)';
       }
+    });
+
+    // Close menu when clicking backdrop
+    mobileBackdrop.addEventListener('click', function() {
+      mobileMenu.classList.add('translate-x-full');
+      mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      
+      const lines = menuToggle.querySelectorAll('.hamburger-line');
+      lines[0].style.transform = 'rotate(0) translateY(0)';
+      lines[1].style.opacity = '1';
+      lines[2].style.transform = 'rotate(0) translateY(0)';
+    });
+  }
+
+  // Login overlay
+  const loginBtns = document.querySelectorAll('#loginBtn, #mobileLoginBtn');
+  const loginOverlay = document.getElementById('loginOverlay');
+  const closeLogin = document.getElementById('closeLogin');
+  
+  loginBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      loginOverlay?.classList.remove('hidden');
+      // Close mobile menu if open
+      if (mobileMenu) mobileMenu.classList.add('translate-x-full');
+      if (mobileBackdrop) mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
     });
   });
 
-  // ----- Close on Escape -----
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      if (submitOpen) toggleSubmit();
-      if (userOpen) toggleUser();
-      if (mobileOpen) { mobileOpen = false; closeMobile(); }
-      if (!loginOverlay.classList.contains('hidden')) {
-        loginOverlay.classList.add('hidden');
-        loginOverlay.classList.remove('flex');
-      }
+  closeLogin?.addEventListener('click', function() {
+    loginOverlay?.classList.add('hidden');
+  });
+
+  loginOverlay?.addEventListener('click', function(e) {
+    if (e.target === loginOverlay) {
+      loginOverlay.classList.add('hidden');
     }
   });
-
-  // ----- Google Sign-In -----
-  const googleClientId = '468094396453-vbt8dbmg2a8qrp0ahmv48qfj6srcp2dq.apps.googleusercontent.com'; // replace with your client ID
-  google.accounts.id.initialize({
-    client_id: googleClientId,
-    callback: handleGoogleCredentialResponse
-  });
-
-  // Render desktop Google button if exists
-  if (document.getElementById('googleSignInBtn')) {
-    google.accounts.id.renderButton(
-      document.getElementById('googleSignInBtn'),
-      { theme: 'filled_blue', size: 'large', width: '100%' }
-    );
-  }
-
-  // Render mobile Google button
-  if (document.getElementById('mobileGoogleSignInBtn')) {
-    google.accounts.id.renderButton(
-      document.getElementById('mobileGoogleSignInBtn'),
-      { theme: 'filled_blue', size: 'large', width: '100%' }
-    );
-  }
-
-  function handleGoogleCredentialResponse(response) {
-    fetch('/api/auth/google', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ credential: response.credential })
-    })
-    .then(res => res.json())
-    .then(data => {
-      console.log('Login success:', data);
-      if (loginOverlay) {
-        loginOverlay.classList.add('hidden');
-        loginOverlay.classList.remove('flex');
-      }
-      if (mobileOpen) { mobileOpen = false; closeMobile(); }
-      alert(`Welcome, ${data.name || 'user'}!`);
-    })
-    .catch(err => console.error('Login failed', err));
-  }
 }
-
-loadNavbar();

@@ -1,0 +1,397 @@
+/* punk-styles.css - Professional Punk Aesthetic */
+
+/* Import punk-inspired font (add to your HTML head) */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto+Condensed:wght@400;700&display=swap');
+
+:root {
+  --punk-pink: #FF006E;
+  --punk-pink-bright: #FF10F0;
+  --punk-dark: #0a0a0a;
+  --punk-gray: #1a1a1a;
+  --punk-white: #ffffff;
+  --punk-glow: rgba(255, 0, 110, 0.5);
+}
+
+/* Base styles */
+body {
+  font-family: 'Roboto Condensed', sans-serif;
+  background-color: var(--punk-dark);
+  color: var(--punk-white);
+}
+
+/* Headings with punk edge */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: 3.5rem;
+  background: linear-gradient(135deg, var(--punk-white) 0%, var(--punk-pink) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+h2 {
+  font-size: 2.5rem;
+  color: var(--punk-pink);
+  text-shadow: 0 0 10px var(--punk-glow);
+}
+
+/* Navbar specific styles */
+.punk-nav {
+  background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
+  backdrop-filter: blur(10px);
+}
+
+.nav-link {
+  position: relative;
+  color: var(--punk-white) !important;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0;
+  text-decoration: none;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--punk-pink);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px var(--punk-glow);
+}
+
+.nav-link:hover {
+  color: var(--punk-pink) !important;
+  text-shadow: 0 0 8px var(--punk-glow) !important;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  color: var(--punk-pink) !important;
+  text-shadow: 0 0 8px var(--punk-glow) !important;
+}
+
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* Mobile nav links */
+.mobile-nav-link {
+  color: var(--punk-white);
+  transition: all 0.3s ease;
+  padding: 0.5rem 0;
+  border-left: 3px solid transparent;
+  padding-left: 1rem;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link.active {
+  color: var(--punk-pink) !important;
+  border-left-color: var(--punk-pink);
+  padding-left: 1.5rem;
+  text-shadow: 0 0 8px var(--punk-glow);
+}
+
+/* Logo glow effect */
+.logo-container {
+  filter: drop-shadow(0 0 5px rgba(255, 0, 110, 0.3));
+  transition: filter 0.3s ease;
+}
+
+.logo-container:hover {
+  filter: drop-shadow(0 0 12px rgba(255, 0, 110, 0.6));
+}
+
+/* Buttons with punk style */
+.punk-button {
+  background: var(--punk-pink);
+  color: var(--punk-dark);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 0 15px var(--punk-glow);
+}
+
+.punk-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.punk-button:hover::before {
+  left: 100%;
+}
+
+.punk-button:hover {
+  background: var(--punk-pink-bright);
+  box-shadow: 0 0 25px var(--punk-glow);
+  transform: translateY(-2px);
+}
+
+.punk-button:active {
+  transform: translateY(0);
+}
+
+/* Secondary button (outlined) */
+.punk-button-outline {
+  background: transparent;
+  color: var(--punk-pink);
+  border: 2px solid var(--punk-pink);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.75rem 2rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.punk-button-outline:hover {
+  background: var(--punk-pink);
+  color: var(--punk-dark);
+  box-shadow: 0 0 15px var(--punk-glow);
+  transform: translateY(-2px);
+}
+
+/* Cards with punk edge */
+.punk-card {
+  background: var(--punk-gray);
+  border: 2px solid var(--punk-pink);
+  padding: 2rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.punk-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--punk-pink), var(--punk-pink-bright));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.punk-card:hover {
+  box-shadow: 0 0 20px var(--punk-glow);
+  transform: translateY(-5px);
+}
+
+.punk-card:hover::before {
+  opacity: 0.3;
+}
+
+/* Links with punk style */
+a.punk-link {
+  color: var(--punk-pink);
+  text-decoration: none;
+  position: relative;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+a.punk-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--punk-pink);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
+}
+
+a.punk-link:hover {
+  text-shadow: 0 0 8px var(--punk-glow);
+}
+
+a.punk-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Input fields */
+.punk-input {
+  background: var(--punk-gray);
+  border: 2px solid #333;
+  color: var(--punk-white);
+  padding: 0.75rem 1rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+.punk-input:focus {
+  outline: none;
+  border-color: var(--punk-pink);
+  box-shadow: 0 0 10px var(--punk-glow);
+}
+
+.punk-input::placeholder {
+  color: #666;
+}
+
+/* Dividers */
+.punk-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--punk-pink), transparent);
+  margin: 2rem 0;
+  box-shadow: 0 0 10px var(--punk-glow);
+}
+
+/* Badges/Tags */
+.punk-badge {
+  display: inline-block;
+  background: var(--punk-pink);
+  color: var(--punk-dark);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
+}
+
+/* Subtle texture overlay for depth */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 0, 110, 0.03) 2px,
+      rgba(255, 0, 110, 0.03) 4px
+    );
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.3;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--punk-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--punk-pink);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--punk-pink-bright);
+  box-shadow: 0 0 10px var(--punk-glow);
+}
+
+/* Selection color */
+::selection {
+  background: var(--punk-pink);
+  color: var(--punk-dark);
+}
+
+::-moz-selection {
+  background: var(--punk-pink);
+  color: var(--punk-dark);
+}
+
+/* Animations */
+@keyframes punk-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--punk-glow);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--punk-glow);
+  }
+}
+
+.punk-pulse {
+  animation: punk-pulse 2s ease-in-out infinite;
+}
+
+/* List styles for band/venue listings */
+.punk-list {
+  list-style: none;
+  padding: 0;
+}
+
+.punk-list li {
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background: var(--punk-gray);
+  border-left: 3px solid var(--punk-pink);
+  transition: all 0.3s ease;
+}
+
+.punk-list li:hover {
+  background: #222;
+  border-left-width: 6px;
+  padding-left: 1.5rem;
+  box-shadow: 0 0 15px rgba(255, 0, 110, 0.2);
+}
+
+/* Hero section */
+.punk-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 4rem 0;
+}
+
+.punk-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 0, 110, 0.1) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+  
+  h2 {
+    font-size: 2rem;
+  }
+  
+  .punk-card {
+    padding: 1.5rem;
+  }
+}
