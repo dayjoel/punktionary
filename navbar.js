@@ -1,10 +1,17 @@
 // navbar.js - Navbar functionality
+let navbarInitialized = false;
+
 document.addEventListener('DOMContentLoaded', function() {
   // Wait a bit for navbar to be loaded if it's fetched
   setTimeout(initNavbar, 100);
 });
 
 function initNavbar() {
+  // Prevent double initialization
+  if (navbarInitialized) {
+    return;
+  }
+  navbarInitialized = true;
   // Active page highlighting
   const currentPath = window.location.pathname;
   const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
@@ -23,28 +30,21 @@ function initNavbar() {
   const submitArrow = document.getElementById('submitArrow');
   
   if (submitBtn && submitMenu) {
-    console.log('Submit button and menu found');
     submitBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       e.preventDefault();
       const isHidden = submitMenu.classList.contains('hidden');
       
-      console.log('Submit button clicked, isHidden:', isHidden);
-      
       if (isHidden) {
         submitMenu.classList.remove('hidden');
         setTimeout(() => submitMenu.classList.remove('opacity-0'), 10);
         if (submitArrow) submitArrow.style.transform = 'rotate(180deg)';
-        console.log('Opening submit menu');
       } else {
         submitMenu.classList.add('opacity-0');
         setTimeout(() => submitMenu.classList.add('hidden'), 200);
         if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';
-        console.log('Closing submit menu');
       }
     });
-  } else {
-    console.warn('Submit button or menu not found', {submitBtn, submitMenu});
   }
 
   // User dropdown
@@ -68,14 +68,11 @@ function initNavbar() {
 
   // Close dropdowns when clicking outside
   document.addEventListener('click', function(e) {
-    console.log('Document clicked, target:', e.target);
-    
     // Don't close if clicking on the submit button or inside the submit menu
     const clickedSubmitButton = e.target.closest('#submitButton');
     const clickedInsideSubmitMenu = e.target.closest('#submitMenu');
     
     if (!clickedSubmitButton && !clickedInsideSubmitMenu && submitMenu && !submitMenu.classList.contains('hidden')) {
-      console.log('Closing submit menu from outside click');
       submitMenu.classList.add('opacity-0');
       setTimeout(() => submitMenu.classList.add('hidden'), 200);
       if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';

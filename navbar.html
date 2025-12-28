@@ -19,7 +19,7 @@
         <li><a href="/resources.html" class="nav-link block" data-page="resources">Resources</a></li>
         <li><a href="/search.html" class="nav-link block" data-page="search">Search</a></li>
         <li class="relative">
-          <button id="submitButton" class="nav-link flex items-center gap-1 cursor-pointer">
+          <button id="submitButton" class="nav-link flex items-center gap-1 cursor-pointer uppercase">
             Submit
             <svg id="submitArrow" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mt-0.5 transition-transform" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -28,7 +28,7 @@
             </svg>
           </button>
           <ul id="submitMenu"
-            class="hidden absolute right-0 bg-black border-2 border-pink-500 rounded-none mt-2 w-40 py-2 shadow-lg shadow-pink-500/30 opacity-0 transition-opacity duration-200">
+            class="hidden opacity-0 absolute right-0 bg-black border-2 border-pink-500 rounded-none mt-2 w-40 py-2 shadow-lg shadow-pink-500/30 transition-opacity duration-200">
             <li><a href="/submit-band.html" class="block px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Band</a></li>
             <li><a href="/submit-venue.html" class="block px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Venue</a></li>
             <li><a href="/submit-resource.html" class="block px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Resource</a></li>
@@ -46,7 +46,7 @@
         </svg>
       </button>
       <ul id="userMenu"
-        class="hidden absolute top-full right-0 bg-black border-2 border-pink-500 rounded-none mt-2 w-36 py-2 shadow-lg shadow-pink-500/30">
+        class="hidden opacity-0 absolute top-full right-0 bg-black border-2 border-pink-500 rounded-none mt-2 w-36 py-2 shadow-lg shadow-pink-500/30 transition-opacity duration-200">
         <li>
           <button id="loginBtn" class="w-full text-left px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Login</button>
         </li>
@@ -103,144 +103,3 @@
     </div>
   </div>
 </header>
-
-<script>
-// Active page highlighting
-document.addEventListener('DOMContentLoaded', function() {
-  const currentPath = window.location.pathname;
-  const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
-  
-  navLinks.forEach(link => {
-    const linkPath = link.getAttribute('href');
-    if (linkPath === currentPath || (currentPath === '/' && linkPath === '/') || 
-        (currentPath.includes(link.dataset.page) && link.dataset.page)) {
-      link.classList.add('active');
-    }
-  });
-
-  // Submit dropdown
-  const submitBtn = document.getElementById('submitButton');
-  const submitMenu = document.getElementById('submitMenu');
-  const submitArrow = document.getElementById('submitArrow');
-  
-  if (submitBtn && submitMenu) {
-    submitBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const isHidden = submitMenu.classList.contains('hidden');
-      
-      if (isHidden) {
-        submitMenu.classList.remove('hidden');
-        setTimeout(() => submitMenu.classList.remove('opacity-0'), 10);
-        if (submitArrow) submitArrow.style.transform = 'rotate(180deg)';
-      } else {
-        submitMenu.classList.add('opacity-0');
-        setTimeout(() => submitMenu.classList.add('hidden'), 200);
-        if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';
-      }
-    });
-  }
-
-  // User dropdown
-  const userBtn = document.getElementById('userButton');
-  const userMenu = document.getElementById('userMenu');
-  
-  if (userBtn && userMenu) {
-    userBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const isHidden = userMenu.classList.contains('hidden');
-      
-      if (isHidden) {
-        userMenu.classList.remove('hidden');
-        setTimeout(() => userMenu.classList.remove('opacity-0'), 10);
-      } else {
-        userMenu.classList.add('opacity-0');
-        setTimeout(() => userMenu.classList.add('hidden'), 200);
-      }
-    });
-  }
-
-  // Close dropdowns when clicking outside
-  document.addEventListener('click', function() {
-    if (submitMenu && !submitMenu.classList.contains('hidden')) {
-      submitMenu.classList.add('opacity-0');
-      setTimeout(() => submitMenu.classList.add('hidden'), 200);
-      if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';
-    }
-    if (userMenu && !userMenu.classList.contains('hidden')) {
-      userMenu.classList.add('opacity-0');
-      setTimeout(() => userMenu.classList.add('hidden'), 200);
-    }
-  });
-
-  // Mobile menu toggle
-  const menuToggle = document.getElementById('menuToggle');
-  const mobileMenu = document.getElementById('mobileMenu');
-  const mobileBackdrop = document.getElementById('mobileBackdrop');
-  
-  if (menuToggle && mobileMenu && mobileBackdrop) {
-    menuToggle.addEventListener('click', function() {
-      const isOpen = !mobileMenu.classList.contains('translate-x-full');
-      
-      if (isOpen) {
-        // Close menu
-        mobileMenu.classList.add('translate-x-full');
-        mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
-        menuToggle.setAttribute('aria-expanded', 'false');
-        
-        // Reset hamburger
-        const lines = menuToggle.querySelectorAll('.hamburger-line');
-        lines[0].style.transform = 'rotate(0) translateY(0)';
-        lines[1].style.opacity = '1';
-        lines[2].style.transform = 'rotate(0) translateY(0)';
-      } else {
-        // Open menu
-        mobileMenu.classList.remove('translate-x-full');
-        mobileBackdrop.classList.remove('opacity-0', 'pointer-events-none');
-        menuToggle.setAttribute('aria-expanded', 'true');
-        
-        // Animate to X
-        const lines = menuToggle.querySelectorAll('.hamburger-line');
-        lines[0].style.transform = 'rotate(45deg) translateY(8px)';
-        lines[1].style.opacity = '0';
-        lines[2].style.transform = 'rotate(-45deg) translateY(-8px)';
-      }
-    });
-
-    // Close menu when clicking backdrop
-    mobileBackdrop.addEventListener('click', function() {
-      mobileMenu.classList.add('translate-x-full');
-      mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
-      menuToggle.setAttribute('aria-expanded', 'false');
-      
-      const lines = menuToggle.querySelectorAll('.hamburger-line');
-      lines[0].style.transform = 'rotate(0) translateY(0)';
-      lines[1].style.opacity = '1';
-      lines[2].style.transform = 'rotate(0) translateY(0)';
-    });
-  }
-
-  // Login overlay
-  const loginBtns = document.querySelectorAll('#loginBtn, #mobileLoginBtn');
-  const loginOverlay = document.getElementById('loginOverlay');
-  const closeLogin = document.getElementById('closeLogin');
-  
-  loginBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-      loginOverlay?.classList.remove('hidden');
-      // Close mobile menu if open
-      if (mobileMenu) mobileMenu.classList.add('translate-x-full');
-      if (mobileBackdrop) mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
-    });
-  });
-
-  closeLogin?.addEventListener('click', function() {
-    loginOverlay?.classList.add('hidden');
-  });
-
-  loginOverlay?.addEventListener('click', function(e) {
-    if (e.target === loginOverlay) {
-      loginOverlay.classList.add('hidden');
-    }
-  });
-});
-</script>
