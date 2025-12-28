@@ -1,2 +1,5 @@
 # secrets
 client_secret_468094396453-vbt8dbmg2a8qrp0ahmv48qfj6srcp2dq.apps.googleusercontent.com.json
+
+# auth
+login_with_google.php
