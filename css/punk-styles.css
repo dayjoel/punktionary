@@ -181,6 +181,16 @@ h2 {
   position: relative;
 }
 
+/* Hover effect only for band summary cards */
+.band-summary-card {
+  transition: all 0.3s ease;
+}
+
+.band-summary-card:hover {
+  background: #0f0f0f; /* Darker background on hover */
+  box-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
+}
+
 /* Links with punk style */
 a.punk-link {
   color: var(--punk-pink);
