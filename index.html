@@ -164,21 +164,10 @@
       <!-- Featured Bands -->
       <section class="featured-card p-6">
         <h2 class="text-2xl font-semibold mb-4 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
-          Featured Bands
+          Recently Added Bands
         </h2>
-        <ul class="punk-list space-y-2">
-          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
-            <a href="/bands.html" class="block">Band A</a>
-          </li>
-          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
-            <a href="/bands.html" class="block">Band B</a>
-          </li>
-          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
-            <a href="/bands.html" class="block">Band C</a>
-          </li>
-          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
-            <a href="/bands.html" class="block">Band D</a>
-          </li>
+        <ul id="recentBandsList" class="punk-list space-y-2">
+          <li class="text-gray-400 text-sm">Loading...</li>
         </ul>
         <a href="/bands.html" class="punk-button-outline w-full text-center mt-6 block">
           View All Bands
@@ -188,32 +177,13 @@
       <!-- Featured Venues -->
       <section class="featured-card p-6">
         <h2 class="text-2xl font-semibold mb-4 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
-          Featured Venues
+          Recently Added Venues
         </h2>
-        <ul class="punk-list space-y-2">
-          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
-            <a href="/venues.html" class="block">Venue X</a>
-          </li>
-          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
-            <a href="/venues.html" class="block">Venue Y</a>
-          </li>
-          <li class="text-gray-300 hover:text-pink-500 cursor-pointer transition-colors">
-            <a href="/venues.html" class="block">Venue Z</a>
-          </li>
+        <ul id="recentVenuesList" class="punk-list space-y-2">
+          <li class="text-gray-400 text-sm">Loading...</li>
         </ul>
         <a href="/venues.html" class="punk-button-outline w-full text-center mt-6 block">
           View All Venues
-        </a>
-      </section>
-
-      <!-- Quick Search -->
-      <section class="featured-card p-6">
-        <h2 class="text-2xl font-semibold mb-4 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
-          Quick Search
-        </h2>
-        <p class="text-gray-400 text-sm mb-4">Find what you're looking for</p>
-        <a href="/search.html" class="punk-button w-full text-center block">
-          Search Directory
         </a>
       </section>
     </aside>
@@ -238,11 +208,15 @@
       .then(response => response.text())
       .then(data => {
         document.getElementById('navbar-container').innerHTML = data;
+        // Initialize navbar after it's loaded
+        if (typeof initNavbar === 'function') {
+          initNavbar();
+        }
       })
       .catch(error => console.error('Error loading navbar:', error));
   </script>
 
-<script src="/navbar.js"></script>
+  <script src="/navbar.js"></script>
 
   <!-- Carousel Script -->
   <script>
