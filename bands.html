@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <title>Bands | PUNKtionary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/punk-styles.css">
+</head>
+<body class="bg-black text-white font-sans">
+  
+  <!-- Include Navbar -->
+  <div id="navbar-container"></div>
+
+  <main class="pt-24 max-w-7xl mx-auto px-6">
+    <div class="py-12">
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-5xl font-bold mb-4">Bands Directory</h1>
+        <p class="text-gray-300 text-lg">
+          Explore underground and emerging artists shaping the sound of tomorrow.
+        </p>
+      </div>
+
+      <div class="punk-divider mb-8"></div>
+
+      <!-- Layout: Sidebar + Content -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <!-- LEFT SIDEBAR - Filters -->
+        <aside class="lg:col-span-1">
+          <div class="punk-card p-6 sticky top-24">
+            <h2 class="text-2xl font-bold mb-6 uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+              Filters
+            </h2>
+            
+            <form id="filterForm" class="space-y-4">
+              <!-- Name -->
+              <div>
+                <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Name</label>
+                <input type="text" name="name" placeholder="Search by name" class="punk-input" />
+              </div>
+
+              <!-- Genre -->
+              <div>
+                <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Genre</label>
+                <input type="text" name="genre" placeholder="e.g. Hardcore" class="punk-input" />
+              </div>
+
+              <!-- City -->
+              <div>
+                <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">City</label>
+                <input type="text" name="city" placeholder="City" class="punk-input" />
+              </div>
+
+              <!-- State -->
+              <div>
+                <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">State</label>
+                <input type="text" name="state" placeholder="State" class="punk-input" />
+              </div>
+
+              <!-- Active Status -->
+              <div>
+                <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Status</label>
+                <div class="space-y-2">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="active" value="yes" class="accent-pink-500" />
+                    <span class="text-sm">Active</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="active" value="no" class="accent-pink-500" />
+                    <span class="text-sm">Inactive</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="active" value="any" class="accent-pink-500" checked />
+                    <span class="text-sm">Any</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Buttons -->
+              <div class="space-y-2 pt-4">
+                <button type="submit" class="punk-button w-full">Apply Filters</button>
+                <button type="button" id="resetBtn" class="punk-button-outline w-full">Reset</button>
+              </div>
+            </form>
+          </div>
+        </aside>
+
+        <!-- RIGHT CONTENT - Band Listings -->
+        <div class="lg:col-span-3">
+          
+          <!-- Top Controls -->
+          <div class="flex justify-between items-center mb-6">
+            <div id="resultsCount" class="text-gray-400">
+              Loading...
+            </div>
+            
+            <!-- Per Page Selector -->
+            <div class="flex items-center gap-3">
+              <label class="text-sm text-gray-400 uppercase tracking-wide">Show:</label>
+              <select id="perPageSelect" class="punk-input py-2 px-3 w-20">
+                <option value="12" selected>12</option>
+                <option value="24">24</option>
+                <option value="48">48</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Band Cards Grid -->
+          <div id="bandsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+            <!-- Cards will be inserted here by JavaScript -->
+          </div>
+
+          <!-- Loading State -->
+          <div id="loadingState" class="text-center py-12">
+            <div class="inline-block w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-gray-400 mt-4">Loading bands...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div id="emptyState" class="hidden text-center py-12">
+            <p class="text-gray-400 text-lg">No bands found matching your filters.</p>
+            <button id="clearFiltersBtn" class="punk-button-outline mt-4">Clear Filters</button>
+          </div>
+
+          <!-- Pagination -->
+          <div id="paginationContainer" class="hidden mt-8 flex justify-center items-center gap-2">
+            <!-- Pagination buttons will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-12 text-center text-gray-500 border-t-2 border-pink-500/50 mt-24">
+    <div class="max-w-6xl mx-auto px-6">
+      <p class="mb-4">© 2025 PUNKtionary. All rights reserved.</p>
+      <div class="flex justify-center gap-6 text-sm">
+        <a href="/about.html" class="punk-link">About</a>
+        <a href="/contact.html" class="punk-link">Contact</a>
+        <a href="/submit-band.html" class="punk-link">Submit</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Load Navbar -->
+  <script>
+    fetch('/navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+        if (typeof initNavbar === 'function') {
+          initNavbar();
+        }
+      })
+      .catch(error => console.error('Error loading navbar:', error));
+  </script>
+
+  <script src="/navbar.js"></script>
+  <script src="/bands.js"></script>
+</body>
+</html>
