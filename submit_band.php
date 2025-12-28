@@ -72,7 +72,7 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => $e->getMessage() // Instead of the generic message
+        'error' => 'Failed to submit band. Please try again.'
     ]);
 }
 ?>
