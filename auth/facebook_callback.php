@@ -2,7 +2,7 @@
 // Facebook OAuth Callback Handler
 // Processes the authorization code and creates/updates user session
 
-require_once __DIR__ . '/oauth_config.php';
+require_once __DIR__ . '/../../oauth_config.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/session_config.php';
 

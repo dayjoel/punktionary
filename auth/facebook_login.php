@@ -2,7 +2,7 @@
 // Facebook OAuth Login Initiation
 // Redirects user to Facebook's authorization page
 
-require_once __DIR__ . '/oauth_config.php';
+require_once __DIR__ . '/../../oauth_config.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/session_config.php';
 
