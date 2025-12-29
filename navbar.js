@@ -143,7 +143,10 @@ function initNavbar() {
   
   loginBtns.forEach(btn => {
     btn.addEventListener('click', function() {
-      loginOverlay?.classList.remove('hidden');
+      if (loginOverlay) {
+        loginOverlay.classList.remove('hidden');
+        loginOverlay.style.display = 'flex';
+      }
       // Close mobile menu if open
       if (mobileMenu) mobileMenu.classList.add('translate-x-full');
       if (mobileBackdrop) mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
@@ -151,12 +154,16 @@ function initNavbar() {
   });
 
   closeLogin?.addEventListener('click', function() {
-    loginOverlay?.classList.add('hidden');
+    if (loginOverlay) {
+      loginOverlay.classList.add('hidden');
+      loginOverlay.style.display = 'none';
+    }
   });
 
   loginOverlay?.addEventListener('click', function(e) {
     if (e.target === loginOverlay) {
       loginOverlay.classList.add('hidden');
+      loginOverlay.style.display = 'none';
     }
   });
 
