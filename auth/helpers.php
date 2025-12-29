@@ -2,7 +2,7 @@
 // Authentication Helper Functions
 // Core authentication logic for OAuth and user management
 
-require_once __DIR__ . '/../db_config.php';
+require_once __DIR__ . '/../../db_config.php';
 
 /**
  * Generate cryptographically secure state token for OAuth CSRF protection
