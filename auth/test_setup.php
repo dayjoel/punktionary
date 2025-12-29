@@ -11,7 +11,7 @@ echo "=== OAuth Setup Test ===\n\n";
 
 // Test 1: Check if db_config.php is accessible
 echo "1. Testing database config...\n";
-$db_config_path = __DIR__ . '/../db_config.php';
+$db_config_path = __DIR__ . '/../../db_config.php';
 if (file_exists($db_config_path)) {
     echo "   ✓ db_config.php found\n";
     require_once $db_config_path;
@@ -28,7 +28,7 @@ if (file_exists($db_config_path)) {
 }
 
 echo "\n2. Testing OAuth config...\n";
-$oauth_config_path = __DIR__ . '/oauth_config.php';
+$oauth_config_path = __DIR__ . '/../../oauth_config.php';
 if (file_exists($oauth_config_path)) {
     echo "   ✓ oauth_config.php found\n";
     require_once $oauth_config_path;

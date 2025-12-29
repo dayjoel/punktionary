@@ -3,7 +3,7 @@
 // Processes the authorization code and creates/updates user session
 // Note: Apple's OAuth is more complex as it requires JWT client secret generation
 
-require_once __DIR__ . '/oauth_config.php';
+require_once __DIR__ . '/../../oauth_config.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/session_config.php';
 

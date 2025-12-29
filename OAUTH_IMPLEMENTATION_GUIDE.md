@@ -39,7 +39,6 @@ Upload these new files to your server:
 **Auth System:**
 - `/auth/session_config.php`
 - `/auth/helpers.php`
-- `/auth/oauth_config.php` ⚠️
 - `/auth/check_auth.php`
 - `/auth/logout.php`
 - `/auth/google_login.php`
@@ -92,9 +91,11 @@ Upload these new files to your server:
 6. Copy Team ID, Service ID (Client ID), Key ID
 7. Upload the .p8 private key file to your server
 
-#### Update `auth/oauth_config.php`
+#### Update `oauth_config.php`
 
-Replace the placeholder values in `/auth/oauth_config.php` with your actual credentials:
+⚠️ **SECURITY**: The `oauth_config.php` file is now stored OUTSIDE the web root at `/home/joeday1/oauth_config.php` (same location as `db_config.php`) for security.
+
+Replace the placeholder values in `/home/joeday1/oauth_config.php` with your actual credentials:
 
 ```php
 // Google
@@ -112,13 +113,13 @@ define('APPLE_KEY_ID', 'your-key-id');
 define('APPLE_PRIVATE_KEY_PATH', '/path/to/AuthKey_XXX.p8');
 ```
 
-⚠️ **Security**: After testing, move `oauth_config.php` outside the web root (like `db_config.php`) and update the require paths.
+✅ **Security**: The `oauth_config.php` file is already configured to be stored outside the web root at `/home/joeday1/oauth_config.php`.
 
 ### 4. Set File Permissions
 
 ```bash
 chmod 600 ~/db_config.php
-chmod 600 ~/oauth_config.php  # if moved outside web root
+chmod 600 ~/oauth_config.php
 chmod 644 ~/punktionary.com/auth/*.php
 chmod 644 ~/punktionary.com/api/*.php
 ```
@@ -217,7 +218,7 @@ Existing submissions have `submitted_by = NULL` (anonymous/legacy).
 - Check `oauth_states` table exists
 
 ### "Failed to get access token"
-- Check OAuth credentials in `oauth_config.php`
+- Check OAuth credentials in `/home/joeday1/oauth_config.php` (outside web root)
 - Verify redirect URIs match exactly in provider settings
 - Check server error logs: `~/logs/punktionary.com/http/error.log`
 
@@ -234,7 +235,7 @@ Existing submissions have `submitted_by = NULL` (anonymous/legacy).
 ## Security Notes
 
 1. **HTTPS Required**: Session cookies are marked "Secure" - site must use HTTPS
-2. **OAuth Secrets**: Never commit `oauth_config.php` with real credentials to git
+2. **OAuth Secrets**: The `oauth_config.php` file is stored outside web root and should NEVER be committed to git
 3. **State Tokens**: CSRF protection via cryptographic random tokens with expiry
 4. **SQL Injection**: All queries use prepared statements
 5. **XSS Protection**: Session cookies are HttpOnly (no JavaScript access)
