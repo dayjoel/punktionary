@@ -2,7 +2,7 @@
 // get_bands.php - Fetch bands with filtering and pagination
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../../db_config.php';
+require_once __DIR__ . '/../db_config.php';
 
 $conn = get_db_connection();
 if (!$conn) {
