@@ -1,5 +1,6 @@
 // navbar.js - Navbar functionality
 let navbarInitialized = false;
+let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', function() {
   // Wait a bit for navbar to be loaded if it's fetched
@@ -158,4 +159,107 @@ function initNavbar() {
       loginOverlay.classList.add('hidden');
     }
   });
+
+  // Logout handlers
+  const logoutBtn = document.getElementById('logoutBtn');
+  const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+
+  logoutBtn?.addEventListener('click', async function() {
+    try {
+      await fetch('/auth/logout.php');
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  });
+
+  mobileLogoutBtn?.addEventListener('click', async function() {
+    try {
+      await fetch('/auth/logout.php');
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  });
+
+  // Check authentication status on page load
+  checkAuthStatus();
+}
+
+// Check if user is authenticated
+async function checkAuthStatus() {
+  try {
+    const response = await fetch('/auth/check_auth.php');
+    const data = await response.json();
+
+    if (data.authenticated) {
+      currentUser = data.user;
+      updateNavbarForLoggedIn(data.user);
+    } else {
+      currentUser = null;
+      updateNavbarForLoggedOut();
+    }
+  } catch (error) {
+    console.error('Auth check failed:', error);
+    updateNavbarForLoggedOut();
+  }
+}
+
+// Update navbar to show logged-in state
+function updateNavbarForLoggedIn(user) {
+  // Update user avatar and display name
+  const avatar = document.getElementById('userAvatar');
+  const displayName = document.getElementById('userDisplayName');
+  const defaultIcon = document.getElementById('userIconDefault');
+
+  if (user.profile_picture && avatar) {
+    avatar.src = user.profile_picture;
+    avatar.classList.remove('hidden');
+    defaultIcon?.classList.add('hidden');
+  }
+
+  if (user.display_name && displayName) {
+    displayName.textContent = user.display_name;
+    displayName.classList.remove('hidden');
+  }
+
+  // Show logged-in menu items (desktop)
+  document.getElementById('loginMenuItem')?.classList.add('hidden');
+  document.getElementById('registerMenuItem')?.classList.add('hidden');
+  document.getElementById('profileMenuItem')?.classList.remove('hidden');
+  document.getElementById('mySubmissionsMenuItem')?.classList.remove('hidden');
+  document.getElementById('logoutMenuItem')?.classList.remove('hidden');
+
+  // Show logged-in menu items (mobile)
+  document.getElementById('mobileLoginBtn')?.classList.add('hidden');
+  document.getElementById('mobileRegisterLink')?.classList.add('hidden');
+  document.getElementById('mobileProfileLink')?.classList.remove('hidden');
+  document.getElementById('mobileSubmissionsLink')?.classList.remove('hidden');
+  document.getElementById('mobileLogoutBtn')?.classList.remove('hidden');
+}
+
+// Update navbar to show logged-out state
+function updateNavbarForLoggedOut() {
+  // Hide user info
+  const avatar = document.getElementById('userAvatar');
+  const displayName = document.getElementById('userDisplayName');
+  const defaultIcon = document.getElementById('userIconDefault');
+
+  avatar?.classList.add('hidden');
+  displayName?.classList.add('hidden');
+  defaultIcon?.classList.remove('hidden');
+
+  // Show logged-out menu items (desktop)
+  document.getElementById('loginMenuItem')?.classList.remove('hidden');
+  document.getElementById('registerMenuItem')?.classList.remove('hidden');
+  document.getElementById('profileMenuItem')?.classList.add('hidden');
+  document.getElementById('mySubmissionsMenuItem')?.classList.add('hidden');
+  document.getElementById('logoutMenuItem')?.classList.add('hidden');
+
+  // Show logged-out menu items (mobile)
+  document.getElementById('mobileLoginBtn')?.classList.remove('hidden');
+  document.getElementById('mobileRegisterLink')?.classList.remove('hidden');
+  document.getElementById('mobileProfileLink')?.classList.add('hidden');
+  document.getElementById('mobileSubmissionsLink')?.classList.add('hidden');
+  document.getElementById('mobileLogoutBtn')?.classList.add('hidden');
 }

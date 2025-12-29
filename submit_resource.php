@@ -7,6 +7,16 @@ header('Content-Type: application/json');
 
 try {
     require_once __DIR__ . '/../db_config.php';
+    require_once __DIR__ . '/auth/session_config.php';
+    require_once __DIR__ . '/auth/helpers.php';
+
+    // Require authentication
+    if (!is_authenticated()) {
+        http_response_code(401);
+        die(json_encode(['success' => false, 'error' => 'You must be logged in to submit resources']));
+    }
+
+    $user_id = get_current_user_id();
 
     $conn = get_db_connection();
     if (!$conn) {
@@ -40,16 +50,16 @@ try {
         die(json_encode(['success' => false, 'error' => 'Invalid URL format']));
     }
 
-    // Insert into database
-    $sql = "INSERT INTO resources (name, link, description, created_at, updated_at) 
-            VALUES (?, ?, ?, NOW(), NOW())";
+    // Insert into database with user attribution
+    $sql = "INSERT INTO resources (submitted_by, name, link, description, created_at, updated_at)
+            VALUES (?, ?, ?, ?, NOW(), NOW())";
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
-    
-    $stmt->bind_param('sss', $name, $link, $description);
+
+    $stmt->bind_param('isss', $user_id, $name, $link, $description);
 
     if ($stmt->execute()) {
         echo json_encode([

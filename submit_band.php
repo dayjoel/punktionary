@@ -7,6 +7,16 @@ header('Content-Type: application/json');
 
 try {
     require_once __DIR__ . '/../db_config.php';
+    require_once __DIR__ . '/auth/session_config.php';
+    require_once __DIR__ . '/auth/helpers.php';
+
+    // Require authentication
+    if (!is_authenticated()) {
+        http_response_code(401);
+        die(json_encode(['success' => false, 'error' => 'You must be logged in to submit bands']));
+    }
+
+    $user_id = get_current_user_id();
 
     $conn = get_db_connection();
     if (!$conn) {
@@ -39,16 +49,16 @@ try {
         }
     }
 
-    // Insert into database
-    $sql = "INSERT INTO bands (name, genre, city, state, country, albums, links, photo_references, active, created_at, updated_at) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+    // Insert into database with user attribution
+    $sql = "INSERT INTO bands (submitted_by, name, genre, city, state, country, albums, links, photo_references, active, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
-    
-    $stmt->bind_param('ssssssssi', $name, $genre, $city, $state, $country, $albums, $links, $photo_references, $active);
+
+    $stmt->bind_param('issssssssi', $user_id, $name, $genre, $city, $state, $country, $albums, $links, $photo_references, $active);
 
     if ($stmt->execute()) {
         echo json_encode([

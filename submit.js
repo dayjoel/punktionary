@@ -102,6 +102,30 @@ async function submitForm(type, form) {
   // Hide previous messages
   hideMessages();
 
+  // Check authentication first
+  try {
+    const authResponse = await fetch('/auth/check_auth.php');
+    const authData = await authResponse.json();
+
+    if (!authData.authenticated) {
+      errorText.textContent = 'You must be logged in to submit content. Please log in and try again.';
+      errorMessage.classList.remove('hidden');
+      errorMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Open login modal
+      const loginOverlay = document.getElementById('loginOverlay');
+      if (loginOverlay) {
+        loginOverlay.classList.remove('hidden');
+      }
+      return;
+    }
+  } catch (error) {
+    console.error('Auth check failed:', error);
+    errorText.textContent = 'Unable to verify authentication. Please try again.';
+    errorMessage.classList.remove('hidden');
+    return;
+  }
+
   try {
     const formData = new FormData(form);
     
