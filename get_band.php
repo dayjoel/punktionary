@@ -2,7 +2,7 @@
 // get_band.php - Fetch single band details by ID
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../../db_config.php';
+require_once __DIR__ . '/../db_config.php';
 
 $conn = get_db_connection();
 if (!$conn) {

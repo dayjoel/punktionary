@@ -5,6 +5,7 @@ ini_set('display_errors', 1);
 header('Content-Type: text/plain');
 
 echo "Current directory: " . __DIR__ . "\n";
+<<<<<<< HEAD
 echo "Looking for config at: " . __DIR__ . '/../../db_config.php' . "\n";
 echo "Config file exists: " . (file_exists(__DIR__ . '/../../db_config.php') ? 'YES' : 'NO') . "\n";
 echo "Config file readable: " . (is_readable(__DIR__ . '/../../db_config.php') ? 'YES' : 'NO') . "\n\n";
@@ -12,6 +13,14 @@ echo "Config file readable: " . (is_readable(__DIR__ . '/../../db_config.php') ?
 
 if (file_exists(__DIR__ . '/../../db_config.php')) {
     require_once __DIR__ . '/../../db_config.php';
+=======
+echo "Looking for config at: " . __DIR__ . '/../db_config.php' . "\n";
+echo "Config file exists: " . (file_exists(__DIR__ . '/../db_config.php') ? 'YES' : 'NO') . "\n";
+echo "Config file readable: " . (is_readable(__DIR__ . '/../db_config.php') ? 'YES' : 'NO') . "\n\n";
+
+if (file_exists(__DIR__ . '/../db_config.php')) {
+    require_once __DIR__ . '/../db_config.php';
+>>>>>>> elastic-hertz
     echo "Config loaded successfully\n";
     echo "DB_HOST: " . DB_HOST . "\n";
     echo "DB_NAME: " . DB_NAME . "\n";
@@ -28,4 +37,8 @@ if (file_exists(__DIR__ . '/../../db_config.php')) {
     echo "Files in parent directory:\n";
     print_r(scandir(__DIR__ . '/../..'));
 }
+<<<<<<< HEAD
 ?>
+=======
+?>
+>>>>>>> elastic-hertz
