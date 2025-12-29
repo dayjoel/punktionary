@@ -6,13 +6,10 @@ ini_set('log_errors', 1);
 header('Content-Type: application/json');
 
 try {
-    $host = 'sql.punktionary.com';
-    $user = 'dayjoel';
-    $pass = 'TETherball99!';
-    $db   = 'prod_punk';
+    require_once __DIR__ . '/../../db_config.php';
 
-    $conn = new mysqli($host, $user, $pass, $db);
-    if ($conn->connect_error) {
+    $conn = get_db_connection();
+    if (!$conn) {
         throw new Exception('Database connection failed');
     }
 

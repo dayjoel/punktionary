@@ -6,15 +6,11 @@ ini_set('log_errors', 1); // Log errors to server log
 header('Content-Type: application/json');
 
 try {
-    // TODO: Move these to a config file outside web root
-    $host = 'sql.punktionary.com';
-    $user = 'dayjoel';
-    $pass = 'TETherball99!';
-    $db   = 'prod_punk';
+    require_once __DIR__ . '/../../db_config.php';
 
-    $conn = new mysqli($host, $user, $pass, $db);
-    if ($conn->connect_error) {
-        throw new Exception('Database connection failed: ' . $conn->connect_error);
+    $conn = get_db_connection();
+    if (!$conn) {
+        throw new Exception('Database connection failed');
     }
 
     // Validate required fields

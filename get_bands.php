@@ -2,14 +2,10 @@
 // get_bands.php - Fetch bands with filtering and pagination
 header('Content-Type: application/json');
 
-// TODO: Move these to a config file outside web root
-$host = 'sql.punktionary.com';
-$user = 'dayjoel';
-$pass = 'TETherball99!';
-$db   = 'prod_punk';
+require_once __DIR__ . '/../../db_config.php';
 
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
+$conn = get_db_connection();
+if (!$conn) {
     die(json_encode(['error' => 'Database connection failed']));
 }
 
