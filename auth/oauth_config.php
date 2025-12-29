@@ -11,8 +11,8 @@ define('GOOGLE_REDIRECT_URI', 'https://punktionary.com/auth/google_callback.php'
 
 // Facebook OAuth Configuration
 // Get credentials from: https://developers.facebook.com/
-define('FACEBOOK_APP_ID', 'YOUR_FACEBOOK_APP_ID');
-define('FACEBOOK_APP_SECRET', 'YOUR_FACEBOOK_APP_SECRET');
+define('FACEBOOK_APP_ID', '856485920427385');
+define('FACEBOOK_APP_SECRET', '6f6a8fa6968cc7d05ed0ee8b97db181c');
 define('FACEBOOK_REDIRECT_URI', 'https://punktionary.com/auth/facebook_callback.php');
 
 // Apple OAuth Configuration
