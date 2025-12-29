@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile | PUNKtionary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/punk-styles.css">
+</head>
+<body class="bg-black text-white font-sans">
+
+  <div id="navbar-container"></div>
+
+  <main class="pt-24 max-w-4xl mx-auto px-6 pb-24">
+
+    <h1 class="text-5xl font-bold mb-8 uppercase tracking-wider punk-heading">My Profile</h1>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="text-center py-12">
+      <p class="text-pink-500 text-lg">Loading profile...</p>
+    </div>
+
+    <!-- Profile Content (hidden until loaded) -->
+    <div id="profileContent" class="hidden">
+
+      <!-- Profile Info Card -->
+      <div class="punk-card p-8 mb-8">
+        <div class="flex items-center gap-6 mb-8">
+          <img id="profilePicture" class="h-24 w-24 rounded-full border-4 border-pink-500" alt="Profile Picture" />
+          <div>
+            <h2 id="profileDisplayName" class="text-3xl font-bold mb-2"></h2>
+            <p id="profileEmail" class="text-gray-400"></p>
+            <p id="profileProvider" class="text-sm text-pink-500 mt-1"></p>
+          </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="grid grid-cols-3 gap-4 mb-8">
+          <div class="text-center p-4 bg-gray-900 border-2 border-pink-500">
+            <div id="submissionCount" class="text-3xl font-bold text-pink-500">0</div>
+            <div class="text-sm text-gray-400 uppercase tracking-wide">Submissions</div>
+          </div>
+          <div class="text-center p-4 bg-gray-900 border-2 border-pink-500">
+            <div id="editCount" class="text-3xl font-bold text-pink-500">0</div>
+            <div class="text-sm text-gray-400 uppercase tracking-wide">Edits</div>
+          </div>
+          <div class="text-center p-4 bg-gray-900 border-2 border-pink-500">
+            <div id="memberSince" class="text-lg font-bold text-pink-500"></div>
+            <div class="text-sm text-gray-400 uppercase tracking-wide">Member Since</div>
+          </div>
+        </div>
+
+        <!-- Update Profile Form -->
+        <form id="updateProfileForm" class="space-y-4 mb-8">
+          <h3 class="text-2xl font-bold mb-4 uppercase tracking-wider">Update Profile</h3>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Display Name</label>
+            <input type="text" id="editDisplayName" class="punk-input" placeholder="Enter your display name" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Profile Picture URL</label>
+            <input type="url" id="editProfilePicture" class="punk-input" placeholder="https://example.com/avatar.jpg" />
+            <p class="text-xs text-gray-500 mt-1">Enter a URL to a public image</p>
+          </div>
+
+          <button type="submit" class="punk-button">Update Profile</button>
+        </form>
+
+        <!-- Success/Error Messages -->
+        <div id="updateSuccess" class="hidden bg-green-900/50 border-2 border-green-500 p-4 mb-4">
+          <p class="text-green-400 font-bold">Profile updated successfully!</p>
+        </div>
+
+        <div id="updateError" class="hidden bg-red-900/50 border-2 border-red-500 p-4 mb-4">
+          <p class="text-red-400 font-bold" id="updateErrorText"></p>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="border-t-2 border-pink-500/30 pt-6 mt-6">
+          <h3 class="text-xl font-bold mb-3 text-red-500 uppercase tracking-wider">Danger Zone</h3>
+          <p class="text-gray-400 text-sm mb-4">
+            Deleting your account is permanent. Your submissions will remain on the site anonymously, but you will lose access to your profile.
+          </p>
+          <button id="deleteAccountBtn" class="punk-button-outline border-red-500 text-red-500 hover:bg-red-500 hover:text-black">
+            Delete Account
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="/navbar.js"></script>
+  <script>
+    // Load navbar
+    fetch('/navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+        if (typeof initNavbar === 'function') {
+          initNavbar();
+        }
+      });
+
+    // Load profile data
+    async function loadProfile() {
+      try {
+        const response = await fetch('/api/user_profile.php');
+
+        if (response.status === 401) {
+          // Not authenticated - redirect to home
+          window.location.href = '/?login_required=1';
+          return;
+        }
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          displayProfile(data);
+        } else {
+          throw new Error(data.error || 'Failed to load profile');
+        }
+      } catch (error) {
+        console.error('Profile load error:', error);
+        document.getElementById('loadingState').innerHTML =
+          '<p class="text-red-500">Failed to load profile. Please try again.</p>';
+      }
+    }
+
+    function displayProfile(data) {
+      const user = data.user;
+      const stats = data.stats;
+
+      // Set profile picture (use default if none)
+      const profilePic = document.getElementById('profilePicture');
+      profilePic.src = user.profile_picture_url || '/images/default-avatar.png';
+
+      // Set user info
+      document.getElementById('profileDisplayName').textContent = user.display_name || 'User';
+      document.getElementById('profileEmail').textContent = user.email;
+      document.getElementById('profileProvider').textContent =
+        'Signed in with ' + user.oauth_provider.charAt(0).toUpperCase() + user.oauth_provider.slice(1);
+
+      // Set statistics
+      document.getElementById('submissionCount').textContent = stats.submissions;
+      document.getElementById('editCount').textContent = stats.edits;
+
+      // Set member since (just year)
+      const createdDate = new Date(user.created_at);
+      document.getElementById('memberSince').textContent = createdDate.getFullYear();
+
+      // Pre-fill edit form
+      document.getElementById('editDisplayName').value = user.display_name || '';
+      document.getElementById('editProfilePicture').value = user.profile_picture_url || '';
+
+      // Show profile content, hide loading
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('profileContent').classList.remove('hidden');
+    }
+
+    // Update profile form handler
+    document.getElementById('updateProfileForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const displayName = document.getElementById('editDisplayName').value;
+      const profilePicture = document.getElementById('editProfilePicture').value;
+
+      const formData = new FormData();
+      formData.append('display_name', displayName);
+      formData.append('profile_picture_url', profilePicture);
+
+      try {
+        const response = await fetch('/api/update_profile.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Show success message
+          document.getElementById('updateSuccess').classList.remove('hidden');
+          document.getElementById('updateError').classList.add('hidden');
+
+          // Reload profile to show updated data
+          setTimeout(() => {
+            loadProfile();
+            document.getElementById('updateSuccess').classList.add('hidden');
+          }, 2000);
+        } else {
+          throw new Error(data.error || 'Failed to update profile');
+        }
+      } catch (error) {
+        console.error('Update error:', error);
+        document.getElementById('updateErrorText').textContent = error.message;
+        document.getElementById('updateError').classList.remove('hidden');
+        document.getElementById('updateSuccess').classList.add('hidden');
+      }
+    });
+
+    // Delete account handler
+    document.getElementById('deleteAccountBtn').addEventListener('click', async function() {
+      const confirmed = confirm(
+        'Are you sure you want to delete your account?\n\n' +
+        'This action cannot be undone. Your submissions will remain on the site, but you will lose access to your profile.'
+      );
+
+      if (!confirmed) return;
+
+      // Double confirmation
+      const doubleConfirmed = confirm(
+        'This is your last chance!\n\n' +
+        'Click OK to permanently delete your account.'
+      );
+
+      if (!doubleConfirmed) return;
+
+      try {
+        const response = await fetch('/api/delete_account.php', {
+          method: 'POST'
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          alert('Your account has been deleted. You will now be logged out.');
+          window.location.href = '/';
+        } else {
+          throw new Error(data.error || 'Failed to delete account');
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('Failed to delete account: ' + error.message);
+      }
+    });
+
+    // Load profile on page load
+    loadProfile();
+  </script>
+</body>
+</html>

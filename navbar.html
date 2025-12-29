@@ -23,18 +23,28 @@
 
     <!-- User Dropdown (Desktop) -->
     <div class="hidden md:flex items-center relative">
-      <button id="userButton" class="nav-link flex items-center gap-1 relative z-10">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <button id="userButton" class="nav-link flex items-center gap-2 relative z-10">
+        <img id="userAvatar" class="hidden h-8 w-8 rounded-full border-2 border-pink-500" alt="User Avatar" />
+        <svg id="userIconDefault" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M5.121 17.804A9 9 0 1118.88 17.804M15 11a3 3 0 11-6 0 3 3 0 11-6 0z" />
         </svg>
+        <span id="userDisplayName" class="hidden"></span>
       </button>
       <ul id="userMenu"
-        class="hidden opacity-0 absolute top-full right-0 bg-black border-2 border-pink-500 rounded-none mt-2 w-36 py-2 shadow-lg shadow-pink-500/30 transition-opacity duration-200">
-        <li>
+        class="hidden opacity-0 absolute top-full right-0 bg-black border-2 border-pink-500 rounded-none mt-2 w-48 py-2 shadow-lg shadow-pink-500/30 transition-opacity duration-200">
+        <!-- Logged out state -->
+        <li id="loginMenuItem">
           <button id="loginBtn" class="w-full text-left px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Login</button>
         </li>
-        <li><a href="/register.html" class="block px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Register</a></li>
+        <li id="registerMenuItem"><a href="/register.html" class="block px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Register</a></li>
+
+        <!-- Logged in state (hidden by default) -->
+        <li id="profileMenuItem" class="hidden"><a href="/profile.html" class="block px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Profile</a></li>
+        <li id="mySubmissionsMenuItem" class="hidden"><a href="/my-submissions.html" class="block px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">My Submissions</a></li>
+        <li id="logoutMenuItem" class="hidden">
+          <button id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-pink-500 hover:text-black transition-colors font-bold">Logout</button>
+        </li>
       </ul>
     </div>
 
@@ -62,24 +72,47 @@
       <a href="/resources.html" class="mobile-nav-link" data-page="resources">Resources</a>
       <a href="/submit.html" class="mobile-nav-link" data-page="submit">Submit</a>
       <hr class="border-pink-500/50 my-2" />
+
+      <!-- Logged out state -->
       <button id="mobileLoginBtn" class="mobile-nav-link text-left">Login</button>
-      <a href="/register.html" class="mobile-nav-link">Register</a>
-      
-      <!-- Google Sign-In Mobile -->
-      <div id="mobileGoogleSignInBtn" class="w-full mt-4"></div>
+      <a id="mobileRegisterLink" href="/register.html" class="mobile-nav-link">Register</a>
+
+      <!-- Logged in state (hidden by default) -->
+      <a id="mobileProfileLink" href="/profile.html" class="mobile-nav-link hidden">Profile</a>
+      <a id="mobileSubmissionsLink" href="/my-submissions.html" class="mobile-nav-link hidden">My Submissions</a>
+      <button id="mobileLogoutBtn" class="mobile-nav-link text-left hidden">Logout</button>
     </nav>
   </div>
 
   <!-- Login Overlay -->
   <div id="loginOverlay" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
-    <div class="bg-gray-900 rounded-none p-8 w-80 border-2 border-pink-500 shadow-2xl shadow-pink-500/30 relative">
+    <div class="bg-gray-900 rounded-none p-8 w-96 border-2 border-pink-500 shadow-2xl shadow-pink-500/30 relative">
       <button id="closeLogin" class="absolute top-4 right-4 text-pink-500 hover:text-white transition-colors text-2xl font-bold">&times;</button>
       <h2 class="text-2xl font-bold mb-6 text-center uppercase tracking-wider">Login</h2>
-      
-      <p class="text-gray-400 mb-4 text-sm text-center">Other signin methods coming soon!</p>
-      
-      <!-- Google Sign-In -->
-      <div id="googleSignInBtn" class="w-full"></div>
+
+      <p class="text-gray-400 mb-6 text-sm text-center">Sign in with your account</p>
+
+      <!-- OAuth Buttons -->
+      <div class="space-y-3">
+        <a href="/auth/google_login.php" class="block w-full bg-white hover:bg-gray-100 text-gray-900 font-bold py-3 px-4 border-2 border-pink-500 transition-colors text-center">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="h-5 w-5" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
+          </span>
+        </a>
+        <a href="/auth/facebook_login.php" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 border-2 border-pink-500 transition-colors text-center">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Continue with Facebook
+          </span>
+        </a>
+        <a href="/auth/apple_login.php" class="block w-full bg-black hover:bg-gray-900 text-white font-bold py-3 px-4 border-2 border-pink-500 transition-colors text-center">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+            Continue with Apple
+          </span>
+        </a>
+      </div>
     </div>
   </div>
 </header>

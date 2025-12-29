@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Submissions | PUNKtionary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/punk-styles.css">
+</head>
+<body class="bg-black text-white font-sans">
+
+  <div id="navbar-container"></div>
+
+  <main class="pt-24 max-w-6xl mx-auto px-6 pb-24">
+
+    <h1 class="text-5xl font-bold mb-8 uppercase tracking-wider punk-heading">My Submissions</h1>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="text-center py-12">
+      <p class="text-pink-500 text-lg">Loading your submissions...</p>
+    </div>
+
+    <!-- Submissions Content (hidden until loaded) -->
+    <div id="submissionsContent" class="hidden">
+
+      <!-- Bands Section -->
+      <div class="mb-12">
+        <h2 class="text-3xl font-bold mb-4 uppercase tracking-wider flex items-center gap-3">
+          <span class="text-pink-500">Bands</span>
+          <span id="bandCount" class="text-lg text-gray-400">(0)</span>
+        </h2>
+        <div id="bandsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Bands will be inserted here -->
+        </div>
+        <p id="noBands" class="hidden text-gray-500 italic">You haven't submitted any bands yet.</p>
+      </div>
+
+      <!-- Venues Section -->
+      <div class="mb-12">
+        <h2 class="text-3xl font-bold mb-4 uppercase tracking-wider flex items-center gap-3">
+          <span class="text-pink-500">Venues</span>
+          <span id="venueCount" class="text-lg text-gray-400">(0)</span>
+        </h2>
+        <div id="venuesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Venues will be inserted here -->
+        </div>
+        <p id="noVenues" class="hidden text-gray-500 italic">You haven't submitted any venues yet.</p>
+      </div>
+
+      <!-- Resources Section -->
+      <div class="mb-12">
+        <h2 class="text-3xl font-bold mb-4 uppercase tracking-wider flex items-center gap-3">
+          <span class="text-pink-500">Resources</span>
+          <span id="resourceCount" class="text-lg text-gray-400">(0)</span>
+        </h2>
+        <div id="resourcesList" class="space-y-3">
+          <!-- Resources will be inserted here -->
+        </div>
+        <p id="noResources" class="hidden text-gray-500 italic">You haven't submitted any resources yet.</p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="/navbar.js"></script>
+  <script>
+    // Load navbar
+    fetch('/navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+        if (typeof initNavbar === 'function') {
+          initNavbar();
+        }
+      });
+
+    // Load user submissions
+    async function loadSubmissions() {
+      try {
+        const response = await fetch('/api/user_submissions.php');
+
+        if (response.status === 401) {
+          // Not authenticated - redirect to home
+          window.location.href = '/?login_required=1';
+          return;
+        }
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          displaySubmissions(data);
+        } else {
+          throw new Error(data.error || 'Failed to load submissions');
+        }
+      } catch (error) {
+        console.error('Submissions load error:', error);
+        document.getElementById('loadingState').innerHTML =
+          '<p class="text-red-500">Failed to load submissions. Please try again.</p>';
+      }
+    }
+
+    function displaySubmissions(data) {
+      const bands = data.bands || [];
+      const venues = data.venues || [];
+      const resources = data.resources || [];
+
+      // Update counts
+      document.getElementById('bandCount').textContent = `(${bands.length})`;
+      document.getElementById('venueCount').textContent = `(${venues.length})`;
+      document.getElementById('resourceCount').textContent = `(${resources.length})`;
+
+      // Display bands
+      const bandsList = document.getElementById('bandsList');
+      if (bands.length > 0) {
+        bandsList.innerHTML = bands.map(band => createBandCard(band)).join('');
+      } else {
+        document.getElementById('noBands').classList.remove('hidden');
+      }
+
+      // Display venues
+      const venuesList = document.getElementById('venuesList');
+      if (venues.length > 0) {
+        venuesList.innerHTML = venues.map(venue => createVenueCard(venue)).join('');
+      } else {
+        document.getElementById('noVenues').classList.remove('hidden');
+      }
+
+      // Display resources
+      const resourcesList = document.getElementById('resourcesList');
+      if (resources.length > 0) {
+        resourcesList.innerHTML = resources.map(resource => createResourceCard(resource)).join('');
+      } else {
+        document.getElementById('noResources').classList.remove('hidden');
+      }
+
+      // Show content, hide loading
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('submissionsContent').classList.remove('hidden');
+    }
+
+    function createBandCard(band) {
+      const date = new Date(band.created_at).toLocaleDateString();
+      const location = [band.city, band.state].filter(Boolean).join(', ') || 'Unknown';
+
+      return `
+        <a href="/band.html?id=${band.id}" class="punk-card p-4 block hover:border-pink-400 transition-colors">
+          <h3 class="text-xl font-bold mb-2 text-pink-500">${escapeHtml(band.name)}</h3>
+          <p class="text-sm text-gray-400 mb-1">
+            <span class="font-bold">Genre:</span> ${escapeHtml(band.genre || 'Unknown')}
+          </p>
+          <p class="text-sm text-gray-400 mb-1">
+            <span class="font-bold">Location:</span> ${escapeHtml(location)}
+          </p>
+          <p class="text-xs text-gray-500 mt-2">Submitted: ${date}</p>
+        </a>
+      `;
+    }
+
+    function createVenueCard(venue) {
+      const date = new Date(venue.created_at).toLocaleDateString();
+      const location = [venue.city, venue.state].filter(Boolean).join(', ') || 'Unknown';
+
+      return `
+        <a href="/venue.html?id=${venue.id}" class="punk-card p-4 block hover:border-pink-400 transition-colors">
+          <h3 class="text-xl font-bold mb-2 text-pink-500">${escapeHtml(venue.name)}</h3>
+          <p class="text-sm text-gray-400 mb-1">
+            <span class="font-bold">Type:</span> ${escapeHtml(venue.type || 'Unknown')}
+          </p>
+          <p class="text-sm text-gray-400 mb-1">
+            <span class="font-bold">Location:</span> ${escapeHtml(location)}
+          </p>
+          <p class="text-xs text-gray-500 mt-2">Submitted: ${date}</p>
+        </a>
+      `;
+    }
+
+    function createResourceCard(resource) {
+      const date = new Date(resource.created_at).toLocaleDateString();
+
+      return `
+        <div class="punk-card p-4">
+          <div class="flex justify-between items-start gap-4">
+            <div class="flex-1">
+              <h3 class="text-xl font-bold mb-2 text-pink-500">${escapeHtml(resource.name)}</h3>
+              <p class="text-sm text-gray-400 mb-2">${escapeHtml(resource.description || '')}</p>
+              <a href="${escapeHtml(resource.link)}" target="_blank" rel="noopener noreferrer"
+                 class="text-pink-500 hover:text-pink-400 text-sm underline break-all">
+                ${escapeHtml(resource.link)}
+              </a>
+              <p class="text-xs text-gray-500 mt-2">Submitted: ${date}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Simple HTML escape function
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Load submissions on page load
+    loadSubmissions();
+  </script>
+</body>
+</html>

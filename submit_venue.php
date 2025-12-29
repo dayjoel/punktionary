@@ -7,6 +7,16 @@ header('Content-Type: application/json');
 
 try {
     require_once __DIR__ . '/../db_config.php';
+    require_once __DIR__ . '/auth/session_config.php';
+    require_once __DIR__ . '/auth/helpers.php';
+
+    // Require authentication
+    if (!is_authenticated()) {
+        http_response_code(401);
+        die(json_encode(['success' => false, 'error' => 'You must be logged in to submit venues']));
+    }
+
+    $user_id = get_current_user_id();
 
     $conn = get_db_connection();
     if (!$conn) {
@@ -41,16 +51,16 @@ try {
         }
     }
 
-    // Insert into database
-    $sql = "INSERT INTO venues (name, type, capacity, street_address, city, state, postal_code, country, age_restriction, booking_contact, links, created_at, updated_at) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+    // Insert into database with user attribution
+    $sql = "INSERT INTO venues (submitted_by, name, type, capacity, street_address, city, state, postal_code, country, age_restriction, booking_contact, links, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
-    
-    $stmt->bind_param('ssissssssss', $name, $type, $capacity, $street_address, $city, $state, $postal_code, $country, $age_restriction, $booking_contact, $links);
+
+    $stmt->bind_param('ississssssss', $user_id, $name, $type, $capacity, $street_address, $city, $state, $postal_code, $country, $age_restriction, $booking_contact, $links);
 
     if ($stmt->execute()) {
         echo json_encode([
