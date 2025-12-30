@@ -4,7 +4,8 @@
       "Bash(xargs ls:*)",
       "Bash(grep:*)",
       "Bash(cat:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(chmod:*)"
     ]
   }
 }
