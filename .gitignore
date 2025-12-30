@@ -8,3 +8,14 @@ login_with_google.php
 generate-icon.html
 FACEBOOK_APP_REVIEW_INSTRUCTIONS.md
 DEPLOYMENT_INSTRUCTIONS.md
+
+# database migrations (internal use)
+database_migration_oauth.sql
+database_migration_oauth_safe.sql
+
+# debug/development files
+api/debug_session.php
+
+# user uploads
+uploads/profile_pictures/*
+!uploads/profile_pictures/.htaccess

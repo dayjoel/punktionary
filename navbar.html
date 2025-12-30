@@ -27,10 +27,21 @@
       <button id="desktopLoginBtn" class="nav-link uppercase tracking-widest">Login</button>
 
       <!-- Logged in state (hidden by default) -->
-      <div id="desktopUserSection" class="hidden flex items-center gap-6">
-        <a href="/profile.html" class="nav-link uppercase tracking-widest">Profile</a>
-        <a href="/my-submissions.html" class="nav-link uppercase tracking-widest">My Submissions</a>
-        <button id="desktopLogoutBtn" class="nav-link uppercase tracking-widest">Logout</button>
+      <div id="desktopUserSection" class="hidden relative">
+        <button id="userMenuToggle" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <img id="userProfilePic" src="/images/default-avatar.svg" alt="Profile" class="h-8 w-8 rounded-full border-2 border-pink-500" />
+          <span id="userFirstName" class="text-sm uppercase tracking-widest font-bold">User</span>
+          <svg class="w-4 h-4 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-black border-2 border-pink-500 shadow-lg shadow-pink-500/30 z-50">
+          <a href="/profile.html" class="block px-4 py-3 text-sm uppercase tracking-wide hover:bg-pink-500 hover:text-black transition-colors">Profile</a>
+          <a href="/my-submissions.html" class="block px-4 py-3 text-sm uppercase tracking-wide hover:bg-pink-500 hover:text-black transition-colors border-t border-pink-500/30">My Submissions</a>
+          <button id="desktopLogoutBtn" class="w-full text-left px-4 py-3 text-sm uppercase tracking-wide hover:bg-pink-500 hover:text-black transition-colors border-t border-pink-500/30">Logout</button>
+        </div>
       </div>
     </div>
 
