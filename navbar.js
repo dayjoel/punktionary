@@ -232,14 +232,12 @@ function updateNavbarForLoggedIn(user) {
 
   // Show logged-in menu items (desktop)
   document.getElementById('loginMenuItem')?.classList.add('hidden');
-  document.getElementById('registerMenuItem')?.classList.add('hidden');
   document.getElementById('profileMenuItem')?.classList.remove('hidden');
   document.getElementById('mySubmissionsMenuItem')?.classList.remove('hidden');
   document.getElementById('logoutMenuItem')?.classList.remove('hidden');
 
   // Show logged-in menu items (mobile)
   document.getElementById('mobileLoginBtn')?.classList.add('hidden');
-  document.getElementById('mobileRegisterLink')?.classList.add('hidden');
   document.getElementById('mobileProfileLink')?.classList.remove('hidden');
   document.getElementById('mobileSubmissionsLink')?.classList.remove('hidden');
   document.getElementById('mobileLogoutBtn')?.classList.remove('hidden');
@@ -258,14 +256,12 @@ function updateNavbarForLoggedOut() {
 
   // Show logged-out menu items (desktop)
   document.getElementById('loginMenuItem')?.classList.remove('hidden');
-  document.getElementById('registerMenuItem')?.classList.remove('hidden');
   document.getElementById('profileMenuItem')?.classList.add('hidden');
   document.getElementById('mySubmissionsMenuItem')?.classList.add('hidden');
   document.getElementById('logoutMenuItem')?.classList.add('hidden');
 
   // Show logged-out menu items (mobile)
   document.getElementById('mobileLoginBtn')?.classList.remove('hidden');
-  document.getElementById('mobileRegisterLink')?.classList.remove('hidden');
   document.getElementById('mobileProfileLink')?.classList.add('hidden');
   document.getElementById('mobileSubmissionsLink')?.classList.add('hidden');
   document.getElementById('mobileLogoutBtn')?.classList.add('hidden');
