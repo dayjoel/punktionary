@@ -25,7 +25,23 @@ function initNavbar() {
     }
   });
 
-  // No dropdowns needed anymore - removed submit dropdown and user dropdown code
+  // User dropdown toggle
+  const userMenuToggle = document.getElementById('userMenuToggle');
+  const userDropdown = document.getElementById('userDropdown');
+
+  if (userMenuToggle && userDropdown) {
+    userMenuToggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      userDropdown.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!userDropdown.contains(e.target) && !userMenuToggle.contains(e.target)) {
+        userDropdown.classList.add('hidden');
+      }
+    });
+  }
 
   // Mobile menu toggle
   const menuToggle = document.getElementById('menuToggle');
@@ -81,22 +97,12 @@ function initNavbar() {
   const desktopLogoutBtn = document.getElementById('desktopLogoutBtn');
   const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
 
-  desktopLogoutBtn?.addEventListener('click', async function() {
-    try {
-      await fetch('/auth/logout.php');
-      window.location.href = '/';
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
+  desktopLogoutBtn?.addEventListener('click', function() {
+    window.location.href = '/auth/logout.php';
   });
 
-  mobileLogoutBtn?.addEventListener('click', async function() {
-    try {
-      await fetch('/auth/logout.php');
-      window.location.href = '/';
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
+  mobileLogoutBtn?.addEventListener('click', function() {
+    window.location.href = '/auth/logout.php';
   });
 
   // Check authentication status on page load
@@ -130,6 +136,25 @@ function updateNavbarForLoggedIn(user) {
 
   if (desktopLoginBtn) desktopLoginBtn.classList.add('hidden');
   if (desktopUserSection) desktopUserSection.classList.remove('hidden');
+
+  // Update user profile picture and name
+  const userProfilePic = document.getElementById('userProfilePic');
+  const userFirstName = document.getElementById('userFirstName');
+
+  if (userProfilePic) {
+    userProfilePic.src = user.profile_picture_url || '/images/default-avatar.svg';
+  }
+
+  if (userFirstName) {
+    // Get first name from display_name (first word) or email
+    let firstName = 'User';
+    if (user.display_name) {
+      firstName = user.display_name.split(' ')[0];
+    } else if (user.email) {
+      firstName = user.email.split('@')[0];
+    }
+    userFirstName.textContent = firstName;
+  }
 
   // Show logged-in state (mobile)
   document.getElementById('mobileLoginBtn')?.classList.add('hidden');
