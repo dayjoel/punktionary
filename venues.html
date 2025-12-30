@@ -177,6 +177,9 @@
     </div>
   </footer>
 
+  <!-- Load Login Modal -->
+  <div id="login-modal-container"></div>
+
   <!-- Load Navbar -->
   <script>
     fetch('/navbar.html')
@@ -188,6 +191,19 @@
         }
       })
       .catch(error => console.error('Error loading navbar:', error));
+  </script>
+
+  <script>
+    // Load login modal
+    fetch('/login-modal.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('login-modal-container').innerHTML = data;
+        if (typeof initLoginModal === 'function') {
+          initLoginModal();
+        }
+      })
+      .catch(error => console.error('Error loading login modal:', error));
   </script>
 
   <script src="/navbar.js"></script>
