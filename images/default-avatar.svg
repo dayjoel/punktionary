@@ -1,0 +1,16 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Black background circle -->
+  <circle cx="100" cy="100" r="100" fill="#000000"/>
+
+  <!-- Pink border circle -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#FF006E" stroke-width="4"/>
+
+  <!-- User icon in pink -->
+  <g fill="#FF006E">
+    <!-- Head -->
+    <circle cx="100" cy="75" r="25"/>
+
+    <!-- Body -->
+    <path d="M 100 105 Q 70 105 55 130 Q 50 140 50 150 L 150 150 Q 150 140 145 130 Q 130 105 100 105 Z"/>
+  </g>
+</svg>
