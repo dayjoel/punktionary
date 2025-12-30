@@ -25,69 +25,7 @@ function initNavbar() {
     }
   });
 
-  // Submit dropdown
-  const submitBtn = document.getElementById('submitButton');
-  const submitMenu = document.getElementById('submitMenu');
-  const submitArrow = document.getElementById('submitArrow');
-  
-  if (submitBtn && submitMenu) {
-    submitBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-      const isHidden = submitMenu.classList.contains('hidden');
-      
-      if (isHidden) {
-        submitMenu.classList.remove('hidden');
-        setTimeout(() => submitMenu.classList.remove('opacity-0'), 10);
-        if (submitArrow) submitArrow.style.transform = 'rotate(180deg)';
-      } else {
-        submitMenu.classList.add('opacity-0');
-        setTimeout(() => submitMenu.classList.add('hidden'), 200);
-        if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';
-      }
-    });
-  }
-
-  // User dropdown
-  const userBtn = document.getElementById('userButton');
-  const userMenu = document.getElementById('userMenu');
-  
-  if (userBtn && userMenu) {
-    userBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const isHidden = userMenu.classList.contains('hidden');
-      
-      if (isHidden) {
-        userMenu.classList.remove('hidden');
-        setTimeout(() => userMenu.classList.remove('opacity-0'), 10);
-      } else {
-        userMenu.classList.add('opacity-0');
-        setTimeout(() => userMenu.classList.add('hidden'), 200);
-      }
-    });
-  }
-
-  // Close dropdowns when clicking outside
-  document.addEventListener('click', function(e) {
-    // Don't close if clicking on the submit button or inside the submit menu
-    const clickedSubmitButton = e.target.closest('#submitButton');
-    const clickedInsideSubmitMenu = e.target.closest('#submitMenu');
-    
-    if (!clickedSubmitButton && !clickedInsideSubmitMenu && submitMenu && !submitMenu.classList.contains('hidden')) {
-      submitMenu.classList.add('opacity-0');
-      setTimeout(() => submitMenu.classList.add('hidden'), 200);
-      if (submitArrow) submitArrow.style.transform = 'rotate(0deg)';
-    }
-    
-    // Don't close if clicking on the user button or inside the user menu
-    const clickedUserButton = e.target.closest('#userButton');
-    const clickedInsideUserMenu = e.target.closest('#userMenu');
-    
-    if (!clickedUserButton && !clickedInsideUserMenu && userMenu && !userMenu.classList.contains('hidden')) {
-      userMenu.classList.add('opacity-0');
-      setTimeout(() => userMenu.classList.add('hidden'), 200);
-    }
-  });
+  // No dropdowns needed anymore - removed submit dropdown and user dropdown code
 
   // Mobile menu toggle
   const menuToggle = document.getElementById('menuToggle');
@@ -137,41 +75,40 @@ function initNavbar() {
   }
 
   // Login overlay
-  const loginBtns = document.querySelectorAll('#loginBtn, #mobileLoginBtn');
+  const loginBtns = document.querySelectorAll('#desktopLoginBtn, #mobileLoginBtn');
   const loginOverlay = document.getElementById('loginOverlay');
   const closeLogin = document.getElementById('closeLogin');
-  
+
   loginBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-      if (loginOverlay) {
-        loginOverlay.classList.remove('hidden');
-        loginOverlay.style.display = 'flex';
-      }
-      // Close mobile menu if open
-      if (mobileMenu) mobileMenu.classList.add('translate-x-full');
-      if (mobileBackdrop) mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
-    });
+    if (btn) {
+      btn.addEventListener('click', function() {
+        if (loginOverlay) {
+          loginOverlay.style.display = 'flex';
+        }
+        // Close mobile menu if open
+        if (mobileMenu) mobileMenu.classList.add('translate-x-full');
+        if (mobileBackdrop) mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
+      });
+    }
   });
 
   closeLogin?.addEventListener('click', function() {
     if (loginOverlay) {
-      loginOverlay.classList.add('hidden');
       loginOverlay.style.display = 'none';
     }
   });
 
   loginOverlay?.addEventListener('click', function(e) {
     if (e.target === loginOverlay) {
-      loginOverlay.classList.add('hidden');
       loginOverlay.style.display = 'none';
     }
   });
 
   // Logout handlers
-  const logoutBtn = document.getElementById('logoutBtn');
+  const desktopLogoutBtn = document.getElementById('desktopLogoutBtn');
   const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
 
-  logoutBtn?.addEventListener('click', async function() {
+  desktopLogoutBtn?.addEventListener('click', async function() {
     try {
       await fetch('/auth/logout.php');
       window.location.href = '/';
@@ -214,29 +151,14 @@ async function checkAuthStatus() {
 
 // Update navbar to show logged-in state
 function updateNavbarForLoggedIn(user) {
-  // Update user avatar and display name
-  const avatar = document.getElementById('userAvatar');
-  const displayName = document.getElementById('userDisplayName');
-  const defaultIcon = document.getElementById('userIconDefault');
+  // Show logged-in state (desktop)
+  const desktopLoginBtn = document.getElementById('desktopLoginBtn');
+  const desktopUserSection = document.getElementById('desktopUserSection');
 
-  if (user.profile_picture && avatar) {
-    avatar.src = user.profile_picture;
-    avatar.classList.remove('hidden');
-    defaultIcon?.classList.add('hidden');
-  }
+  if (desktopLoginBtn) desktopLoginBtn.classList.add('hidden');
+  if (desktopUserSection) desktopUserSection.classList.remove('hidden');
 
-  if (user.display_name && displayName) {
-    displayName.textContent = user.display_name;
-    displayName.classList.remove('hidden');
-  }
-
-  // Show logged-in menu items (desktop)
-  document.getElementById('loginMenuItem')?.classList.add('hidden');
-  document.getElementById('profileMenuItem')?.classList.remove('hidden');
-  document.getElementById('mySubmissionsMenuItem')?.classList.remove('hidden');
-  document.getElementById('logoutMenuItem')?.classList.remove('hidden');
-
-  // Show logged-in menu items (mobile)
+  // Show logged-in state (mobile)
   document.getElementById('mobileLoginBtn')?.classList.add('hidden');
   document.getElementById('mobileProfileLink')?.classList.remove('hidden');
   document.getElementById('mobileSubmissionsLink')?.classList.remove('hidden');
@@ -245,22 +167,14 @@ function updateNavbarForLoggedIn(user) {
 
 // Update navbar to show logged-out state
 function updateNavbarForLoggedOut() {
-  // Hide user info
-  const avatar = document.getElementById('userAvatar');
-  const displayName = document.getElementById('userDisplayName');
-  const defaultIcon = document.getElementById('userIconDefault');
+  // Show logged-out state (desktop)
+  const desktopLoginBtn = document.getElementById('desktopLoginBtn');
+  const desktopUserSection = document.getElementById('desktopUserSection');
 
-  avatar?.classList.add('hidden');
-  displayName?.classList.add('hidden');
-  defaultIcon?.classList.remove('hidden');
+  if (desktopLoginBtn) desktopLoginBtn.classList.remove('hidden');
+  if (desktopUserSection) desktopUserSection.classList.add('hidden');
 
-  // Show logged-out menu items (desktop)
-  document.getElementById('loginMenuItem')?.classList.remove('hidden');
-  document.getElementById('profileMenuItem')?.classList.add('hidden');
-  document.getElementById('mySubmissionsMenuItem')?.classList.add('hidden');
-  document.getElementById('logoutMenuItem')?.classList.add('hidden');
-
-  // Show logged-out menu items (mobile)
+  // Show logged-out state (mobile)
   document.getElementById('mobileLoginBtn')?.classList.remove('hidden');
   document.getElementById('mobileProfileLink')?.classList.add('hidden');
   document.getElementById('mobileSubmissionsLink')?.classList.add('hidden');
