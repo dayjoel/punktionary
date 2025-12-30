@@ -6,6 +6,9 @@
   <title>My Profile | PUNKtionary</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/css/punk-styles.css">
+  <!-- Cropper.js for image cropping -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 </head>
 <body class="bg-black text-white font-sans">
 
@@ -51,13 +54,33 @@
           </div>
 
           <div>
-            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Profile Picture URL</label>
-            <input type="url" id="editProfilePicture" class="punk-input" placeholder="https://example.com/avatar.jpg" />
-            <p class="text-xs text-gray-500 mt-1">Enter a URL to a public image</p>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Profile Picture</label>
+            <input type="file" id="profilePictureFile" accept="image/*" class="punk-input" />
+            <p class="text-xs text-gray-500 mt-1">Upload a square image for best results</p>
+            <button type="button" id="uploadImageBtn" class="punk-button-outline mt-2 hidden">Crop & Upload Image</button>
           </div>
 
           <button type="submit" class="punk-button">Update Profile</button>
         </form>
+
+        <!-- Image Crop Modal -->
+        <div id="cropModal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
+          <div class="bg-gray-900 rounded-none p-8 max-w-2xl w-full border-2 border-pink-500 shadow-2xl shadow-pink-500/30 relative">
+            <button id="closeCropModal" class="absolute top-4 right-4 text-pink-500 hover:text-white transition-colors text-2xl font-bold">&times;</button>
+            <h2 class="text-2xl font-bold mb-6 text-center uppercase tracking-wider">Crop Profile Picture</h2>
+
+            <div class="mb-4">
+              <div class="max-h-96 overflow-hidden">
+                <img id="cropImage" src="" alt="Crop preview" class="max-w-full">
+              </div>
+            </div>
+
+            <div class="flex gap-4">
+              <button id="cancelCrop" class="punk-button-outline flex-1">Cancel</button>
+              <button id="saveCrop" class="punk-button flex-1">Save & Upload</button>
+            </div>
+          </div>
+        </div>
 
         <!-- Success/Error Messages -->
         <div id="updateSuccess" class="hidden bg-green-900/50 border-2 border-green-500 p-4 mb-4">
@@ -160,23 +183,124 @@
 
       // Pre-fill edit form
       document.getElementById('editDisplayName').value = user.display_name || '';
-      document.getElementById('editProfilePicture').value = user.profile_picture_url || '';
 
       // Show profile content, hide loading
       document.getElementById('loadingState').classList.add('hidden');
       document.getElementById('profileContent').classList.remove('hidden');
     }
 
+    // Image cropping functionality
+    let cropper = null;
+    let selectedFile = null;
+
+    document.getElementById('profilePictureFile').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById('cropImage').src = event.target.result;
+          document.getElementById('cropModal').classList.remove('hidden');
+
+          // Initialize cropper
+          if (cropper) {
+            cropper.destroy();
+          }
+          cropper = new Cropper(document.getElementById('cropImage'), {
+            aspectRatio: 1,
+            viewMode: 2,
+            autoCropArea: 1,
+            responsive: true,
+            background: false,
+            guides: true,
+            center: true,
+            highlight: true,
+            cropBoxResizable: true,
+            cropBoxMovable: true,
+            toggleDragModeOnDblclick: false
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('closeCropModal').addEventListener('click', function() {
+      document.getElementById('cropModal').classList.add('hidden');
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
+    });
+
+    document.getElementById('cancelCrop').addEventListener('click', function() {
+      document.getElementById('cropModal').classList.add('hidden');
+      document.getElementById('profilePictureFile').value = '';
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
+    });
+
+    document.getElementById('saveCrop').addEventListener('click', async function() {
+      if (!cropper) return;
+
+      // Get cropped canvas
+      const canvas = cropper.getCroppedCanvas({
+        width: 300,
+        height: 300,
+        imageSmoothingQuality: 'high'
+      });
+
+      // Convert to blob
+      canvas.toBlob(async function(blob) {
+        const formData = new FormData();
+        formData.append('profile_picture', blob, 'profile.jpg');
+
+        try {
+          const response = await fetch('/api/upload_profile_picture.php', {
+            method: 'POST',
+            body: formData
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            // Close modal
+            document.getElementById('cropModal').classList.add('hidden');
+            if (cropper) {
+              cropper.destroy();
+              cropper = null;
+            }
+
+            // Show success message
+            document.getElementById('updateSuccess').classList.remove('hidden');
+            document.getElementById('updateError').classList.add('hidden');
+
+            // Reload profile to show new picture
+            setTimeout(() => {
+              loadProfile();
+              document.getElementById('updateSuccess').classList.add('hidden');
+              document.getElementById('profilePictureFile').value = '';
+            }, 2000);
+          } else {
+            throw new Error(data.error || 'Failed to upload image');
+          }
+        } catch (error) {
+          console.error('Upload error:', error);
+          document.getElementById('updateErrorText').textContent = error.message;
+          document.getElementById('updateError').classList.remove('hidden');
+        }
+      }, 'image/jpeg', 0.9);
+    });
+
     // Update profile form handler
     document.getElementById('updateProfileForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const displayName = document.getElementById('editDisplayName').value;
-      const profilePicture = document.getElementById('editProfilePicture').value;
 
       const formData = new FormData();
       formData.append('display_name', displayName);
-      formData.append('profile_picture_url', profilePicture);
 
       try {
         const response = await fetch('/api/update_profile.php', {
