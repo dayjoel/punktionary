@@ -58,8 +58,12 @@ try {
         throw new Exception('Invalid user info from Facebook');
     }
 
-    // Facebook may not provide email for all users
-    $email = $user_info['email'] ?? 'facebook_' . $user_info['id'] . '@punktionary.local';
+    // Email is required - if Facebook doesn't provide it, fail the login
+    if (!isset($user_info['email'])) {
+        throw new Exception('Email is required but not provided by Facebook');
+    }
+
+    $email = $user_info['email'];
     $profile_picture = $user_info['picture']['data']['url'] ?? null;
 
     // Create or update user in database
