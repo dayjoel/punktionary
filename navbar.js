@@ -74,35 +74,8 @@ function initNavbar() {
     });
   }
 
-  // Login overlay
-  const loginBtns = document.querySelectorAll('#desktopLoginBtn, #mobileLoginBtn');
-  const loginOverlay = document.getElementById('loginOverlay');
-  const closeLogin = document.getElementById('closeLogin');
-
-  loginBtns.forEach(btn => {
-    if (btn) {
-      btn.addEventListener('click', function() {
-        if (loginOverlay) {
-          loginOverlay.classList.remove('hidden');
-        }
-        // Close mobile menu if open
-        if (mobileMenu) mobileMenu.classList.add('translate-x-full');
-        if (mobileBackdrop) mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
-      });
-    }
-  });
-
-  closeLogin?.addEventListener('click', function() {
-    if (loginOverlay) {
-      loginOverlay.classList.add('hidden');
-    }
-  });
-
-  loginOverlay?.addEventListener('click', function(e) {
-    if (e.target === loginOverlay) {
-      loginOverlay.classList.add('hidden');
-    }
-  });
+  // Login overlay - setup event listeners
+  setupLoginModal();
 
   // Logout handlers
   const desktopLogoutBtn = document.getElementById('desktopLogoutBtn');
@@ -179,4 +152,46 @@ function updateNavbarForLoggedOut() {
   document.getElementById('mobileProfileLink')?.classList.add('hidden');
   document.getElementById('mobileSubmissionsLink')?.classList.add('hidden');
   document.getElementById('mobileLogoutBtn')?.classList.add('hidden');
+}
+
+// Setup login modal event listeners
+function setupLoginModal() {
+  const loginBtns = document.querySelectorAll('#desktopLoginBtn, #mobileLoginBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileBackdrop = document.getElementById('mobileBackdrop');
+
+  loginBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', function() {
+        // Wait a bit for modal to be loaded if needed
+        setTimeout(() => {
+          const loginOverlay = document.getElementById('loginOverlay');
+          if (loginOverlay) {
+            loginOverlay.classList.remove('hidden');
+          }
+          // Close mobile menu if open
+          if (mobileMenu) mobileMenu.classList.add('translate-x-full');
+          if (mobileBackdrop) mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
+        }, 50);
+      });
+    }
+  });
+}
+
+// Initialize login modal controls when modal is loaded
+function initLoginModal() {
+  const loginOverlay = document.getElementById('loginOverlay');
+  const closeLogin = document.getElementById('closeLogin');
+
+  closeLogin?.addEventListener('click', function() {
+    if (loginOverlay) {
+      loginOverlay.classList.add('hidden');
+    }
+  });
+
+  loginOverlay?.addEventListener('click', function(e) {
+    if (e.target === loginOverlay) {
+      loginOverlay.classList.add('hidden');
+    }
+  });
 }
