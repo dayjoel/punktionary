@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Deletion Request - PUNKtionary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/punk-styles.css">
+</head>
+<body class="min-h-screen flex flex-col">
+  <!-- Navigation -->
+  <div id="navbar-container"></div>
+
+  <!-- Main Content -->
+  <main class="flex-grow pt-24 pb-12">
+    <div class="max-w-4xl mx-auto px-6">
+      <h1 class="text-4xl font-bold mb-8">Data Deletion Request</h1>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-2xl font-bold mb-4 text-pink-500">Your Right to Delete Your Data</h2>
+          <p class="mb-4">You have the right to request deletion of your personal data from PUNKtionary at any time. This includes:</p>
+          <ul class="list-disc list-inside space-y-2 ml-4 mb-6">
+            <li>Your account information (name, email, profile picture)</li>
+            <li>Your login credentials and OAuth connections</li>
+            <li>Any content you have submitted to the platform</li>
+            <li>Your usage history and preferences</li>
+          </ul>
+        </section>
+
+        <section class="punk-card">
+          <h2 class="text-2xl font-bold mb-6 text-pink-500">Submit a Deletion Request</h2>
+
+          <div id="deletionForm">
+            <p class="mb-6">Please fill out the form below to request deletion of your data. We will process your request within 30 days.</p>
+
+            <form id="dataDeleteForm" class="space-y-4">
+              <div>
+                <label for="email" class="block mb-2 font-bold">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  class="punk-input"
+                  placeholder="your.email@example.com"
+                >
+                <p class="text-sm text-gray-400 mt-1">Enter the email address associated with your account</p>
+              </div>
+
+              <div>
+                <label for="reason" class="block mb-2 font-bold">Reason for Deletion (Optional)</label>
+                <textarea
+                  id="reason"
+                  name="reason"
+                  rows="4"
+                  class="punk-input"
+                  placeholder="Please let us know why you're deleting your account (optional)"
+                ></textarea>
+              </div>
+
+              <div class="flex items-start">
+                <input
+                  type="checkbox"
+                  id="confirm"
+                  name="confirm"
+                  required
+                  class="mt-1 mr-3 h-4 w-4"
+                >
+                <label for="confirm" class="text-sm">
+                  I understand that deleting my data is permanent and cannot be undone. All my submissions and account information will be removed.
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                class="punk-button w-full"
+              >
+                Submit Deletion Request
+              </button>
+            </form>
+          </div>
+
+          <div id="successMessage" class="hidden">
+            <div class="bg-green-900/30 border-2 border-green-500 p-6 text-center">
+              <h3 class="text-xl font-bold text-green-500 mb-2">Request Submitted Successfully</h3>
+              <p>Your data deletion request has been received. We will process it within 30 days and send a confirmation email to the address you provided.</p>
+            </div>
+          </div>
+
+          <div id="errorMessage" class="hidden">
+            <div class="bg-red-900/30 border-2 border-red-500 p-6 text-center">
+              <h3 class="text-xl font-bold text-red-500 mb-2">Error</h3>
+              <p id="errorText">There was an error processing your request. Please try again.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-bold mb-4 text-pink-500">What Happens Next?</h2>
+          <ol class="list-decimal list-inside space-y-3 ml-4">
+            <li><strong>Request Review:</strong> We will verify your request and confirm your identity within 5 business days.</li>
+            <li><strong>Data Deletion:</strong> Once verified, we will permanently delete all your personal data from our systems within 30 days.</li>
+            <li><strong>Confirmation:</strong> You will receive an email confirmation once the deletion is complete.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-bold mb-4 text-pink-500">Important Notes</h2>
+          <ul class="list-disc list-inside space-y-2 ml-4">
+            <li>Data deletion is permanent and cannot be undone</li>
+            <li>Some data may be retained for legal compliance or dispute resolution purposes</li>
+            <li>Publicly submitted content may have been indexed by search engines before deletion</li>
+            <li>You can create a new account at any time after deletion</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-bold mb-4 text-pink-500">Alternative: Export Your Data</h2>
+          <p>If you'd like to keep a copy of your data before deleting it, please contact us at <a href="mailto:privacy@punktionary.com" class="punk-link">privacy@punktionary.com</a> to request a data export.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-bold mb-4 text-pink-500">Questions?</h2>
+          <p>If you have questions about data deletion or need assistance, please contact us at:</p>
+          <p class="mt-2"><a href="mailto:privacy@punktionary.com" class="punk-link">privacy@punktionary.com</a></p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-black border-t-2 border-pink-500 py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-6 text-center text-gray-400 text-sm">
+      <p>&copy; 2025 PUNKtionary. All rights reserved.</p>
+      <div class="mt-2 space-x-4">
+        <a href="/privacy.html" class="punk-link">Privacy Policy</a>
+        <a href="/terms.html" class="punk-link">Terms of Service</a>
+        <a href="/data-deletion.html" class="punk-link">Data Deletion</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Load navbar -->
+  <script>
+    fetch('/navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+        const script = document.createElement('script');
+        script.src = '/navbar.js';
+        document.body.appendChild(script);
+      })
+      .catch(error => console.error('Error loading navbar:', error));
+  </script>
+
+  <!-- Load Login Modal -->
+  <div id="login-modal-container"></div>
+  <script>
+    fetch('/login-modal.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('login-modal-container').innerHTML = data;
+        if (typeof initLoginModal === 'function') {
+          initLoginModal();
+        }
+      })
+      .catch(error => console.error('Error loading login modal:', error));
+  </script>
+
+  <!-- Form handling -->
+  <script>
+    document.getElementById('dataDeleteForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const reason = document.getElementById('reason').value;
+      const confirm = document.getElementById('confirm').checked;
+
+      if (!confirm) {
+        alert('Please confirm that you understand the deletion is permanent.');
+        return;
+      }
+
+      try {
+        const response = await fetch('/auth/data_deletion.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            reason: reason
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          document.getElementById('deletionForm').classList.add('hidden');
+          document.getElementById('successMessage').classList.remove('hidden');
+          document.getElementById('errorMessage').classList.add('hidden');
+        } else {
+          document.getElementById('errorText').textContent = data.error || 'There was an error processing your request.';
+          document.getElementById('errorMessage').classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('errorText').textContent = 'There was an error processing your request. Please try again.';
+        document.getElementById('errorMessage').classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
