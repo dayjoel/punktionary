@@ -2,6 +2,10 @@
 // User Profile API Endpoint
 // Returns user profile data and statistics
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../auth/session_config.php';
 require_once __DIR__ . '/../auth/helpers.php';
 require_once __DIR__ . '/../db_config.php';
