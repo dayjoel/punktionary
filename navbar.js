@@ -25,24 +25,6 @@ function initNavbar() {
     }
   });
 
-  // User dropdown toggle
-  const userMenuToggle = document.getElementById('userMenuToggle');
-  const userDropdown = document.getElementById('userDropdown');
-
-  if (userMenuToggle && userDropdown) {
-    userMenuToggle.addEventListener('click', function(e) {
-      e.stopPropagation();
-      userDropdown.classList.toggle('hidden');
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!userDropdown.contains(e.target) && !userMenuToggle.contains(e.target)) {
-        userDropdown.classList.add('hidden');
-      }
-    });
-  }
-
   // Mobile menu toggle
   const menuToggle = document.getElementById('menuToggle');
   const mobileMenu = document.getElementById('mobileMenu');
@@ -156,11 +138,39 @@ function updateNavbarForLoggedIn(user) {
     userFirstName.textContent = firstName;
   }
 
+  // Setup user dropdown toggle (after elements are visible)
+  setupUserDropdown();
+
   // Show logged-in state (mobile)
   document.getElementById('mobileLoginBtn')?.classList.add('hidden');
   document.getElementById('mobileProfileLink')?.classList.remove('hidden');
   document.getElementById('mobileSubmissionsLink')?.classList.remove('hidden');
   document.getElementById('mobileLogoutBtn')?.classList.remove('hidden');
+}
+
+// Setup user dropdown event listeners
+let dropdownListenersAdded = false;
+function setupUserDropdown() {
+  if (dropdownListenersAdded) return; // Prevent multiple listeners
+
+  const userMenuToggle = document.getElementById('userMenuToggle');
+  const userDropdown = document.getElementById('userDropdown');
+
+  if (userMenuToggle && userDropdown) {
+    userMenuToggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      userDropdown.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (userDropdown && !userDropdown.contains(e.target) && !userMenuToggle.contains(e.target)) {
+        userDropdown.classList.add('hidden');
+      }
+    });
+
+    dropdownListenersAdded = true;
+  }
 }
 
 // Update navbar to show logged-out state
