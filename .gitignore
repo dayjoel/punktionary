@@ -3,3 +3,8 @@ client_secret_468094396453-vbt8dbmg2a8qrp0ahmv48qfj6srcp2dq.apps.googleuserconte
 
 # auth
 login_with_google.php
+
+# internal tools and documentation
+generate-icon.html
+FACEBOOK_APP_REVIEW_INSTRUCTIONS.md
+DEPLOYMENT_INSTRUCTIONS.md
