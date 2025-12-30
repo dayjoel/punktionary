@@ -3,28 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-
   <title>Resources | PUNKtionary</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/punk-styles.css">
 </head>
 <body class="bg-black text-white font-sans">
-  <main class="pt-24 max-w-5xl mx-auto px-6">
-    <section class="py-24">
-      <h1 class="text-4xl font-bold mb-6">Resources</h1>
-      <p class="text-gray-300 mb-12">
+
+  <div id="navbar-container"></div>
+
+  <main class="pt-24 max-w-5xl mx-auto px-6 pb-24">
+    <section class="py-12">
+      <h1 class="text-5xl font-bold mb-8 uppercase tracking-wider punk-heading">Resources</h1>
+      <p class="text-gray-300 mb-12 text-lg">
         Tools and guides for artists, managers, and promoters to grow in the music scene.
       </p>
-      <div class="border border-gray-700 rounded-xl p-6 bg-gray-900/50">
-        <p class="text-gray-500 italic">[Resource listings will appear here]</p>
+
+      <div class="punk-card p-8">
+        <p class="text-gray-500 italic text-center py-12">[Resource listings will appear here]</p>
       </div>
     </section>
   </main>
 
-  <footer class="py-8 text-center text-gray-500 border-t border-gray-800 mt-24">
-    © 2025 PUNKtionary. All rights reserved.
-  </footer>
+  <!-- Load Login Modal -->
+  <div id="login-modal-container"></div>
 
-<script src="/navbar.js" defer></script>
+  <script src="/navbar.js"></script>
+  <script>
+    // Load login modal
+    fetch('/login-modal.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('login-modal-container').innerHTML = data;
+        if (typeof initLoginModal === 'function') {
+          initLoginModal();
+        }
+      })
+      .catch(error => console.error('Error loading login modal:', error));
+  </script>
+  <script>
+    // Load navbar
+    fetch('/navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+        if (typeof initNavbar === 'function') {
+          initNavbar();
+        }
+      });
+  </script>
+
 </body>
 </html>
