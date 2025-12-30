@@ -79,6 +79,9 @@
   <!-- Include Navbar -->
   <div id="navbar-container"></div>
 
+  <!-- Include Login Modal -->
+  <div id="login-modal-container"></div>
+
   <main class="pt-24 max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-12">
 
     <!-- Primary Column -->
@@ -181,6 +184,20 @@
         }
       })
       .catch(error => console.error('Error loading navbar:', error));
+  </script>
+
+  <!-- Load Login Modal -->
+  <script>
+    fetch('/login-modal.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('login-modal-container').innerHTML = data;
+        // Initialize modal controls after it's loaded
+        if (typeof initLoginModal === 'function') {
+          initLoginModal();
+        }
+      })
+      .catch(error => console.error('Error loading login modal:', error));
   </script>
 
   <script src="/navbar.js"></script>
