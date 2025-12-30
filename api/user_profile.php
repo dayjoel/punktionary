@@ -8,7 +8,7 @@ ini_set('display_errors', 1);
 
 require_once __DIR__ . '/../auth/session_config.php';
 require_once __DIR__ . '/../auth/helpers.php';
-require_once __DIR__ . '/../db_config.php';
+require_once __DIR__ . '/../../db_config.php';
 
 header('Content-Type: application/json');
 
