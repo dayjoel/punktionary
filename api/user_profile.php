@@ -8,10 +8,21 @@ require_once __DIR__ . '/../db_config.php';
 
 header('Content-Type: application/json');
 
+// Debug logging
+error_log('User profile accessed - Session ID: ' . session_id());
+error_log('Is authenticated: ' . (is_authenticated() ? 'yes' : 'no'));
+error_log('User ID: ' . get_current_user_id());
+
 // Require authentication
 if (!is_authenticated()) {
     http_response_code(401);
-    echo json_encode(['error' => 'Not authenticated']);
+    echo json_encode([
+        'error' => 'Not authenticated',
+        'debug' => [
+            'session_id' => session_id(),
+            'session_data' => $_SESSION
+        ]
+    ]);
     exit;
 }
 
