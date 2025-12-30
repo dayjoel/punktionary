@@ -1,12 +1,7 @@
 // submit.js - Handle form type switching and submissions
 
-let autocomplete = null;
-
-// Google Places API callback
-function initAutocomplete() {
-  // This is called when Google Maps API loads
-  // Autocomplete will be initialized when venue form is shown
-}
+let autocompleteSetup = false;
+let autocompleteTimeout = null;
 
 document.addEventListener('DOMContentLoaded', function() {
   initSubmitPage();
@@ -93,82 +88,162 @@ function showForm(type) {
 }
 
 function setupVenueAddressAutocomplete() {
-  // Only initialize once and if Google Maps is loaded
-  if (autocomplete || typeof google === 'undefined') {
+  if (autocompleteSetup) {
     return;
   }
+  autocompleteSetup = true;
 
   const addressInput = document.querySelector('#venueForm input[name="street_address"]');
   if (!addressInput) {
     return;
   }
 
-  // Create autocomplete instance restricted to US addresses
-  autocomplete = new google.maps.places.Autocomplete(addressInput, {
-    types: ['address'],
-    componentRestrictions: { country: 'us' }
-  });
+  // Create autocomplete dropdown container
+  const dropdown = document.createElement('div');
+  dropdown.id = 'address-autocomplete-dropdown';
+  dropdown.className = 'hidden absolute z-50 w-full bg-black border-2 border-pink-500 mt-1 max-h-60 overflow-y-auto';
+  dropdown.style.top = addressInput.offsetTop + addressInput.offsetHeight + 'px';
+  dropdown.style.left = addressInput.offsetLeft + 'px';
+  addressInput.parentElement.style.position = 'relative';
+  addressInput.parentElement.appendChild(dropdown);
 
-  // Listen for place selection
-  autocomplete.addListener('place_changed', function() {
-    const place = autocomplete.getPlace();
+  // Listen for input changes
+  addressInput.addEventListener('input', function() {
+    clearTimeout(autocompleteTimeout);
+    const input = this.value.trim();
 
-    if (!place.address_components) {
+    if (input.length < 3) {
+      dropdown.classList.add('hidden');
       return;
     }
 
-    // Extract address components
-    let streetNumber = '';
-    let route = '';
-    let city = '';
-    let state = '';
-    let postalCode = '';
+    // Debounce requests
+    autocompleteTimeout = setTimeout(async () => {
+      try {
+        const formData = new FormData();
+        formData.append('input', input);
 
-    place.address_components.forEach(component => {
-      const types = component.types;
+        const response = await fetch('/api/autocomplete_address.php', {
+          method: 'POST',
+          body: formData
+        });
 
-      if (types.includes('street_number')) {
-        streetNumber = component.long_name;
+        const data = await response.json();
+
+        if (data.predictions && data.predictions.length > 0) {
+          displayPredictions(data.predictions, dropdown, addressInput);
+        } else {
+          dropdown.classList.add('hidden');
+        }
+      } catch (error) {
+        console.error('Autocomplete error:', error);
+        dropdown.classList.add('hidden');
       }
-      if (types.includes('route')) {
-        route = component.long_name;
-      }
-      if (types.includes('locality')) {
-        city = component.long_name;
-      }
-      if (types.includes('administrative_area_level_1')) {
-        state = component.short_name; // Two-letter abbreviation
-      }
-      if (types.includes('postal_code')) {
-        postalCode = component.long_name;
-      }
-    });
+    }, 300);
+  });
 
-    // Populate form fields
-    const venueForm = document.getElementById('venueForm');
-
-    // Set street address
-    const fullAddress = `${streetNumber} ${route}`.trim();
-    addressInput.value = fullAddress;
-
-    // Set city
-    const cityInput = venueForm.querySelector('input[name="city"]');
-    if (cityInput && city) {
-      cityInput.value = city;
-    }
-
-    // Set state (select dropdown)
-    const stateSelect = venueForm.querySelector('select[name="state"]');
-    if (stateSelect && state) {
-      stateSelect.value = state;
-    }
-
-    // Set postal code
-    const postalInput = venueForm.querySelector('input[name="postal_code"]');
-    if (postalInput && postalCode) {
-      postalInput.value = postalCode;
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!addressInput.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.add('hidden');
     }
   });
+}
+
+function displayPredictions(predictions, dropdown, addressInput) {
+  dropdown.innerHTML = '';
+  dropdown.classList.remove('hidden');
+
+  predictions.forEach(prediction => {
+    const item = document.createElement('div');
+    item.className = 'px-4 py-3 cursor-pointer hover:bg-pink-500 hover:text-black transition-colors border-b border-pink-500/30 last:border-b-0';
+    item.textContent = prediction.description;
+    item.dataset.placeId = prediction.place_id;
+
+    item.addEventListener('click', async function() {
+      addressInput.value = prediction.description;
+      dropdown.classList.add('hidden');
+
+      // Get place details to populate other fields
+      await getPlaceDetails(prediction.place_id);
+    });
+
+    dropdown.appendChild(item);
+  });
+}
+
+async function getPlaceDetails(placeId) {
+  try {
+    const formData = new FormData();
+    formData.append('place_id', placeId);
+
+    const response = await fetch('/api/get_place_details.php', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (data.result && data.result.address_components) {
+      populateAddressFields(data.result.address_components);
+    }
+  } catch (error) {
+    console.error('Place details error:', error);
+  }
+}
+
+function populateAddressFields(addressComponents) {
+  const venueForm = document.getElementById('venueForm');
+  let streetNumber = '';
+  let route = '';
+  let city = '';
+  let state = '';
+  let postalCode = '';
+
+  addressComponents.forEach(component => {
+    const types = component.types;
+
+    if (types.includes('street_number')) {
+      streetNumber = component.long_name;
+    }
+    if (types.includes('route')) {
+      route = component.long_name;
+    }
+    if (types.includes('locality')) {
+      city = component.long_name;
+    }
+    if (types.includes('administrative_area_level_1')) {
+      state = component.short_name;
+    }
+    if (types.includes('postal_code')) {
+      postalCode = component.long_name;
+    }
+  });
+
+  // Set street address
+  const addressInput = venueForm.querySelector('input[name="street_address"]');
+  const fullAddress = `${streetNumber} ${route}`.trim();
+  if (addressInput) {
+    addressInput.value = fullAddress;
+  }
+
+  // Set city
+  const cityInput = venueForm.querySelector('input[name="city"]');
+  if (cityInput && city) {
+    cityInput.value = city;
+  }
+
+  // Set state
+  const stateSelect = venueForm.querySelector('select[name="state"]');
+  if (stateSelect && state) {
+    stateSelect.value = state;
+  }
+
+  // Set postal code
+  const postalInput = venueForm.querySelector('input[name="postal_code"]');
+  if (postalInput && postalCode) {
+    postalInput.value = postalCode;
+  }
 }
 
 function updateActiveButton(activeBtn, allButtons) {
