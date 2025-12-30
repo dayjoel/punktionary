@@ -28,26 +28,17 @@
         <div class="flex items-center gap-6 mb-8">
           <img id="profilePicture" class="h-24 w-24 rounded-full border-4 border-pink-500" alt="Profile Picture" />
           <div>
-            <h2 id="profileDisplayName" class="text-3xl font-bold mb-2"></h2>
+            <h2 id="profileDisplayName" class="text-3xl font-bold mb-1"></h2>
+            <p id="memberSince" class="text-sm text-gray-500 mb-2"></p>
             <p id="profileEmail" class="text-gray-400"></p>
             <p id="profileProvider" class="text-sm text-pink-500 mt-1"></p>
           </div>
         </div>
 
         <!-- Statistics -->
-        <div class="grid grid-cols-3 gap-4 mb-8">
-          <div class="text-center p-4 bg-gray-900 border-2 border-pink-500">
-            <div id="submissionCount" class="text-3xl font-bold text-pink-500">0</div>
-            <div class="text-sm text-gray-400 uppercase tracking-wide">Submissions</div>
-          </div>
-          <div class="text-center p-4 bg-gray-900 border-2 border-pink-500">
-            <div id="editCount" class="text-3xl font-bold text-pink-500">0</div>
-            <div class="text-sm text-gray-400 uppercase tracking-wide">Edits</div>
-          </div>
-          <div class="text-center p-4 bg-gray-900 border-2 border-pink-500">
-            <div id="memberSince" class="text-lg font-bold text-pink-500"></div>
-            <div class="text-sm text-gray-400 uppercase tracking-wide">Member Since</div>
-          </div>
+        <div class="mb-8 space-y-2">
+          <p class="text-gray-300"><span class="font-bold">Submissions:</span> <span id="submissionCount">0</span></p>
+          <p class="text-gray-300"><span class="font-bold">Edits:</span> <span id="editCount">0</span></p>
         </div>
 
         <!-- Update Profile Form -->
@@ -159,13 +150,13 @@
       document.getElementById('profileProvider').textContent =
         'Signed in with ' + user.oauth_provider.charAt(0).toUpperCase() + user.oauth_provider.slice(1);
 
+      // Set member since (formatted date)
+      const createdDate = new Date(user.created_at);
+      document.getElementById('memberSince').textContent = 'Member since ' + createdDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+
       // Set statistics
       document.getElementById('submissionCount').textContent = stats.submissions;
       document.getElementById('editCount').textContent = stats.edits;
-
-      // Set member since (just year)
-      const createdDate = new Date(user.created_at);
-      document.getElementById('memberSince').textContent = createdDate.getFullYear();
 
       // Pre-fill edit form
       document.getElementById('editDisplayName').value = user.display_name || '';
