@@ -83,6 +83,7 @@ function initNavbar() {
     if (btn) {
       btn.addEventListener('click', function() {
         if (loginOverlay) {
+          loginOverlay.classList.remove('hidden');
           loginOverlay.style.display = 'flex';
         }
         // Close mobile menu if open
@@ -94,12 +95,14 @@ function initNavbar() {
 
   closeLogin?.addEventListener('click', function() {
     if (loginOverlay) {
+      loginOverlay.classList.add('hidden');
       loginOverlay.style.display = 'none';
     }
   });
 
   loginOverlay?.addEventListener('click', function(e) {
     if (e.target === loginOverlay) {
+      loginOverlay.classList.add('hidden');
       loginOverlay.style.display = 'none';
     }
   });
