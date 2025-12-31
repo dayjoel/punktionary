@@ -207,6 +207,11 @@ h2 {
   box-shadow: 0 0 20px rgba(255, 0, 110, 0.15);
 }
 
+/* Disable button sweep animation in list view to prevent gray box artifact */
+.list-view-card .punk-button::before {
+  display: none;
+}
+
 /* Links with punk style */
 a.punk-link {
   color: var(--punk-pink);
