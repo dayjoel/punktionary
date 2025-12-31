@@ -173,18 +173,19 @@ function displayPredictions(predictions, dropdown, addressInput) {
     item.dataset.placeId = prediction.place_id;
 
     item.addEventListener('click', async function() {
-      addressInput.value = prediction.description;
+      const selectedDescription = prediction.description;
+      addressInput.value = selectedDescription;
       dropdown.classList.add('hidden');
 
       // Get place details to populate other fields
-      await getPlaceDetails(prediction.place_id);
+      await getPlaceDetails(prediction.place_id, selectedDescription);
     });
 
     dropdown.appendChild(item);
   });
 }
 
-async function getPlaceDetails(placeId) {
+async function getPlaceDetails(placeId, selectedDescription) {
   try {
     const formData = new FormData();
     formData.append('place_id', placeId);
@@ -202,7 +203,7 @@ async function getPlaceDetails(placeId) {
 
     if (data.result && data.result.address_components) {
       console.log('Address components found:', data.result.address_components);
-      populateAddressFields(data.result.address_components);
+      populateAddressFields(data.result.address_components, selectedDescription);
     } else {
       console.error('No address components in response:', data);
     }
@@ -211,7 +212,7 @@ async function getPlaceDetails(placeId) {
   }
 }
 
-function populateAddressFields(addressComponents) {
+function populateAddressFields(addressComponents, selectedDescription) {
   const venueForm = document.getElementById('venueForm');
   let streetNumber = '';
   let route = '';
@@ -243,15 +244,21 @@ function populateAddressFields(addressComponents) {
 
   console.log('Extracted components:', { streetNumber, route, city, state, postalCode });
 
-  // Set street address
+  // Set street address - try to extract from selected description if Google doesn't provide street_number
   const addressInput = venueForm.querySelector('input[name="street_address"]');
-  const fullAddress = `${streetNumber} ${route}`.trim();
   if (addressInput) {
-    // Only update if we have both street number and route
     if (streetNumber && route) {
-      addressInput.value = fullAddress;
+      // Google provided both - use them
+      addressInput.value = `${streetNumber} ${route}`;
+    } else if (!streetNumber && route && selectedDescription) {
+      // Google only provided route, try to extract street number from description
+      // Example: "10325 West Marginal Way, Tukwila, WA" -> extract "10325 West Marginal Way"
+      const parts = selectedDescription.split(',');
+      if (parts.length > 0) {
+        addressInput.value = parts[0].trim();
+      }
     } else if (!streetNumber && route) {
-      // If no street number, just use route
+      // No description, just use route
       addressInput.value = route;
     }
     // If neither, leave the user's input as-is
@@ -269,7 +276,7 @@ function populateAddressFields(addressComponents) {
     stateSelect.value = state;
   }
 
-  // Set postal code
+  // Set postal code - only update if Google provided one
   const postalInput = venueForm.querySelector('input[name="postal_code"]');
   if (postalInput && postalCode) {
     postalInput.value = postalCode;
