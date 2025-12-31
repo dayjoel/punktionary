@@ -128,6 +128,14 @@ function setupVenueAddressAutocomplete() {
           body: formData
         });
 
+        if (!response.ok) {
+          console.error('Autocomplete API error:', response.status, response.statusText);
+          const errorData = await response.json();
+          console.error('Error details:', errorData);
+          dropdown.classList.add('hidden');
+          return;
+        }
+
         const data = await response.json();
 
         if (data.predictions && data.predictions.length > 0) {
