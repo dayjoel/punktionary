@@ -34,7 +34,7 @@ try {
     // Build Google Places Details API request
     $url = 'https://maps.googleapis.com/maps/api/place/details/json?' . http_build_query([
         'place_id' => $place_id,
-        'fields' => 'address_components',
+        'fields' => 'address_components,formatted_address',
         'key' => GOOGLE_MAPS_API_KEY
     ]);
 

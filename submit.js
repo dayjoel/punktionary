@@ -101,11 +101,15 @@ function setupVenueAddressAutocomplete() {
   // Create autocomplete dropdown container
   const dropdown = document.createElement('div');
   dropdown.id = 'address-autocomplete-dropdown';
-  dropdown.className = 'hidden absolute z-50 w-full bg-black border-2 border-pink-500 mt-1 max-h-60 overflow-y-auto';
-  dropdown.style.top = addressInput.offsetTop + addressInput.offsetHeight + 'px';
-  dropdown.style.left = addressInput.offsetLeft + 'px';
-  addressInput.parentElement.style.position = 'relative';
-  addressInput.parentElement.appendChild(dropdown);
+  dropdown.className = 'hidden absolute z-50 bg-black border-2 border-pink-500 mt-1 max-h-60 overflow-y-auto';
+  dropdown.style.width = '100%';
+  dropdown.style.left = '0';
+  dropdown.style.top = '100%';
+
+  // Ensure parent has relative positioning
+  const parentDiv = addressInput.parentElement;
+  parentDiv.style.position = 'relative';
+  parentDiv.appendChild(dropdown);
 
   // Listen for input changes
   addressInput.addEventListener('input', function() {
@@ -193,7 +197,10 @@ async function getPlaceDetails(placeId) {
     const data = await response.json();
 
     if (data.result && data.result.address_components) {
+      console.log('Place details response:', data.result);
       populateAddressFields(data.result.address_components);
+    } else {
+      console.error('No address components in response:', data);
     }
   } catch (error) {
     console.error('Place details error:', error);
@@ -207,6 +214,8 @@ function populateAddressFields(addressComponents) {
   let city = '';
   let state = '';
   let postalCode = '';
+
+  console.log('Processing address components:', addressComponents);
 
   addressComponents.forEach(component => {
     const types = component.types;
@@ -228,11 +237,20 @@ function populateAddressFields(addressComponents) {
     }
   });
 
+  console.log('Extracted components:', { streetNumber, route, city, state, postalCode });
+
   // Set street address
   const addressInput = venueForm.querySelector('input[name="street_address"]');
   const fullAddress = `${streetNumber} ${route}`.trim();
   if (addressInput) {
-    addressInput.value = fullAddress;
+    // Only update if we have both street number and route
+    if (streetNumber && route) {
+      addressInput.value = fullAddress;
+    } else if (!streetNumber && route) {
+      // If no street number, just use route
+      addressInput.value = route;
+    }
+    // If neither, leave the user's input as-is
   }
 
   // Set city
