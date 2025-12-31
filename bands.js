@@ -4,6 +4,7 @@ let currentPage = 1;
 let currentPerPage = 12;
 let currentFilters = {};
 let currentSort = 'name_asc';
+let currentView = 'grid'; // 'grid' or 'list'
 
 document.addEventListener('DOMContentLoaded', function() {
   initBands();
@@ -56,6 +57,35 @@ function initBands() {
     currentPage = 1; // Reset to page 1
     loadBands(currentFilters);
   });
+
+  // View toggle buttons
+  const gridViewBtn = document.getElementById('gridViewBtn');
+  const listViewBtn = document.getElementById('listViewBtn');
+
+  gridViewBtn.addEventListener('click', function() {
+    currentView = 'grid';
+    updateViewButtons();
+    displayBands(window.currentBands || []);
+  });
+
+  listViewBtn.addEventListener('click', function() {
+    currentView = 'list';
+    updateViewButtons();
+    displayBands(window.currentBands || []);
+  });
+}
+
+function updateViewButtons() {
+  const gridViewBtn = document.getElementById('gridViewBtn');
+  const listViewBtn = document.getElementById('listViewBtn');
+
+  if (currentView === 'grid') {
+    gridViewBtn.className = 'px-3 py-2 bg-pink-500 text-black font-bold transition-colors';
+    listViewBtn.className = 'px-3 py-2 text-pink-500 hover:bg-pink-500 hover:text-black font-bold transition-colors';
+  } else {
+    gridViewBtn.className = 'px-3 py-2 text-pink-500 hover:bg-pink-500 hover:text-black font-bold transition-colors';
+    listViewBtn.className = 'px-3 py-2 bg-pink-500 text-black font-bold transition-colors';
+  }
 }
 
 function applyFilters() {
@@ -130,11 +160,21 @@ async function loadBands(filters = {}) {
 }
 
 function displayBands(bands) {
+  // Store bands for view switching
+  window.currentBands = bands;
+
   const bandsGrid = document.getElementById('bandsGrid');
   bandsGrid.innerHTML = '';
 
+  // Update container classes based on view
+  if (currentView === 'grid') {
+    bandsGrid.className = 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8';
+  } else {
+    bandsGrid.className = 'space-y-4 mb-8';
+  }
+
   bands.forEach(band => {
-    const card = createBandCard(band);
+    const card = currentView === 'grid' ? createBandCard(band) : createBandListItem(band);
     bandsGrid.appendChild(card);
   });
 }
@@ -193,6 +233,64 @@ function createBandCard(band) {
   });
 
   return card;
+}
+
+function createBandListItem(band) {
+  const item = document.createElement('div');
+  item.className = 'punk-card p-6 cursor-pointer';
+
+  // Parse links if they exist
+  let socialLinks = '';
+  if (band.links) {
+    try {
+      const links = JSON.parse(band.links);
+      socialLinks = Object.entries(links).map(([platform, url]) =>
+        `<a href="${url}" target="_blank" rel="noopener noreferrer" class="punk-link text-sm">${platform}</a>`
+      ).join(' • ');
+    } catch (e) {
+      if (band.links.trim()) {
+        socialLinks = `<a href="${band.links}" target="_blank" rel="noopener noreferrer" class="punk-link text-sm">Website</a>`;
+      }
+    }
+  }
+
+  // Status badge
+  const statusBadge = band.active ?
+    '<span class="punk-badge">Active</span>' :
+    '<span class="inline-block bg-gray-700 text-gray-300 px-3 py-1 text-xs font-bold uppercase">Inactive</span>';
+
+  item.innerHTML = `
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div class="flex-1">
+        <div class="mb-3">
+          <h3 class="text-3xl font-bold mb-2 inline-block mr-3" style="font-family: 'Bebas Neue', sans-serif;">
+            ${band.name}
+          </h3>
+          ${statusBadge}
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm mb-3">
+          ${band.genre ? `<p class="text-gray-300"><span class="text-pink-500 font-bold">Genre:</span> ${band.genre}</p>` : ''}
+          ${band.city || band.state ? `<p class="text-gray-300"><span class="text-pink-500 font-bold">Location:</span> ${[band.city, band.state].filter(Boolean).join(', ')}</p>` : ''}
+        </div>
+
+        ${socialLinks ? `<div class="mt-3 text-sm">${socialLinks}</div>` : ''}
+      </div>
+
+      <div class="flex-shrink-0">
+        <a href="/band.html?id=${band.id}" class="punk-button">View Details →</a>
+      </div>
+    </div>
+  `;
+
+  // Make whole item clickable except the button
+  item.addEventListener('click', function(e) {
+    if (e.target.tagName !== 'A' && !e.target.closest('a')) {
+      window.location.href = `/band.html?id=${band.id}`;
+    }
+  });
+
+  return item;
 }
 
 function displayPagination(pagination) {
