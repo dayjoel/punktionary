@@ -181,7 +181,7 @@ h2 {
   position: relative;
 }
 
-/* Hover effect only for band/venue summary cards */
+/* Hover effect only for band/venue summary cards in grid view */
 .band-summary-card,
 .venue-summary-card {
   transition: all 0.3s ease;
@@ -193,6 +193,16 @@ h2 {
   border-color: var(--punk-pink-bright);
   box-shadow: 0 0 20px rgba(255, 0, 110, 0.25);
   transform: translateY(-2px);
+}
+
+/* List view specific card styling - subtle hover without artifacts */
+.list-view-card {
+  transition: all 0.3s ease;
+}
+
+.list-view-card:hover {
+  border-color: var(--punk-pink-bright);
+  box-shadow: 0 0 20px rgba(255, 0, 110, 0.15);
 }
 
 /* Links with punk style */
