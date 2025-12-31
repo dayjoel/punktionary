@@ -196,8 +196,12 @@ async function getPlaceDetails(placeId) {
 
     const data = await response.json();
 
+    console.log('=== FULL PLACES API RESPONSE ===');
+    console.log(JSON.stringify(data, null, 2));
+    console.log('=== END RESPONSE ===');
+
     if (data.result && data.result.address_components) {
-      console.log('Place details response:', data.result);
+      console.log('Address components found:', data.result.address_components);
       populateAddressFields(data.result.address_components);
     } else {
       console.error('No address components in response:', data);
