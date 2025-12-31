@@ -48,10 +48,22 @@ try {
 
     $response = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curl_error = curl_error($ch);
     curl_close($ch);
 
+    if ($response === false) {
+        throw new Exception('cURL error: ' . $curl_error);
+    }
+
     if ($http_code !== 200) {
-        throw new Exception('Google API request failed');
+        error_log('Google API returned HTTP ' . $http_code . ': ' . $response);
+        throw new Exception('Google API request failed with HTTP ' . $http_code);
+    }
+
+    // Parse response to check for API errors
+    $data = json_decode($response, true);
+    if (isset($data['status']) && $data['status'] !== 'OK' && $data['status'] !== 'ZERO_RESULTS') {
+        error_log('Google API error status: ' . $data['status'] . (isset($data['error_message']) ? ' - ' . $data['error_message'] : ''));
     }
 
     // Return the response from Google
