@@ -198,9 +198,11 @@ h2 {
 /* List view specific card styling - subtle hover without artifacts */
 .list-view-card {
   transition: all 0.3s ease;
+  background: transparent;
 }
 
 .list-view-card:hover {
+  background: rgba(26, 26, 26, 0.3);
   border-color: var(--punk-pink-bright);
   box-shadow: 0 0 20px rgba(255, 0, 110, 0.15);
 }
