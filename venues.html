@@ -114,8 +114,22 @@
             <div id="resultsCount" class="text-gray-400">
               Loading...
             </div>
-            
+
             <div class="flex flex-wrap items-center gap-4">
+              <!-- View Toggle -->
+              <div class="flex items-center gap-2 border-2 border-pink-500 rounded">
+                <button id="gridViewBtn" class="px-3 py-2 bg-pink-500 text-black font-bold transition-colors" title="Grid View">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                  </svg>
+                </button>
+                <button id="listViewBtn" class="px-3 py-2 text-pink-500 hover:bg-pink-500 hover:text-black font-bold transition-colors" title="List View">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+
               <!-- Sort Selector -->
               <div class="flex items-center gap-3">
                 <label class="text-sm text-gray-400 uppercase tracking-wide">Sort:</label>
@@ -126,7 +140,7 @@
                   <option value="oldest">Oldest</option>
                 </select>
               </div>
-              
+
               <!-- Per Page Selector -->
               <div class="flex items-center gap-3">
                 <label class="text-sm text-gray-400 uppercase tracking-wide">Show:</label>
