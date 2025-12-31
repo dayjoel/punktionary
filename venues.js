@@ -235,7 +235,7 @@ function createVenueCard(venue) {
 
 function createVenueListItem(venue) {
   const item = document.createElement('div');
-  item.className = 'punk-card p-6 cursor-pointer';
+  item.className = 'punk-card list-view-card p-6 cursor-pointer';
 
   // Parse links if they exist
   let socialLinks = '';
