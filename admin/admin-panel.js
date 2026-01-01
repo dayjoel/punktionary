@@ -4,11 +4,18 @@ let currentUser = null;
 let selectedUser = null;
 
 // Load data when page loads
-document.addEventListener('DOMContentLoaded', function() {
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPage);
+} else {
+    // DOM already loaded
+    initPage();
+}
+
+function initPage() {
     loadCurrentUser();
     loadStats();
     setupSearch();
-});
+}
 
 async function loadCurrentUser() {
     try {
