@@ -68,6 +68,30 @@ function initSubmitPage() {
     });
   });
 
+  // "Ask a punk" checkbox for venue address
+  const askAPunkCheckbox = document.getElementById('askAPunk');
+  const addressFields = document.getElementById('addressFields');
+
+  if (askAPunkCheckbox && addressFields) {
+    askAPunkCheckbox.addEventListener('change', function() {
+      if (this.checked) {
+        // Hide and disable address fields
+        addressFields.style.display = 'none';
+        document.getElementById('street_address').disabled = true;
+        document.getElementById('city').disabled = true;
+        document.getElementById('postal_code').disabled = true;
+        document.getElementById('state').disabled = true;
+      } else {
+        // Show and enable address fields
+        addressFields.style.display = 'block';
+        document.getElementById('street_address').disabled = false;
+        document.getElementById('city').disabled = false;
+        document.getElementById('postal_code').disabled = false;
+        document.getElementById('state').disabled = false;
+      }
+    });
+  }
+
   // Switch to band form
   selectBand.addEventListener('click', function() {
     showForm('band');

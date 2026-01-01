@@ -16,14 +16,15 @@
 
   <main class="pt-24 max-w-5xl mx-auto px-6 pb-24">
     
-    <!-- Back Button -->
-    <div class="mb-8">
+    <!-- Back Button and Actions -->
+    <div class="mb-8 flex items-center justify-between">
       <a href="/venues.html" class="punk-link inline-flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
         Back to Venues
       </a>
+      <button id="suggestEditBtn" class="punk-button-outline hidden">Suggest Edit</button>
     </div>
 
     <!-- Loading State -->
@@ -124,6 +125,110 @@
       </div>
     </div>
 
+    <!-- Edit Suggestion Modal -->
+    <div id="editModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="punk-card max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-3xl font-bold uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+            Suggest Edit
+          </h2>
+          <button id="closeEditModal" class="text-pink-500 hover:text-pink-400 text-3xl leading-none">&times;</button>
+        </div>
+
+        <p class="text-gray-300 mb-6">Suggest changes to this venue's information. Your suggestions will be reviewed before being applied.</p>
+
+        <form id="editForm" class="space-y-4">
+          <input type="hidden" id="editVenueId" name="venue_id" />
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Venue Name</label>
+            <input type="text" id="editName" name="name" class="punk-input" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Type</label>
+            <select id="editType" name="type" class="punk-input">
+              <option value="">Select venue type</option>
+              <option value="Bar">Bar</option>
+              <option value="Club">Club</option>
+              <option value="Coffee Shop">Coffee Shop</option>
+              <option value="Record Store">Record Store</option>
+              <option value="House">House</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Capacity</label>
+            <input type="number" id="editCapacity" name="capacity" class="punk-input" placeholder="e.g., 200" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Address</label>
+            <div class="mb-3">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="askAPunkCheckbox" class="accent-pink-500" />
+                <span>Ask a punk (address unknown)</span>
+              </label>
+            </div>
+            <div id="addressFields" class="space-y-3">
+              <input type="text" id="editStreetAddress" name="street_address" class="punk-input" placeholder="Street Address" />
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <input type="text" id="editCity" name="city" class="punk-input" placeholder="City" />
+                <input type="text" id="editState" name="state" class="punk-input" placeholder="State" />
+                <input type="text" id="editPostalCode" name="postal_code" class="punk-input" placeholder="Postal Code" />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Age Restriction</label>
+            <div class="flex flex-wrap gap-4">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="age_restriction" value="All Ages" class="accent-pink-500" />
+                <span>All Ages</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="age_restriction" value="21+" class="accent-pink-500" />
+                <span>21+</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="age_restriction" value="18+" class="accent-pink-500" />
+                <span>18+</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="age_restriction" value="Mixed" class="accent-pink-500" />
+                <span>Mixed</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Booking Contact</label>
+            <input type="text" id="editBookingContact" name="booking_contact" class="punk-input" placeholder="Email or phone number" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Website Link</label>
+            <input type="url" id="editWebsiteLink" name="website_link" class="punk-input" placeholder="https://example.com" />
+          </div>
+
+          <div class="flex gap-4 pt-4">
+            <button type="submit" class="punk-button flex-1">Submit Suggestion</button>
+            <button type="button" id="cancelEdit" class="punk-button-outline flex-1">Cancel</button>
+          </div>
+        </form>
+
+        <!-- Success/Error Messages -->
+        <div id="editSuccess" class="hidden mt-4 p-4 bg-pink-500/20 border-2 border-pink-500 rounded">
+          <p class="text-pink-500 font-bold">Your edit suggestion has been submitted for review!</p>
+        </div>
+        <div id="editError" class="hidden mt-4 p-4 bg-red-500/20 border-2 border-red-500 rounded">
+          <p class="text-red-500 font-bold" id="editErrorText"></p>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <!-- Footer -->
@@ -185,8 +290,14 @@
         // Update page title
         document.title = `${venue.name} | PUNKtionary`;
 
+        // Store venue data for edit modal
+        currentVenueData = venue;
+
         // Populate venue details
         displayVenueDetails(venue);
+
+        // Show suggest edit button
+        document.getElementById('suggestEditBtn').classList.remove('hidden');
 
       } catch (error) {
         console.error('Error loading venue:', error);
@@ -284,6 +395,144 @@
       document.getElementById('loadingState').classList.add('hidden');
       document.getElementById('errorState').classList.remove('hidden');
     }
+
+    // Edit Modal Functionality
+    let currentVenueData = null;
+
+    // "Ask a punk" checkbox toggle
+    document.getElementById('askAPunkCheckbox').addEventListener('change', function() {
+      const addressFields = document.getElementById('addressFields');
+      const streetAddress = document.getElementById('editStreetAddress');
+      const city = document.getElementById('editCity');
+      const state = document.getElementById('editState');
+      const postalCode = document.getElementById('editPostalCode');
+
+      if (this.checked) {
+        // Hide and disable address fields
+        addressFields.classList.add('hidden');
+        streetAddress.disabled = true;
+        city.disabled = true;
+        state.disabled = true;
+        postalCode.disabled = true;
+        // Clear values
+        streetAddress.value = '';
+        city.value = '';
+        state.value = '';
+        postalCode.value = '';
+      } else {
+        // Show and enable address fields
+        addressFields.classList.remove('hidden');
+        streetAddress.disabled = false;
+        city.disabled = false;
+        state.disabled = false;
+        postalCode.disabled = false;
+      }
+    });
+
+    document.getElementById('suggestEditBtn').addEventListener('click', function() {
+      if (!currentVenueData) return;
+
+      // Populate form with current data
+      populateEditForm(currentVenueData);
+
+      // Show modal
+      document.getElementById('editModal').classList.remove('hidden');
+    });
+
+    document.getElementById('closeEditModal').addEventListener('click', closeEditModal);
+    document.getElementById('cancelEdit').addEventListener('click', closeEditModal);
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.add('hidden');
+      document.getElementById('editSuccess').classList.add('hidden');
+      document.getElementById('editError').classList.add('hidden');
+    }
+
+    function populateEditForm(venue) {
+      document.getElementById('editVenueId').value = venue.id;
+      document.getElementById('editName').value = venue.name || '';
+      document.getElementById('editType').value = venue.type || '';
+      document.getElementById('editCapacity').value = venue.capacity || '';
+      document.getElementById('editStreetAddress').value = venue.street_address || '';
+      document.getElementById('editCity').value = venue.city || '';
+      document.getElementById('editState').value = venue.state || '';
+      document.getElementById('editPostalCode').value = venue.postal_code || '';
+      document.getElementById('editBookingContact').value = venue.booking_contact || '';
+
+      // Check if address is unknown - if all address fields are empty, check the "Ask a punk" box
+      const hasAddress = venue.street_address || venue.city || venue.state || venue.postal_code;
+      document.getElementById('askAPunkCheckbox').checked = !hasAddress;
+
+      // Trigger the checkbox event to show/hide fields
+      if (!hasAddress) {
+        document.getElementById('addressFields').classList.add('hidden');
+        document.getElementById('editStreetAddress').disabled = true;
+        document.getElementById('editCity').disabled = true;
+        document.getElementById('editState').disabled = true;
+        document.getElementById('editPostalCode').disabled = true;
+      }
+
+      // Set website link
+      if (venue.links) {
+        try {
+          const links = JSON.parse(venue.links);
+          document.getElementById('editWebsiteLink').value = links.Website || '';
+        } catch(e) {
+          // If not JSON, treat as single link
+          document.getElementById('editWebsiteLink').value = venue.links || '';
+        }
+      }
+
+      // Set age restriction
+      if (venue.age_restriction) {
+        const ageRadio = document.querySelector(`input[name="age_restriction"][value="${venue.age_restriction}"]`);
+        if (ageRadio) {
+          ageRadio.checked = true;
+        }
+      }
+    }
+
+    document.getElementById('editForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      // Hide previous messages
+      document.getElementById('editSuccess').classList.add('hidden');
+      document.getElementById('editError').classList.add('hidden');
+
+      // Collect form data
+      const formData = new FormData(this);
+
+      // Process website link
+      const websiteLink = formData.get('website_link');
+      formData.delete('website_link');
+      if (websiteLink && websiteLink.trim()) {
+        const links = { Website: websiteLink.trim() };
+        formData.set('links', JSON.stringify(links));
+      }
+
+      try {
+        const response = await fetch('/api/submit_edit.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          document.getElementById('editSuccess').classList.remove('hidden');
+          setTimeout(() => {
+            closeEditModal();
+          }, 2000);
+        } else {
+          document.getElementById('editErrorText').textContent = data.error || 'Failed to submit edit suggestion';
+          document.getElementById('editError').classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Edit submission error:', error);
+        document.getElementById('editErrorText').textContent = 'Network error. Please try again.';
+        document.getElementById('editError').classList.remove('hidden');
+      }
+    });
   </script>
 </body>
 </html>
