@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Punktionary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/punk-styles.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="bg-black text-white font-sans">
+    <!-- Include Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Main Content -->
+    <main class="pt-24 max-w-7xl mx-auto px-6">
+    <div class="py-12">
+        <div class="mb-8">
+            <h1 class="text-4xl font-black uppercase mb-2 punk-gradient-text">Admin Panel</h1>
+            <p class="text-gray-400">Manage users and review edit suggestions</p>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Pending Edits Card -->
+            <div class="punk-card p-6">
+                <h2 class="text-2xl font-bold mb-4 uppercase tracking-wider">Edit Review Queue</h2>
+                <div class="mb-4">
+                    <div class="text-5xl font-black punk-gradient-text mb-2" id="pendingCount">
+                        <span class="inline-block animate-pulse">...</span>
+                    </div>
+                    <p class="text-gray-400">Pending edit suggestions</p>
+                </div>
+                <a href="/admin/review-edits.html" class="punk-button inline-block">Review Edits</a>
+            </div>
+
+            <!-- User Management Card -->
+            <div class="punk-card p-6">
+                <h2 class="text-2xl font-bold mb-4 uppercase tracking-wider">User Management</h2>
+                <p class="text-gray-400 mb-4">Search for a user by name or email to manage their account privileges</p>
+                <div class="mb-4">
+                    <input type="text"
+                           id="userSearch"
+                           placeholder="Search by name or email..."
+                           class="punk-input mb-2" />
+                    <button id="searchBtn" class="punk-button w-full">Search Users</button>
+                </div>
+
+                <!-- Search Results -->
+                <div id="searchResults" class="hidden mt-4">
+                    <h3 class="font-bold mb-2 text-pink-500">Search Results:</h3>
+                    <div id="searchResultsList" class="space-y-2 max-h-96 overflow-y-auto">
+                        <!-- Results will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- No Results -->
+                <div id="noResults" class="hidden mt-4 p-4 bg-gray-900/50 border border-gray-700 rounded text-center">
+                    <p class="text-gray-500">No users found</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="punk-card p-6 text-center">
+                <div class="text-3xl font-black text-pink-500 mb-2" id="approvedCount">
+                    <span class="inline-block animate-pulse">...</span>
+                </div>
+                <p class="text-gray-400 text-sm uppercase tracking-wide">Approved Edits</p>
+            </div>
+            <div class="punk-card p-6 text-center">
+                <div class="text-3xl font-black text-red-500 mb-2" id="rejectedCount">
+                    <span class="inline-block animate-pulse">...</span>
+                </div>
+                <p class="text-gray-400 text-sm uppercase tracking-wide">Rejected Edits</p>
+            </div>
+            <div class="punk-card p-6 text-center">
+                <div class="text-3xl font-black text-purple-500 mb-2" id="totalUsersCount">
+                    <span class="inline-block animate-pulse">...</span>
+                </div>
+                <p class="text-gray-400 text-sm uppercase tracking-wide">Total Users</p>
+            </div>
+        </div>
+    </div>
+    </main>
+
+    <!-- User Edit Modal -->
+    <div id="userModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="punk-card max-w-2xl w-full">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-2xl font-black uppercase punk-gradient-text mb-2">Manage User</h2>
+                </div>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+
+            <!-- User Info -->
+            <div id="userInfo" class="mb-6">
+                <!-- User details will be shown here -->
+            </div>
+
+            <!-- Account Type Actions -->
+            <div id="accountActions" class="mb-6">
+                <h3 class="font-bold text-pink-500 mb-3">Change Account Type:</h3>
+                <div class="flex gap-3 flex-wrap">
+                    <button onclick="changeUserAccountType(0)" class="punk-button-outline">
+                        Make User
+                    </button>
+                    <button onclick="changeUserAccountType(1)" class="punk-button">
+                        Make Admin
+                    </button>
+                    <button onclick="changeUserAccountType(2)" id="makeGodBtn" class="punk-button bg-purple-600 hover:bg-purple-700">
+                        Make God
+                    </button>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div id="modalMessage" class="hidden p-4 rounded mb-4"></div>
+        </div>
+    </div>
+
+    <script>
+        // Load navbar
+        fetch('/navbar.html')
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById('navbar-container').innerHTML = data;
+          })
+          .catch(error => console.error('Error loading navbar:', error));
+    </script>
+    <script src="/navbar.js"></script>
+    <script src="admin-panel.js"></script>
+</body>
+</html>
