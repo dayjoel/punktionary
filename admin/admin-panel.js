@@ -1,6 +1,6 @@
 // admin-panel.js - Unified admin panel
 
-let currentUser = null;
+let adminCurrentUser = null;
 let selectedUser = null;
 
 // Load data when page loads
@@ -22,7 +22,7 @@ async function loadCurrentUser() {
         const response = await fetch('/api/user_profile.php');
         const data = await response.json();
         if (data.success) {
-            currentUser = data.user;
+            adminCurrentUser = data.user;
         }
     } catch (error) {
         console.error('Error loading current user:', error);
@@ -217,8 +217,8 @@ function openUserModal(user) {
     `;
 
     // Check permissions
-    const currentAccountType = currentUser ? currentUser.account_type : 0;
-    const isCurrentUser = currentUser && user.id == currentUser.id;
+    const currentAccountType = adminCurrentUser ? adminCurrentUser.account_type : 0;
+    const isCurrentUser = adminCurrentUser && user.id == adminCurrentUser.id;
 
     // Hide/show god button based on permissions
     const makeGodBtn = document.getElementById('makeGodBtn');
