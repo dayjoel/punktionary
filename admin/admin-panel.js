@@ -29,14 +29,14 @@ async function loadStats() {
         const editsData = await editsResponse.json();
 
         if (editsData.success) {
-            document.getElementById('pendingCount').textContent = editsData.counts.pending || 0;
-            document.getElementById('approvedCount').textContent = editsData.counts.approved || 0;
-            document.getElementById('rejectedCount').textContent = editsData.counts.rejected || 0;
+            document.getElementById('pendingCount').innerHTML = editsData.counts.pending || 0;
+            document.getElementById('approvedCount').innerHTML = editsData.counts.approved || 0;
+            document.getElementById('rejectedCount').innerHTML = editsData.counts.rejected || 0;
         } else {
             console.error('Failed to load edit counts:', editsData.error);
-            document.getElementById('pendingCount').textContent = '0';
-            document.getElementById('approvedCount').textContent = '0';
-            document.getElementById('rejectedCount').textContent = '0';
+            document.getElementById('pendingCount').innerHTML = '0';
+            document.getElementById('approvedCount').innerHTML = '0';
+            document.getElementById('rejectedCount').innerHTML = '0';
         }
 
         // Load user count
@@ -44,10 +44,10 @@ async function loadStats() {
         const usersData = await usersResponse.json();
 
         if (usersData.success) {
-            document.getElementById('totalUsersCount').textContent = usersData.users.length;
+            document.getElementById('totalUsersCount').innerHTML = usersData.users.length;
         } else {
             console.error('Failed to load user count:', usersData.error);
-            document.getElementById('totalUsersCount').textContent = '0';
+            document.getElementById('totalUsersCount').innerHTML = '0';
         }
     } catch (error) {
         console.error('Error loading stats:', error);
