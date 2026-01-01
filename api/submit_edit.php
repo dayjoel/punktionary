@@ -61,10 +61,22 @@ try {
         $filename = 'band_' . uniqid() . '_' . time() . '.' . $extension;
         $filepath = $upload_dir . $filename;
 
-        if (move_uploaded_file($file['tmp_name'], $filepath)) {
+        error_log('Attempting file upload - tmp: ' . $file['tmp_name'] . ' to: ' . $filepath);
+        error_log('Temp file exists: ' . (file_exists($file['tmp_name']) ? 'yes' : 'no'));
+        error_log('Upload dir exists: ' . (is_dir($upload_dir) ? 'yes' : 'no'));
+        error_log('Upload dir writable: ' . (is_writable($upload_dir) ? 'yes' : 'no'));
+
+        $move_result = move_uploaded_file($file['tmp_name'], $filepath);
+        error_log('Move result: ' . ($move_result ? 'success' : 'failed'));
+        error_log('File exists after move: ' . (file_exists($filepath) ? 'yes' : 'no'));
+
+        if ($move_result) {
             $logo_url = '/uploads/band-logos/' . $filename;
+            error_log('Logo URL set to: ' . $logo_url);
         } else {
             error_log('Failed to move uploaded file: ' . $file['tmp_name'] . ' to ' . $filepath);
+            http_response_code(500);
+            die(json_encode(['success' => false, 'error' => 'Failed to save uploaded file']));
         }
     } elseif ($logo_source === 'url' && isset($_POST['logo_url']) && !empty(trim($_POST['logo_url']))) {
         $logo_url = trim($_POST['logo_url']);
@@ -103,11 +115,21 @@ try {
     $stmt->bind_param('ssis', $entity_type, $entity_id, $user_id, $changes_json);
 
     if ($stmt->execute()) {
-        echo json_encode([
+        $response = [
             'success' => true,
             'message' => 'Edit suggestion submitted successfully',
             'id' => $stmt->insert_id
-        ]);
+        ];
+
+        // Debug: include upload details if logo was uploaded
+        if ($logo_source === 'upload' && $logo_url !== null) {
+            $response['debug'] = [
+                'logo_url' => $logo_url,
+                'file_exists' => file_exists(__DIR__ . '/../../' . $logo_url)
+            ];
+        }
+
+        echo json_encode($response);
     } else {
         throw new Exception('Execute failed: ' . $stmt->error);
     }
