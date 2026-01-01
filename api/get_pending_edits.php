@@ -1,7 +1,7 @@
 <?php
 // get_pending_edits.php - Fetch pending edits for admin review
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 header('Content-Type: application/json');
 
