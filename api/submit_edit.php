@@ -123,9 +123,13 @@ try {
 
         // Debug: include upload details if logo was uploaded
         if ($logo_source === 'upload' && $logo_url !== null) {
+            $full_path = __DIR__ . '/../../' . $logo_url;
             $response['debug'] = [
                 'logo_url' => $logo_url,
-                'file_exists' => file_exists(__DIR__ . '/../../' . $logo_url)
+                'full_path_checked' => $full_path,
+                'file_exists' => file_exists($full_path),
+                '__DIR__' => __DIR__,
+                'realpath_of_upload_dir' => realpath(__DIR__ . '/../../uploads/band-logos/')
             ];
         }
 
