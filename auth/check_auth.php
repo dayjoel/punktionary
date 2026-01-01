@@ -21,8 +21,9 @@ if (is_authenticated()) {
             'user' => [
                 'id' => $user_data['id'],
                 'display_name' => $user_data['display_name'],
-                'profile_picture' => $user_data['profile_picture_url'],
-                'oauth_provider' => $user_data['oauth_provider']
+                'profile_picture_url' => $user_data['profile_picture_url'],
+                'oauth_provider' => $user_data['oauth_provider'],
+                'account_type' => isset($user_data['account_type']) ? (int)$user_data['account_type'] : 0
             ]
         ]);
     } else {
