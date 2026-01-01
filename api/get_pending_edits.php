@@ -86,6 +86,16 @@ try {
             $entity_result = $entity_stmt->get_result();
             $entity_data = $entity_result->fetch_assoc();
             $entity_stmt->close();
+
+            // Decode JSON fields in band data
+            if ($entity_data) {
+                if (isset($entity_data['albums']) && is_string($entity_data['albums'])) {
+                    $entity_data['albums'] = json_decode($entity_data['albums'], true);
+                }
+                if (isset($entity_data['links']) && is_string($entity_data['links'])) {
+                    $entity_data['links'] = json_decode($entity_data['links'], true);
+                }
+            }
         } elseif ($row['entity_type'] === 'venue') {
             $entity_stmt = $conn->prepare("SELECT * FROM venues WHERE id = ?");
             $entity_stmt->bind_param('i', $row['entity_id']);
@@ -93,6 +103,13 @@ try {
             $entity_result = $entity_stmt->get_result();
             $entity_data = $entity_result->fetch_assoc();
             $entity_stmt->close();
+
+            // Decode JSON fields in venue data
+            if ($entity_data) {
+                if (isset($entity_data['links']) && is_string($entity_data['links'])) {
+                    $entity_data['links'] = json_decode($entity_data['links'], true);
+                }
+            }
         }
 
         $row['original_data'] = $entity_data;
