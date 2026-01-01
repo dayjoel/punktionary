@@ -47,24 +47,26 @@
           <p class="text-gray-300"><span class="font-bold">Edits:</span> <span id="editCount">0</span></p>
         </div>
 
-        <!-- Update Profile Form -->
-        <form id="updateProfileForm" class="space-y-4 mb-8">
+        <!-- Update Profile -->
+        <div class="mb-8">
           <h3 class="text-2xl font-bold mb-4 uppercase tracking-wider">Update Profile</h3>
 
-          <div>
+          <!-- Display Name Section -->
+          <form id="updateProfileForm" class="mb-6">
             <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Display Name</label>
-            <input type="text" id="editDisplayName" class="punk-input" placeholder="Enter your display name" />
-          </div>
+            <div class="flex gap-2">
+              <input type="text" id="editDisplayName" class="punk-input flex-1" placeholder="Enter your display name" />
+              <button type="submit" class="punk-button">Update Display Name</button>
+            </div>
+          </form>
 
+          <!-- Profile Picture Section -->
           <div>
             <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Profile Picture</label>
             <input type="file" id="profilePictureFile" accept="image/*" class="punk-input" />
-            <p class="text-xs text-gray-500 mt-1">Upload a square image for best results</p>
-            <button type="button" id="uploadImageBtn" class="punk-button-outline mt-2 hidden">Crop & Upload Image</button>
+            <p class="text-xs text-gray-500 mt-1">Upload a square image for best results. Changes are saved automatically after cropping.</p>
           </div>
-
-          <button type="submit" class="punk-button">Update Profile</button>
-        </form>
+        </div>
 
         <!-- Image Crop Modal -->
         <div id="cropModal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
