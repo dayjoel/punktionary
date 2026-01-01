@@ -90,7 +90,14 @@ try {
 
             foreach ($field_changes as $field => $value) {
                 $update_fields[] = "$field = ?";
-                $update_values[] = $value;
+
+                // JSON encode arrays and objects for database storage
+                if (is_array($value) || is_object($value)) {
+                    $update_values[] = json_encode($value);
+                } else {
+                    $update_values[] = $value;
+                }
+
                 $update_types .= 's';
             }
 
