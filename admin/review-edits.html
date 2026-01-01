@@ -33,9 +33,34 @@
             </button>
         </div>
 
+        <!-- Date Filter (for approved/rejected) -->
+        <div id="dateFilter" class="hidden mb-6 punk-card p-4">
+            <div class="flex gap-4 flex-wrap items-end">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-bold mb-2 text-pink-500">Start Date</label>
+                    <input type="date" id="startDate" class="punk-input" />
+                </div>
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-bold mb-2 text-pink-500">End Date</label>
+                    <input type="date" id="endDate" class="punk-input" />
+                </div>
+                <div class="flex gap-2">
+                    <button id="applyFilter" class="punk-button">Apply Filter</button>
+                    <button id="clearFilter" class="punk-button-outline">Clear</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Edit List -->
         <div id="editsList" class="space-y-4">
             <!-- Edits will be loaded here -->
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="hidden mt-8 flex justify-center items-center gap-4">
+            <button id="prevPage" class="punk-button-outline" disabled>Previous</button>
+            <span id="pageInfo" class="text-gray-400">Page 1 of 1</span>
+            <button id="nextPage" class="punk-button-outline" disabled>Next</button>
         </div>
 
         <!-- Empty State -->
