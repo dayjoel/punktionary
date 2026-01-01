@@ -2,10 +2,25 @@
 let navbarInitialized = false;
 let currentUser = null;
 
+// Try to initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-  // Wait a bit for navbar to be loaded if it's fetched
-  setTimeout(initNavbar, 100);
+  // Wait for navbar to be loaded if it's fetched
+  waitForNavbarAndInit();
 });
+
+// Wait for navbar elements to exist before initializing
+function waitForNavbarAndInit() {
+  const checkNavbar = setInterval(() => {
+    // Check if navbar elements exist
+    if (document.getElementById('desktopLoginBtn')) {
+      clearInterval(checkNavbar);
+      initNavbar();
+    }
+  }, 50); // Check every 50ms
+
+  // Timeout after 5 seconds to prevent infinite waiting
+  setTimeout(() => clearInterval(checkNavbar), 5000);
+}
 
 function initNavbar() {
   // Prevent double initialization
