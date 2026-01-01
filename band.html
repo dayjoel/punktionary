@@ -16,14 +16,15 @@
 
   <main class="pt-24 max-w-5xl mx-auto px-6 pb-24">
     
-    <!-- Back Button -->
-    <div class="mb-8">
+    <!-- Back Button and Actions -->
+    <div class="mb-8 flex items-center justify-between">
       <a href="/bands.html" class="punk-link inline-flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
         Back to Bands
       </a>
+      <button id="suggestEditBtn" class="punk-button-outline hidden">Suggest Edit</button>
     </div>
 
     <!-- Loading State -->
@@ -133,6 +134,94 @@
       </div>
     </div>
 
+    <!-- Edit Suggestion Modal -->
+    <div id="editModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="punk-card max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-3xl font-bold uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+            Suggest Edit
+          </h2>
+          <button id="closeEditModal" class="text-pink-500 hover:text-pink-400 text-3xl leading-none">&times;</button>
+        </div>
+
+        <p class="text-gray-300 mb-6">Suggest changes to this band's information. Your suggestions will be reviewed before being applied.</p>
+
+        <form id="editForm" class="space-y-4">
+          <input type="hidden" id="editBandId" name="band_id" />
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Band Name</label>
+            <input type="text" id="editName" name="name" class="punk-input" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Genres (Select up to 3)</label>
+            <div id="editGenreCheckboxes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto p-4 bg-black/30 border border-pink-500/30 rounded">
+              <!-- Genre checkboxes will be populated by JavaScript -->
+            </div>
+            <p class="text-xs text-gray-500 mt-2" id="editGenreCount">0 of 3 genres selected</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">City</label>
+              <input type="text" id="editCity" name="city" class="punk-input" />
+            </div>
+            <div>
+              <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">State/Territory</label>
+              <select id="editState" name="state" class="punk-input">
+                <option value="">Select state/territory</option>
+                <!-- States will be populated by JavaScript -->
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Albums (comma-separated)</label>
+            <input type="text" id="editAlbums" name="albums" class="punk-input" placeholder="Album One, Album Two, Album Three" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Links</label>
+            <div class="space-y-2">
+              <input type="url" id="editLinkWebsite" name="link_website" class="punk-input" placeholder="Website URL" />
+              <input type="url" id="editLinkBandcamp" name="link_bandcamp" class="punk-input" placeholder="Bandcamp URL" />
+              <input type="url" id="editLinkInstagram" name="link_instagram" class="punk-input" placeholder="Instagram URL" />
+              <input type="url" id="editLinkFacebook" name="link_facebook" class="punk-input" placeholder="Facebook URL" />
+              <input type="url" id="editLinkX" name="link_x" class="punk-input" placeholder="X (Twitter) URL" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Currently Active?</label>
+            <div class="flex gap-6">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" id="editActiveYes" name="active" value="1" class="accent-pink-500" />
+                <span>Yes</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" id="editActiveNo" name="active" value="0" class="accent-pink-500" />
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="flex gap-4 pt-4">
+            <button type="submit" class="punk-button flex-1">Submit Suggestion</button>
+            <button type="button" id="cancelEdit" class="punk-button-outline flex-1">Cancel</button>
+          </div>
+        </form>
+
+        <!-- Success/Error Messages -->
+        <div id="editSuccess" class="hidden mt-4 p-4 bg-pink-500/20 border-2 border-pink-500 rounded">
+          <p class="text-pink-500 font-bold">Your edit suggestion has been submitted for review!</p>
+        </div>
+        <div id="editError" class="hidden mt-4 p-4 bg-red-500/20 border-2 border-red-500 rounded">
+          <p class="text-red-500 font-bold" id="editErrorText"></p>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <!-- Footer -->
@@ -194,8 +283,14 @@
         // Update page title
         document.title = `${band.name} | PUNKtionary`;
 
+        // Store band data for edit modal
+        currentBandData = band;
+
         // Populate band details
         displayBandDetails(band);
+
+        // Show suggest edit button
+        document.getElementById('suggestEditBtn').classList.remove('hidden');
 
       } catch (error) {
         console.error('Error loading band:', error);
@@ -328,6 +423,174 @@
       document.getElementById('loadingState').classList.add('hidden');
       document.getElementById('errorState').classList.remove('hidden');
     }
+
+    // Edit Modal Functionality
+    let currentBandData = null;
+    const genres = ['Afro-punk', 'Anarcho punk', 'Art punk', 'Celtic punk', 'Christian punk', 'Cowpunk', 'Crust punk', 'Dance-punk', 'Dark cabaret', 'Deathrock', 'Egg punk', 'Folk punk', 'Garage punk', 'Glam punk', 'Grindcore', 'Gypsy punk', 'Hardcore punk', 'Horror punk', 'Latin punk', 'Melodic punk', 'Nazi punk', 'Oi!', 'Peace punk', 'Pop-punk', 'Psychobilly', 'Punk blues', 'Punk jazz', 'Punk metal', 'Punk pathetique', 'Queercore', 'Riot Grrrl', 'Ska punk and ska-core', 'Skate punk', 'Street punk', 'Synthpunk', 'Taqwacore', 'Trallpunk'];
+
+    const states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC', 'AS', 'GU', 'MP', 'PR', 'VI'];
+
+    document.getElementById('suggestEditBtn').addEventListener('click', function() {
+      if (!currentBandData) return;
+
+      // Populate genre checkboxes
+      const genreContainer = document.getElementById('editGenreCheckboxes');
+      genreContainer.innerHTML = genres.map(genre => `
+        <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+          <input type="checkbox" name="edit_genres" value="${genre}" class="edit-genre-checkbox accent-pink-500" />
+          <span class="text-sm">${genre}</span>
+        </label>
+      `).join('');
+
+      // Populate state dropdown
+      const stateSelect = document.getElementById('editState');
+      stateSelect.innerHTML = '<option value="">Select state/territory</option>' +
+        states.map(state => `<option value="${state}">${state}</option>`).join('');
+
+      // Set up genre checkbox limit
+      setupEditGenreLimit();
+
+      // Populate form with current data
+      populateEditForm(currentBandData);
+
+      // Show modal
+      document.getElementById('editModal').classList.remove('hidden');
+    });
+
+    document.getElementById('closeEditModal').addEventListener('click', closeEditModal);
+    document.getElementById('cancelEdit').addEventListener('click', closeEditModal);
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.add('hidden');
+      document.getElementById('editSuccess').classList.add('hidden');
+      document.getElementById('editError').classList.add('hidden');
+    }
+
+    function setupEditGenreLimit() {
+      const checkboxes = document.querySelectorAll('.edit-genre-checkbox');
+      const counter = document.getElementById('editGenreCount');
+
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          const checked = document.querySelectorAll('.edit-genre-checkbox:checked');
+          counter.textContent = `${checked.length} of 3 genres selected`;
+
+          if (checked.length >= 3) {
+            checkboxes.forEach(box => {
+              if (!box.checked) {
+                box.disabled = true;
+                box.parentElement.classList.add('opacity-50', 'cursor-not-allowed');
+              }
+            });
+          } else {
+            checkboxes.forEach(box => {
+              box.disabled = false;
+              box.parentElement.classList.remove('opacity-50', 'cursor-not-allowed');
+            });
+          }
+        });
+      });
+    }
+
+    function populateEditForm(band) {
+      document.getElementById('editBandId').value = band.id;
+      document.getElementById('editName').value = band.name || '';
+      document.getElementById('editCity').value = band.city || '';
+      document.getElementById('editState').value = band.state || '';
+
+      // Set genres
+      if (band.genre) {
+        const bandGenres = band.genre.split(',').map(g => g.trim());
+        document.querySelectorAll('.edit-genre-checkbox').forEach(cb => {
+          cb.checked = bandGenres.includes(cb.value);
+        });
+        document.getElementById('editGenreCount').textContent = `${bandGenres.length} of 3 genres selected`;
+      }
+
+      // Set albums
+      if (band.albums) {
+        try {
+          const albums = JSON.parse(band.albums);
+          document.getElementById('editAlbums').value = Array.isArray(albums) ? albums.join(', ') : band.albums;
+        } catch(e) {
+          document.getElementById('editAlbums').value = band.albums || '';
+        }
+      }
+
+      // Set links
+      if (band.links) {
+        try {
+          const links = JSON.parse(band.links);
+          document.getElementById('editLinkWebsite').value = links.Website || '';
+          document.getElementById('editLinkBandcamp').value = links.Bandcamp || '';
+          document.getElementById('editLinkInstagram').value = links.Instagram || '';
+          document.getElementById('editLinkFacebook').value = links.Facebook || '';
+          document.getElementById('editLinkX').value = links.X || '';
+        } catch(e) {}
+      }
+
+      // Set active status
+      if (band.active == 1) {
+        document.getElementById('editActiveYes').checked = true;
+      } else {
+        document.getElementById('editActiveNo').checked = true;
+      }
+    }
+
+    document.getElementById('editForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      // Hide previous messages
+      document.getElementById('editSuccess').classList.add('hidden');
+      document.getElementById('editError').classList.add('hidden');
+
+      // Collect form data
+      const formData = new FormData(this);
+
+      // Process genres
+      const selectedGenres = Array.from(document.querySelectorAll('.edit-genre-checkbox:checked')).map(cb => cb.value);
+      formData.delete('edit_genres');
+      if (selectedGenres.length > 0) {
+        formData.set('genre', selectedGenres.join(', '));
+      }
+
+      // Process links
+      const links = {};
+      ['website', 'bandcamp', 'instagram', 'facebook', 'x'].forEach(platform => {
+        const value = formData.get(`link_${platform}`);
+        if (value && value.trim()) {
+          const platformName = platform === 'x' ? 'X' : platform.charAt(0).toUpperCase() + platform.slice(1);
+          links[platformName] = value.trim();
+        }
+        formData.delete(`link_${platform}`);
+      });
+      if (Object.keys(links).length > 0) {
+        formData.set('links', JSON.stringify(links));
+      }
+
+      try {
+        const response = await fetch('/api/submit_edit.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          document.getElementById('editSuccess').classList.remove('hidden');
+          setTimeout(() => {
+            closeEditModal();
+          }, 2000);
+        } else {
+          document.getElementById('editErrorText').textContent = data.error || 'Failed to submit edit suggestion';
+          document.getElementById('editError').classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Edit submission error:', error);
+        document.getElementById('editErrorText').textContent = 'Network error. Please try again.';
+        document.getElementById('editError').classList.remove('hidden');
+      }
+    });
   </script>
 </body>
 </html>

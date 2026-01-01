@@ -13,6 +13,7 @@ DEPLOYMENT_INSTRUCTIONS.md
 # database migrations (internal use)
 database_migration_oauth.sql
 database_migration_oauth_safe.sql
+db/migrations/*.sql
 
 # debug/development files
 api/debug_session.php
