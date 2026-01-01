@@ -43,6 +43,58 @@ try {
         $status = 'pending';
     }
 
+    // Get pagination parameters
+    $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+    $per_page = isset($_GET['per_page']) ? min(100, max(10, intval($_GET['per_page']))) : 20;
+    $offset = ($page - 1) * $per_page;
+
+    // Get date filter (for approved/rejected)
+    $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : null;
+    $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : null;
+
+    // Build WHERE clause
+    $where_conditions = ["pe.status = ?"];
+    $params = [$status];
+    $param_types = 's';
+
+    if ($start_date && ($status === 'approved' || $status === 'rejected')) {
+        $where_conditions[] = "pe.reviewed_at >= ?";
+        $params[] = $start_date . ' 00:00:00';
+        $param_types .= 's';
+    }
+
+    if ($end_date && ($status === 'approved' || $status === 'rejected')) {
+        $where_conditions[] = "pe.reviewed_at <= ?";
+        $params[] = $end_date . ' 23:59:59';
+        $param_types .= 's';
+    }
+
+    $where_clause = implode(' AND ', $where_conditions);
+
+    // Get total count for pagination
+    $count_sql = "SELECT COUNT(*) as total
+                  FROM pending_edits pe
+                  WHERE $where_clause";
+
+    $count_stmt = $conn->prepare($count_sql);
+    if (!$count_stmt) {
+        throw new Exception('Count prepare failed: ' . $conn->error);
+    }
+
+    // Bind parameters for count query
+    $count_bind_params = $params;
+    array_unshift($count_bind_params, $param_types);
+    $tmp = [];
+    foreach ($count_bind_params as $key => $value) {
+        $tmp[$key] = &$count_bind_params[$key];
+    }
+    call_user_func_array([$count_stmt, 'bind_param'], $tmp);
+
+    $count_stmt->execute();
+    $count_result = $count_stmt->get_result();
+    $total_count = $count_result->fetch_assoc()['total'];
+    $count_stmt->close();
+
     // Fetch pending edits with user info
     $sql = "SELECT
                 pe.id,
@@ -60,15 +112,26 @@ try {
             FROM pending_edits pe
             JOIN users u ON pe.submitted_by = u.id
             LEFT JOIN users reviewer ON pe.reviewed_by = reviewer.id
-            WHERE pe.status = ?
-            ORDER BY pe.created_at DESC";
+            WHERE $where_clause
+            ORDER BY " . ($status === 'pending' ? 'pe.created_at' : 'pe.reviewed_at') . " DESC
+            LIMIT ? OFFSET ?";
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
 
-    $stmt->bind_param('s', $status);
+    // Bind parameters for main query
+    $params[] = $per_page;
+    $params[] = $offset;
+    $param_types .= 'ii';
+
+    array_unshift($params, $param_types);
+    $tmp = [];
+    foreach ($params as $key => $value) {
+        $tmp[$key] = &$params[$key];
+    }
+    call_user_func_array([$stmt, 'bind_param'], $tmp);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -128,10 +191,20 @@ try {
 
     $conn->close();
 
+    $total_pages = ceil($total_count / $per_page);
+
     echo json_encode([
         'success' => true,
         'edits' => $edits,
-        'counts' => $counts
+        'counts' => $counts,
+        'pagination' => [
+            'page' => $page,
+            'per_page' => $per_page,
+            'total' => $total_count,
+            'total_pages' => $total_pages,
+            'has_prev' => $page > 1,
+            'has_next' => $page < $total_pages
+        ]
     ]);
 
 } catch (Exception $e) {

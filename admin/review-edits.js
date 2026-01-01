@@ -2,6 +2,9 @@
 
 let currentFilter = 'pending';
 let currentEditData = null;
+let currentPage = 1;
+let startDate = null;
+let endDate = null;
 
 // Load edits when page loads
 document.addEventListener('DOMContentLoaded', function() {
@@ -15,14 +18,59 @@ function setupEventListeners() {
         tab.addEventListener('click', function() {
             const status = this.dataset.status;
             currentFilter = status;
+            currentPage = 1; // Reset to page 1
+            startDate = null;
+            endDate = null;
 
             // Update active tab
             document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
             this.classList.add('active');
 
+            // Show/hide date filter
+            const dateFilter = document.getElementById('dateFilter');
+            if (status === 'approved' || status === 'rejected') {
+                dateFilter.classList.remove('hidden');
+            } else {
+                dateFilter.classList.add('hidden');
+            }
+
+            // Clear date inputs
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+
             // Load edits for this status
             loadEdits(status);
         });
+    });
+
+    // Date filter buttons
+    document.getElementById('applyFilter').addEventListener('click', function() {
+        startDate = document.getElementById('startDate').value;
+        endDate = document.getElementById('endDate').value;
+        currentPage = 1;
+        loadEdits(currentFilter);
+    });
+
+    document.getElementById('clearFilter').addEventListener('click', function() {
+        document.getElementById('startDate').value = '';
+        document.getElementById('endDate').value = '';
+        startDate = null;
+        endDate = null;
+        currentPage = 1;
+        loadEdits(currentFilter);
+    });
+
+    // Pagination buttons
+    document.getElementById('prevPage').addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            loadEdits(currentFilter);
+        }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', function() {
+        currentPage++;
+        loadEdits(currentFilter);
     });
 
     // Modal close
@@ -44,13 +92,20 @@ async function loadEdits(status) {
     const loadingState = document.getElementById('loadingState');
     const editsList = document.getElementById('editsList');
     const emptyState = document.getElementById('emptyState');
+    const pagination = document.getElementById('pagination');
 
     loadingState.classList.remove('hidden');
     editsList.classList.add('hidden');
     emptyState.classList.add('hidden');
+    pagination.classList.add('hidden');
 
     try {
-        const response = await fetch(`/api/get_pending_edits.php?status=${status}`);
+        // Build query string
+        let url = `/api/get_pending_edits.php?status=${status}&page=${currentPage}`;
+        if (startDate) url += `&start_date=${startDate}`;
+        if (endDate) url += `&end_date=${endDate}`;
+
+        const response = await fetch(url);
         const data = await response.json();
 
         if (!data.success) {
@@ -75,6 +130,18 @@ async function loadEdits(status) {
             editsList.appendChild(createEditCard(edit));
         });
         editsList.classList.remove('hidden');
+
+        // Update pagination
+        if (data.pagination && data.pagination.total_pages > 1) {
+            pagination.classList.remove('hidden');
+            document.getElementById('pageInfo').textContent = `Page ${data.pagination.page} of ${data.pagination.total_pages}`;
+
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+
+            prevBtn.disabled = !data.pagination.has_prev;
+            nextBtn.disabled = !data.pagination.has_next;
+        }
 
     } catch (error) {
         console.error('Error loading edits:', error);
@@ -202,6 +269,12 @@ function openReviewModal(edit) {
         adminActions.classList.remove('hidden');
         reviewedState.classList.add('hidden');
         adminNotes.value = '';
+
+        // Re-enable buttons when opening a new pending edit
+        const approveBtn = document.getElementById('approveBtn');
+        const rejectBtn = document.getElementById('rejectBtn');
+        approveBtn.disabled = false;
+        rejectBtn.disabled = false;
     } else {
         adminActions.classList.add('hidden');
         reviewedState.classList.remove('hidden');
@@ -265,6 +338,7 @@ async function reviewEdit(action) {
             // Wait a moment then close modal and reload list
             setTimeout(() => {
                 closeModal();
+                currentPage = 1; // Reset to first page after review
                 loadEdits(currentFilter);
             }, 1500);
         } else {
