@@ -146,6 +146,31 @@ function updateNavbarForLoggedIn(user) {
   document.getElementById('mobileProfileLink')?.classList.remove('hidden');
   document.getElementById('mobileSubmissionsLink')?.classList.remove('hidden');
   document.getElementById('mobileLogoutBtn')?.classList.remove('hidden');
+
+  // Show admin panel link if user is admin or god (account_type >= 1)
+  if (user.account_type >= 1) {
+    document.getElementById('adminPanelLink')?.classList.remove('hidden');
+    document.getElementById('mobileAdminPanelLink')?.classList.remove('hidden');
+
+    // Load and display pending edits count
+    loadPendingEditsCount();
+  }
+}
+
+// Load pending edits count for admin badge
+async function loadPendingEditsCount() {
+  try {
+    const response = await fetch('/api/get_pending_edits.php?status=pending');
+    const data = await response.json();
+
+    if (data.success && data.counts.pending > 0) {
+      const count = data.counts.pending;
+      document.getElementById('adminBadge').textContent = count;
+      document.getElementById('mobileAdminBadge').textContent = count;
+    }
+  } catch (error) {
+    console.error('Failed to load pending edits count:', error);
+  }
 }
 
 // Setup user dropdown event listeners
