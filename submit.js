@@ -12,12 +12,31 @@ function initSubmitPage() {
   const selectBand = document.getElementById('selectBand');
   const selectVenue = document.getElementById('selectVenue');
   const selectResource = document.getElementById('selectResource');
-  
+
   const bandForm = document.getElementById('bandForm');
   const venueForm = document.getElementById('venueForm');
   const resourceForm = document.getElementById('resourceForm');
-  
+
   const typeButtons = document.querySelectorAll('.submit-type-btn');
+
+  // Image source toggle for band form
+  const imageSourceRadios = document.querySelectorAll('input[name="image_source"]');
+  const uploadSection = document.getElementById('upload-section');
+  const urlSection = document.getElementById('url-section');
+
+  imageSourceRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      if (this.value === 'upload') {
+        uploadSection.classList.remove('hidden');
+        urlSection.classList.add('hidden');
+        document.getElementById('logoUrlInput').value = '';
+      } else {
+        uploadSection.classList.add('hidden');
+        urlSection.classList.remove('hidden');
+        document.getElementById('logoFileInput').value = '';
+      }
+    });
+  });
 
   // Switch to band form
   selectBand.addEventListener('click', function() {
