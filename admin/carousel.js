@@ -293,7 +293,9 @@ async function editItem(id) {
             throw new Error('Failed to load carousel items');
         }
 
-        const item = data.items.find(i => i.id === id);
+        // Convert id to number for comparison
+        const itemId = parseInt(id);
+        const item = data.items.find(i => parseInt(i.id) === itemId);
         if (!item) {
             throw new Error('Item not found');
         }
