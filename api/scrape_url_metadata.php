@@ -33,8 +33,8 @@ try {
         die(json_encode(['success' => false, 'error' => 'Admin access required']));
     }
 
-    // Get URL from request
-    $url = isset($_POST['url']) ? trim($_POST['url']) : '';
+    // Get URL from request (support both GET and POST)
+    $url = isset($_GET['url']) ? trim($_GET['url']) : (isset($_POST['url']) ? trim($_POST['url']) : '');
 
     if (empty($url)) {
         http_response_code(400);
