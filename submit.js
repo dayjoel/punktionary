@@ -38,6 +38,36 @@ function initSubmitPage() {
     });
   });
 
+  // Genre checkbox limit (max 3)
+  const genreCheckboxes = document.querySelectorAll('.genre-checkbox');
+  const genreCount = document.getElementById('genreCount');
+
+  genreCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      const checkedBoxes = document.querySelectorAll('.genre-checkbox:checked');
+      const count = checkedBoxes.length;
+
+      // Update count display
+      genreCount.textContent = `${count} of 3 genres selected`;
+
+      // If 3 are selected, disable unchecked boxes
+      if (count >= 3) {
+        genreCheckboxes.forEach(box => {
+          if (!box.checked) {
+            box.disabled = true;
+            box.parentElement.classList.add('opacity-50', 'cursor-not-allowed');
+          }
+        });
+      } else {
+        // Re-enable all boxes
+        genreCheckboxes.forEach(box => {
+          box.disabled = false;
+          box.parentElement.classList.remove('opacity-50', 'cursor-not-allowed');
+        });
+      }
+    });
+  });
+
   // Switch to band form
   selectBand.addEventListener('click', function() {
     showForm('band');
@@ -348,7 +378,22 @@ async function submitForm(type, form) {
 
   try {
     const formData = new FormData(form);
-    
+
+    // Process genre checkboxes for bands (convert to comma-separated string)
+    if (type === 'band') {
+      const selectedGenres = Array.from(document.querySelectorAll('.genre-checkbox:checked'))
+        .map(cb => cb.value);
+
+      if (selectedGenres.length > 0) {
+        formData.set('genre', selectedGenres.join(', '));
+      } else {
+        formData.delete('genre');
+      }
+
+      // Remove the individual genre checkbox values from formData
+      formData.delete('genres');
+    }
+
     // Process albums field for bands (convert comma-separated to JSON array)
     if (type === 'band') {
       const albumsStr = formData.get('albums');
