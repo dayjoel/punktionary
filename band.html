@@ -455,12 +455,21 @@
     // Toggle logo source sections
     document.querySelectorAll('input[name="edit_logo_source"]').forEach(radio => {
       radio.addEventListener('change', function() {
+        const urlInput = document.getElementById('editLogoUrl');
+        const fileInput = document.getElementById('editLogoFile');
+
         if (this.value === 'url') {
           document.getElementById('editLogoUrlSection').classList.remove('hidden');
           document.getElementById('editLogoFileSection').classList.add('hidden');
+          urlInput.disabled = false;
+          fileInput.disabled = true;
+          fileInput.value = ''; // Clear file input
         } else {
           document.getElementById('editLogoUrlSection').classList.add('hidden');
           document.getElementById('editLogoFileSection').classList.remove('hidden');
+          urlInput.disabled = true;
+          fileInput.disabled = false;
+          urlInput.value = ''; // Clear URL input
         }
       });
     });
