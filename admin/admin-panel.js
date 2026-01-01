@@ -32,6 +32,11 @@ async function loadStats() {
             document.getElementById('pendingCount').textContent = editsData.counts.pending || 0;
             document.getElementById('approvedCount').textContent = editsData.counts.approved || 0;
             document.getElementById('rejectedCount').textContent = editsData.counts.rejected || 0;
+        } else {
+            console.error('Failed to load edit counts:', editsData.error);
+            document.getElementById('pendingCount').textContent = '0';
+            document.getElementById('approvedCount').textContent = '0';
+            document.getElementById('rejectedCount').textContent = '0';
         }
 
         // Load user count
@@ -40,6 +45,9 @@ async function loadStats() {
 
         if (usersData.success) {
             document.getElementById('totalUsersCount').textContent = usersData.users.length;
+        } else {
+            console.error('Failed to load user count:', usersData.error);
+            document.getElementById('totalUsersCount').textContent = '0';
         }
     } catch (error) {
         console.error('Error loading stats:', error);

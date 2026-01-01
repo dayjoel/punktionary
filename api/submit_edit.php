@@ -34,7 +34,7 @@ try {
 
     // Collect all changed fields
     $field_changes = [];
-    $allowed_fields = ['name', 'genre', 'city', 'state', 'country', 'albums', 'links', 'active'];
+    $allowed_fields = ['name', 'genre', 'city', 'state', 'country', 'albums', 'links', 'active', 'logo'];
 
     foreach ($allowed_fields as $field) {
         if (isset($_POST[$field]) && $_POST[$field] !== '') {
