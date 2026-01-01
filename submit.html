@@ -344,7 +344,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Type</label>
-            <input type="text" name="type" class="punk-input" placeholder="e.g. Club, Bar, DIY Space" />
+            <select name="type" class="punk-input">
+              <option value="">Select venue type</option>
+              <option value="Bar">Bar</option>
+              <option value="Club">Club</option>
+              <option value="Coffee Shop">Coffee Shop</option>
+              <option value="Record Store">Record Store</option>
+              <option value="House">House</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
           <div>
             <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Capacity</label>
@@ -353,24 +361,32 @@
         </div>
 
         <div>
-          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Street Address</label>
-          <input type="text" name="street_address" class="punk-input" placeholder="Street address" />
+          <label class="flex items-center gap-2 mb-3 cursor-pointer">
+            <input type="checkbox" id="askAPunk" class="w-4 h-4 accent-pink-500" />
+            <span class="text-sm font-bold text-pink-500 uppercase tracking-wide">Ask a punk (address unknown)</span>
+          </label>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div id="addressFields">
           <div>
-            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">City</label>
-            <input type="text" name="city" class="punk-input" placeholder="City" />
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Street Address</label>
+            <input type="text" name="street_address" id="street_address" class="punk-input" placeholder="Street address" />
           </div>
-          <div>
-            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Postal Code</label>
-            <input type="text" name="postal_code" class="punk-input" placeholder="Postal code" />
-          </div>
-        </div>
 
-        <div>
-          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">State/Territory</label>
-          <select name="state" class="punk-input">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">City</label>
+              <input type="text" name="city" id="city" class="punk-input" placeholder="City" />
+            </div>
+            <div>
+              <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Postal Code</label>
+              <input type="text" name="postal_code" id="postal_code" class="punk-input" placeholder="Postal code" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">State/Territory</label>
+            <select name="state" id="state" class="punk-input">
             <option value="">Select state/territory</option>
             <option value="AL">AL - Alabama</option>
             <option value="AK">AK - Alaska</option>
@@ -428,7 +444,8 @@
             <option value="MP">MP - Northern Mariana Islands</option>
             <option value="PR">PR - Puerto Rico</option>
             <option value="VI">VI - U.S. Virgin Islands</option>
-          </select>
+            </select>
+          </div>
         </div>
 
         <div>
