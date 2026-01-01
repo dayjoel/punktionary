@@ -172,7 +172,8 @@
 
       // Set user info
       document.getElementById('profileDisplayName').textContent = user.display_name || 'User';
-      document.getElementById('userRole').textContent = user.is_admin ? 'admin' : 'user';
+      const accountTypes = {0: 'user', 1: 'admin', 2: 'god'};
+      document.getElementById('userRole').textContent = accountTypes[user.account_type] || 'user';
       document.getElementById('profileEmail').textContent = user.email;
       document.getElementById('profileProvider').textContent =
         'Signed in with ' + user.oauth_provider.charAt(0).toUpperCase() + user.oauth_provider.slice(1);
