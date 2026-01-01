@@ -160,26 +160,38 @@ function openReviewModal(edit) {
         originalInfo.innerHTML = '<p class="text-gray-500">Original data not available</p>';
     }
 
-    // Show changes comparison
+    // Show changes comparison - only show fields that actually changed
     const changesComparison = document.getElementById('changesComparison');
-    changesComparison.innerHTML = Object.entries(edit.field_changes).map(([field, newValue]) => {
-        const oldValue = edit.original_data ? edit.original_data[field] : 'N/A';
-        return `
-            <div class="punk-card bg-black/30 p-4">
-                <h4 class="font-bold text-pink-500 mb-2">${formatFieldName(field)}</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-xs text-gray-500 mb-1">OLD VALUE:</p>
-                        <p class="text-gray-400 line-through">${formatFieldValue(oldValue)}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-green-500 mb-1">NEW VALUE:</p>
-                        <p class="text-green-400 font-semibold">${formatFieldValue(newValue)}</p>
+    const actualChanges = Object.entries(edit.field_changes).filter(([field, newValue]) => {
+        const oldValue = edit.original_data ? edit.original_data[field] : null;
+        // Normalize values for comparison
+        const normalizedOld = normalizeValue(oldValue);
+        const normalizedNew = normalizeValue(newValue);
+        return normalizedOld !== normalizedNew;
+    });
+
+    if (actualChanges.length === 0) {
+        changesComparison.innerHTML = '<p class="text-gray-500 italic">No actual changes detected</p>';
+    } else {
+        changesComparison.innerHTML = actualChanges.map(([field, newValue]) => {
+            const oldValue = edit.original_data ? edit.original_data[field] : 'N/A';
+            return `
+                <div class="punk-card bg-black/30 p-4">
+                    <h4 class="font-bold text-pink-500 mb-2 uppercase tracking-wide">${formatFieldName(field)}</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">OLD VALUE:</p>
+                            <p class="text-gray-400 line-through break-words">${formatFieldValue(oldValue)}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-green-500 mb-1">NEW VALUE:</p>
+                            <p class="text-green-400 font-semibold break-words">${formatFieldValue(newValue)}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-    }).join('');
+            `;
+        }).join('');
+    }
 
     // Show admin actions or reviewed state
     const adminActions = document.getElementById('adminActions');
@@ -297,4 +309,26 @@ function formatFieldValue(value) {
         return JSON.stringify(value);
     }
     return String(value);
+}
+
+function normalizeValue(value) {
+    // Normalize values for comparison
+    if (value === null || value === undefined || value === '') {
+        return '';
+    }
+    if (typeof value === 'boolean') {
+        return value ? '1' : '0';
+    }
+    if (typeof value === 'number') {
+        return String(value);
+    }
+    if (typeof value === 'object') {
+        // For arrays and objects, stringify and sort for consistent comparison
+        if (Array.isArray(value)) {
+            return JSON.stringify(value.sort());
+        }
+        return JSON.stringify(value);
+    }
+    // Trim strings and normalize whitespace
+    return String(value).trim();
 }
