@@ -32,14 +32,57 @@ try {
         die(json_encode(['success' => false, 'error' => 'Invalid entity ID']));
     }
 
+    // Handle logo upload or URL
+    $logo_url = null;
+    $logo_source = isset($_POST['logo_source']) ? $_POST['logo_source'] : 'url';
+
+    if ($logo_source === 'upload' && isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
+        // Handle file upload
+        $upload_dir = __DIR__ . '/../../uploads/band-logos/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+
+        $file = $_FILES['logo_file'];
+        $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $max_size = 5 * 1024 * 1024; // 5MB
+
+        if (!in_array($file['type'], $allowed_types)) {
+            http_response_code(400);
+            die(json_encode(['success' => false, 'error' => 'Invalid file type. Please upload JPG, PNG, GIF, or WebP']));
+        }
+
+        if ($file['size'] > $max_size) {
+            http_response_code(400);
+            die(json_encode(['success' => false, 'error' => 'File too large. Maximum size is 5MB']));
+        }
+
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = 'band_' . uniqid() . '_' . time() . '.' . $extension;
+        $filepath = $upload_dir . $filename;
+
+        if (move_uploaded_file($file['tmp_name'], $filepath)) {
+            $logo_url = '/uploads/band-logos/' . $filename;
+        } else {
+            error_log('Failed to move uploaded file: ' . $file['tmp_name'] . ' to ' . $filepath);
+        }
+    } elseif ($logo_source === 'url' && isset($_POST['logo_url']) && !empty(trim($_POST['logo_url']))) {
+        $logo_url = trim($_POST['logo_url']);
+    }
+
     // Collect all changed fields
     $field_changes = [];
-    $allowed_fields = ['name', 'genre', 'city', 'state', 'country', 'albums', 'links', 'active', 'logo'];
+    $allowed_fields = ['name', 'genre', 'city', 'state', 'country', 'albums', 'links', 'active'];
 
     foreach ($allowed_fields as $field) {
         if (isset($_POST[$field]) && $_POST[$field] !== '') {
             $field_changes[$field] = trim($_POST[$field]);
         }
+    }
+
+    // Add logo if provided
+    if ($logo_url !== null) {
+        $field_changes['logo'] = $logo_url;
     }
 
     if (empty($field_changes)) {
