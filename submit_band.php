@@ -39,6 +39,7 @@ try {
     $links = isset($_POST['links']) ? trim($_POST['links']) : null;
     $photo_references = isset($_POST['photo_references']) ? $_POST['photo_references'] : null; // Already JSON from JS
     $active = isset($_POST['active']) ? intval($_POST['active']) : 1;
+    $logo = null;
 
     // Validate JSON fields if provided
     if ($links && !empty($links)) {
@@ -49,16 +50,105 @@ try {
         }
     }
 
+    // Handle logo upload or URL
+    $image_source = isset($_POST['image_source']) ? $_POST['image_source'] : null;
+
+    if ($image_source === 'upload' && isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
+        // Handle file upload
+        $upload_dir = __DIR__ . '/uploads/band-logos/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+
+        $file = $_FILES['logo_file'];
+        $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $max_size = 5 * 1024 * 1024; // 5MB
+
+        if (!in_array($file['type'], $allowed_types)) {
+            http_response_code(400);
+            die(json_encode(['success' => false, 'error' => 'Invalid file type. Please upload JPG, PNG, GIF, or WebP']));
+        }
+
+        if ($file['size'] > $max_size) {
+            http_response_code(400);
+            die(json_encode(['success' => false, 'error' => 'File too large. Maximum size is 5MB']));
+        }
+
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = 'band_' . uniqid() . '_' . time() . '.' . $extension;
+        $filepath = $upload_dir . $filename;
+
+        if (move_uploaded_file($file['tmp_name'], $filepath)) {
+            $logo = '/uploads/band-logos/' . $filename;
+        } else {
+            error_log('Failed to move uploaded file: ' . $file['tmp_name'] . ' to ' . $filepath);
+        }
+    } elseif ($image_source === 'url' && isset($_POST['logo_url']) && !empty(trim($_POST['logo_url']))) {
+        // Handle URL download
+        $url = trim($_POST['logo_url']);
+
+        // Validate URL
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            http_response_code(400);
+            die(json_encode(['success' => false, 'error' => 'Invalid image URL']));
+        }
+
+        $upload_dir = __DIR__ . '/uploads/band-logos/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+
+        // Download the image
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'PUNKtionary/1.0');
+        $image_data = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        curl_close($ch);
+
+        if ($http_code === 200 && $image_data !== false) {
+            $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!in_array($content_type, $allowed_types)) {
+                http_response_code(400);
+                die(json_encode(['success' => false, 'error' => 'URL does not point to a valid image']));
+            }
+
+            // Determine extension from content type
+            $extension_map = [
+                'image/jpeg' => 'jpg',
+                'image/jpg' => 'jpg',
+                'image/png' => 'png',
+                'image/gif' => 'gif',
+                'image/webp' => 'webp'
+            ];
+            $extension = $extension_map[$content_type] ?? 'jpg';
+
+            $filename = 'band_' . uniqid() . '_' . time() . '.' . $extension;
+            $filepath = $upload_dir . $filename;
+
+            if (file_put_contents($filepath, $image_data) !== false) {
+                $logo = '/uploads/band-logos/' . $filename;
+            } else {
+                error_log('Failed to save downloaded image to: ' . $filepath);
+            }
+        } else {
+            error_log('Failed to download image from URL: ' . $url . ' (HTTP ' . $http_code . ')');
+        }
+    }
+
     // Insert into database with user attribution
-    $sql = "INSERT INTO bands (submitted_by, name, genre, city, state, country, albums, links, photo_references, active, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+    $sql = "INSERT INTO bands (submitted_by, name, genre, city, state, country, albums, links, photo_references, logo, active, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
 
-    $stmt->bind_param('issssssssi', $user_id, $name, $genre, $city, $state, $country, $albums, $links, $photo_references, $active);
+    $stmt->bind_param('isssssssssi', $user_id, $name, $genre, $city, $state, $country, $albums, $links, $photo_references, $logo, $active);
 
     if ($stmt->execute()) {
         echo json_encode([

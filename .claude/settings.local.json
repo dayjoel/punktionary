@@ -5,7 +5,8 @@
       "Bash(grep:*)",
       "Bash(cat:*)",
       "Bash(ls:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(php -r:*)"
     ]
   }
 }

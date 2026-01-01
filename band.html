@@ -44,13 +44,19 @@
       
       <!-- Header Section -->
       <div class="mb-12">
-        <div class="flex items-start justify-between mb-4">
-          <div>
+        <div class="flex items-start gap-8 mb-4">
+          <!-- Band Logo -->
+          <div id="bandLogoContainer" class="hidden flex-shrink-0">
+            <img id="bandLogo" src="" alt="Band Logo" class="w-32 h-32 object-cover border-2 border-pink-500 shadow-lg shadow-pink-500/20" />
+          </div>
+
+          <!-- Band Name and Status -->
+          <div class="flex-1">
             <h1 id="bandName" class="text-6xl font-bold mb-4"></h1>
             <div id="bandStatus" class="mb-4"></div>
           </div>
         </div>
-        
+
         <div class="punk-divider"></div>
       </div>
 
@@ -198,11 +204,18 @@
     }
 
     function displayBandDetails(band) {
+      // Logo
+      if (band.logo) {
+        document.getElementById('bandLogoContainer').classList.remove('hidden');
+        document.getElementById('bandLogo').src = band.logo;
+        document.getElementById('bandLogo').alt = `${band.name} Logo`;
+      }
+
       // Name and status
       document.getElementById('bandName').textContent = band.name;
-      
-      const statusBadge = band.active ? 
-        '<span class="punk-badge text-lg px-4 py-2">Active</span>' : 
+
+      const statusBadge = band.active ?
+        '<span class="punk-badge text-lg px-4 py-2">Active</span>' :
         '<span class="inline-block bg-gray-700 text-gray-300 px-4 py-2 text-sm font-bold uppercase">Inactive</span>';
       document.getElementById('bandStatus').innerHTML = statusBadge;
 

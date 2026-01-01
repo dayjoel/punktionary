@@ -161,9 +161,29 @@
         </div>
 
         <div>
-          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Photo URLs</label>
-          <input type="text" name="photo_references" class="punk-input" placeholder="Comma-separated photo URLs" />
-          <p class="text-xs text-gray-500 mt-1">Optional: Direct links to band photos</p>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Logo/Image</label>
+          <div class="space-y-3">
+            <div class="flex gap-2">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="image_source" value="upload" class="accent-pink-500" checked />
+                <span class="text-sm">Upload File</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="image_source" value="url" class="accent-pink-500" />
+                <span class="text-sm">Enter URL</span>
+              </label>
+            </div>
+
+            <div id="upload-section">
+              <input type="file" name="logo_file" id="logoFileInput" accept="image/*" class="punk-input" />
+              <p class="text-xs text-gray-500 mt-1">Accepted formats: JPG, PNG, GIF (max 5MB)</p>
+            </div>
+
+            <div id="url-section" class="hidden">
+              <input type="url" name="logo_url" id="logoUrlInput" class="punk-input" placeholder="https://example.com/logo.jpg" />
+              <p class="text-xs text-gray-500 mt-1">We'll download and host the image for you</p>
+            </div>
+          </div>
         </div>
 
         <div>
