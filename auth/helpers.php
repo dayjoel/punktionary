@@ -97,15 +97,15 @@ function upsert_user($provider, $provider_id, $email, $display_name, $profile_pi
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        // Update existing user
+        // Update existing user - only update email and last_login
+        // Don't overwrite display_name or profile_picture_url as user may have customized them
         $user = $result->fetch_assoc();
         $user_id = $user['id'];
 
         $update_stmt = $conn->prepare(
-            "UPDATE users SET email = ?, display_name = ?, profile_picture_url = ?,
-             last_login = NOW(), updated_at = NOW() WHERE id = ?"
+            "UPDATE users SET email = ?, last_login = NOW(), updated_at = NOW() WHERE id = ?"
         );
-        $update_stmt->bind_param('sssi', $email, $display_name, $profile_picture, $user_id);
+        $update_stmt->bind_param('si', $email, $user_id);
         $update_stmt->execute();
         $update_stmt->close();
     } else {

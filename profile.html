@@ -113,8 +113,24 @@
   <!-- Load Login Modal -->
   <div id="login-modal-container"></div>
 
-  <script src="/navbar.js"></script>
   <script>
+    // Load navbar first, then initialize it
+    fetch('/navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+        // Load navbar.js after HTML is in place
+        return fetch('/navbar.js');
+      })
+      .then(response => response.text())
+      .then(script => {
+        eval(script);
+        if (typeof initNavbar === 'function') {
+          initNavbar();
+        }
+      })
+      .catch(error => console.error('Error loading navbar:', error));
+
     // Load login modal
     fetch('/login-modal.html')
       .then(response => response.text())
@@ -127,15 +143,6 @@
       .catch(error => console.error('Error loading login modal:', error));
   </script>
   <script>
-    // Load navbar
-    fetch('/navbar.html')
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById('navbar-container').innerHTML = data;
-        if (typeof initNavbar === 'function') {
-          initNavbar();
-        }
-      });
 
     // Load profile data
     async function loadProfile() {
