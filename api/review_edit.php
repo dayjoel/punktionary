@@ -91,10 +91,23 @@ try {
             foreach ($field_changes as $field => $value) {
                 $update_fields[] = "$field = ?";
 
-                // JSON encode arrays and objects for database storage
+                // Handle different value types for database storage
                 if (is_array($value) || is_object($value)) {
+                    // Encode arrays/objects to JSON
                     $update_values[] = json_encode($value);
+                } elseif (is_string($value) && in_array($field, ['albums', 'links'])) {
+                    // For albums and links, the value might already be a JSON string from the form
+                    // Validate it's valid JSON, if not treat as regular string
+                    json_decode($value);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        // It's already valid JSON, use as-is
+                        $update_values[] = $value;
+                    } else {
+                        // Not valid JSON, encode it
+                        $update_values[] = json_encode($value);
+                    }
                 } else {
+                    // Regular string or number value
                     $update_values[] = $value;
                 }
 
