@@ -46,6 +46,17 @@ async function loadStats() {
             document.getElementById('rejectedCount').innerHTML = '0';
         }
 
+        // Load carousel count
+        const carouselResponse = await fetch('/api/carousel_items.php');
+        const carouselData = await carouselResponse.json();
+
+        if (carouselData.success) {
+            document.getElementById('carouselCount').innerHTML = carouselData.items.length;
+        } else {
+            console.error('Failed to load carousel count:', carouselData.error);
+            document.getElementById('carouselCount').innerHTML = '0';
+        }
+
         // Load user count
         const usersResponse = await fetch('/api/get_all_users.php');
         const usersData = await usersResponse.json();
@@ -61,6 +72,7 @@ async function loadStats() {
         document.getElementById('pendingCount').textContent = '?';
         document.getElementById('approvedCount').textContent = '?';
         document.getElementById('rejectedCount').textContent = '?';
+        document.getElementById('carouselCount').textContent = '?';
         document.getElementById('totalUsersCount').textContent = '?';
     }
 }
