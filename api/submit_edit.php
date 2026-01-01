@@ -71,6 +71,8 @@ try {
         error_log('File exists after move: ' . (file_exists($filepath) ? 'yes' : 'no'));
 
         if ($move_result) {
+            // Set proper permissions for web server to read the file
+            chmod($filepath, 0644);
             $logo_url = '/uploads/band-logos/' . $filename;
             error_log('Logo URL set to: ' . $logo_url);
         } else {
