@@ -54,9 +54,9 @@ try {
                 pe.created_at,
                 pe.reviewed_at,
                 pe.reviewed_by,
-                u.name as submitted_by_username,
+                u.display_name as submitted_by_username,
                 u.email as submitted_by_email,
-                reviewer.name as reviewed_by_username
+                reviewer.display_name as reviewed_by_username
             FROM pending_edits pe
             JOIN users u ON pe.submitted_by = u.id
             LEFT JOIN users reviewer ON pe.reviewed_by = reviewer.id
