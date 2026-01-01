@@ -31,7 +31,10 @@
         <div class="flex items-center gap-6 mb-8">
           <img id="profilePicture" class="h-24 w-24 rounded-full border-4 border-pink-500" alt="Profile Picture" />
           <div>
-            <h2 id="profileDisplayName" class="text-3xl font-bold mb-1"></h2>
+            <h2 class="text-3xl font-bold mb-1">
+              <span id="profileDisplayName"></span>
+              <span id="userRole" class="text-sm italic text-gray-500 ml-2"></span>
+            </h2>
             <p id="memberSince" class="text-sm text-gray-500 mb-2"></p>
             <p id="profileEmail" class="text-gray-400"></p>
             <p id="profileProvider" class="text-sm text-pink-500 mt-1"></p>
@@ -169,6 +172,7 @@
 
       // Set user info
       document.getElementById('profileDisplayName').textContent = user.display_name || 'User';
+      document.getElementById('userRole').textContent = user.is_admin ? 'admin' : 'user';
       document.getElementById('profileEmail').textContent = user.email;
       document.getElementById('profileProvider').textContent =
         'Signed in with ' + user.oauth_provider.charAt(0).toUpperCase() + user.oauth_provider.slice(1);
