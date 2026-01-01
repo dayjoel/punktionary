@@ -149,10 +149,12 @@ try {
 
 } catch (Exception $e) {
     error_log('Review edit error: ' . $e->getMessage());
+    error_log('Stack trace: ' . $e->getTraceAsString());
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => 'Failed to process review. Please try again.'
+        'error' => 'Failed to process review. Please try again.',
+        'debug' => $e->getMessage() // Temporary for debugging
     ]);
 }
 ?>
