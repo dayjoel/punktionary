@@ -399,6 +399,31 @@
     // Edit Modal Functionality
     let currentVenueData = null;
 
+    // Check if user is authenticated before showing edit modal
+    async function checkAuthenticationBeforeEdit() {
+      try {
+        const response = await fetch('/auth/check_auth.php');
+        const data = await response.json();
+
+        if (data.authenticated) {
+          return true; // User is logged in, allow edit access
+        } else {
+          // User not logged in - show login modal
+          const loginOverlay = document.getElementById('loginOverlay');
+          if (loginOverlay) {
+            loginOverlay.classList.remove('hidden');
+          } else {
+            alert('Please sign in to suggest edits.');
+          }
+          return false;
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        alert('Please sign in to suggest edits.');
+        return false;
+      }
+    }
+
     // "Ask a punk" checkbox toggle
     document.getElementById('askAPunkCheckbox').addEventListener('change', function() {
       const addressFields = document.getElementById('addressFields');
@@ -429,8 +454,12 @@
       }
     });
 
-    document.getElementById('suggestEditBtn').addEventListener('click', function() {
+    document.getElementById('suggestEditBtn').addEventListener('click', async function() {
       if (!currentVenueData) return;
+
+      // Check authentication before allowing edit
+      const isAuthenticated = await checkAuthenticationBeforeEdit();
+      if (!isAuthenticated) return;
 
       // Populate form with current data
       populateEditForm(currentVenueData);

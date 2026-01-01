@@ -5,7 +5,26 @@ let autocompleteTimeout = null;
 
 document.addEventListener('DOMContentLoaded', function() {
   initSubmitPage();
+  checkAndShowAuthNotice();
 });
+
+// Check authentication status and show notice if not logged in
+async function checkAndShowAuthNotice() {
+  try {
+    const response = await fetch('/auth/check_auth.php');
+    const data = await response.json();
+
+    if (!data.authenticated) {
+      // User not logged in - show the auth notice
+      const authNotice = document.getElementById('authNotice');
+      if (authNotice) {
+        authNotice.classList.remove('hidden');
+      }
+    }
+  } catch (error) {
+    console.error('Auth check failed:', error);
+  }
+}
 
 function initSubmitPage() {
   // Form type selector buttons
@@ -93,21 +112,27 @@ function initSubmitPage() {
   }
 
   // Switch to band form
-  selectBand.addEventListener('click', function() {
-    showForm('band');
-    updateActiveButton(this, typeButtons);
+  selectBand.addEventListener('click', async function() {
+    if (await checkAuthenticationBeforeForm()) {
+      showForm('band');
+      updateActiveButton(this, typeButtons);
+    }
   });
 
   // Switch to venue form
-  selectVenue.addEventListener('click', function() {
-    showForm('venue');
-    updateActiveButton(this, typeButtons);
+  selectVenue.addEventListener('click', async function() {
+    if (await checkAuthenticationBeforeForm()) {
+      showForm('venue');
+      updateActiveButton(this, typeButtons);
+    }
   });
 
   // Switch to resource form
-  selectResource.addEventListener('click', function() {
-    showForm('resource');
-    updateActiveButton(this, typeButtons);
+  selectResource.addEventListener('click', async function() {
+    if (await checkAuthenticationBeforeForm()) {
+      showForm('resource');
+      updateActiveButton(this, typeButtons);
+    }
   });
 
   // Form submissions
@@ -133,6 +158,32 @@ function initSubmitPage() {
     // Reset current form
     document.querySelector('.submit-form:not(.hidden)').reset();
   });
+}
+
+// Check if user is authenticated before showing form
+async function checkAuthenticationBeforeForm() {
+  try {
+    const response = await fetch('/auth/check_auth.php');
+    const data = await response.json();
+
+    if (data.authenticated) {
+      return true; // User is logged in, allow form access
+    } else {
+      // User not logged in - show login modal
+      const loginOverlay = document.getElementById('loginOverlay');
+      if (loginOverlay) {
+        loginOverlay.classList.remove('hidden');
+      } else {
+        // Fallback: redirect to login if modal not available
+        alert('Please sign in to submit content.');
+      }
+      return false;
+    }
+  } catch (error) {
+    console.error('Auth check failed:', error);
+    alert('Please sign in to submit content.');
+    return false;
+  }
 }
 
 function showForm(type) {
