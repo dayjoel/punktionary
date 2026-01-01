@@ -37,8 +37,8 @@ try {
     $logo_source = isset($_POST['logo_source']) ? $_POST['logo_source'] : 'url';
 
     if ($logo_source === 'upload' && isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
-        // Handle file upload
-        $upload_dir = __DIR__ . '/../../uploads/band-logos/';
+        // Handle file upload - match the path used in submit_band.php
+        $upload_dir = __DIR__ . '/../uploads/band-logos/';
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0755, true);
         }
