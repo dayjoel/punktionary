@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carousel Manager - PUNKtionary Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="punk-bg min-h-screen">
+    <!-- Navigation -->
+    <nav id="mainNav"></nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2">Carousel Manager</h1>
+            <p class="text-gray-400">Manage homepage featured content</p>
+        </div>
+
+        <!-- Add New Item Section -->
+        <div class="punk-card p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Add New Carousel Item</h2>
+
+            <!-- URL Scraper -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Paste URL to Auto-Fill</label>
+                <div class="flex gap-2">
+                    <input type="url"
+                           id="scrapeUrl"
+                           class="punk-input flex-1"
+                           placeholder="https://example.com/article">
+                    <button id="scrapeBtn" class="punk-button">
+                        Scrape Metadata
+                    </button>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">
+                    Automatically extract title, description, and image from a URL
+                </p>
+            </div>
+
+            <div id="scrapeStatus" class="hidden mb-4"></div>
+
+            <!-- Manual Form -->
+            <form id="carouselForm">
+                <input type="hidden" id="itemId" name="id">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Title *</label>
+                        <input type="text"
+                               id="itemTitle"
+                               name="title"
+                               class="punk-input w-full"
+                               required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Link URL</label>
+                        <input type="url"
+                               id="itemLink"
+                               name="link_url"
+                               class="punk-input w-full"
+                               placeholder="https://...">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Description</label>
+                    <textarea id="itemDescription"
+                              name="description"
+                              class="punk-input w-full"
+                              rows="3"></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Image URL *</label>
+                    <input type="url"
+                           id="itemImage"
+                           name="image_url"
+                           class="punk-input w-full"
+                           placeholder="https://..."
+                           required>
+                    <div id="imagePreview" class="mt-2 hidden">
+                        <img id="previewImg"
+                             src=""
+                             alt="Preview"
+                             class="max-w-xs max-h-48 rounded border-2 border-pink-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Display Order</label>
+                        <input type="number"
+                               id="itemOrder"
+                               name="display_order"
+                               class="punk-input w-full"
+                               value="0"
+                               min="0">
+                        <p class="text-xs text-gray-500 mt-1">Lower numbers appear first</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Publish Date</label>
+                        <input type="date"
+                               id="itemPublish"
+                               name="publish_date"
+                               class="punk-input w-full">
+                        <p class="text-xs text-gray-500 mt-1">Leave empty for immediate</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Expire Date</label>
+                        <input type="date"
+                               id="itemExpire"
+                               name="expire_date"
+                               class="punk-input w-full">
+                        <p class="text-xs text-gray-500 mt-1">Leave empty for no expiration</p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox"
+                               id="itemActive"
+                               name="active"
+                               class="w-4 h-4"
+                               checked>
+                        <span class="text-sm font-medium">Active (visible on homepage)</span>
+                    </label>
+                </div>
+
+                <div class="flex gap-2">
+                    <button type="submit" id="saveBtn" class="punk-button">
+                        Save Carousel Item
+                    </button>
+                    <button type="button" id="cancelBtn" class="punk-button-outline hidden">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+
+            <div id="formMessage" class="hidden mt-4"></div>
+        </div>
+
+        <!-- Existing Items List -->
+        <div class="punk-card p-6">
+            <h2 class="text-2xl font-bold mb-4">Current Carousel Items</h2>
+
+            <div id="loadingState" class="text-center py-8">
+                <p class="text-gray-400">Loading carousel items...</p>
+            </div>
+
+            <div id="emptyState" class="text-center py-8 hidden">
+                <p class="text-gray-500">No carousel items yet. Add one above!</p>
+            </div>
+
+            <div id="itemsList" class="space-y-4 hidden"></div>
+        </div>
+    </div>
+
+    <script src="/navbar.js"></script>
+    <script src="carousel.js"></script>
+</body>
+</html>
