@@ -69,15 +69,140 @@
           <input type="text" name="name" required class="punk-input" placeholder="Enter band name" />
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Genre</label>
-            <input type="text" name="genre" class="punk-input" placeholder="e.g. Hardcore, Punk Rock" />
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Genres (Select up to 3)</label>
+          <div id="genreCheckboxes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto p-4 bg-black/30 border border-pink-500/30 rounded">
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Afro-punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Afro-punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Anarcho punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Anarcho punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Art punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Art punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Celtic punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Celtic punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Christian punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Christian punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Cowpunk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Cowpunk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Crust punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Crust punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Dance-punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Dance-punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Dark cabaret" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Dark cabaret</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Folk punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Folk punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Garage punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Garage punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Glam punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Glam punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Grindcore" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Grindcore</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Gypsy punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Gypsy punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Hardcore punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Hardcore punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Horror punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Horror punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Latin punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Latin punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Melodic punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Melodic punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Oi!" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Oi!</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Peace punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Peace punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Pop-punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Pop-punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Psychobilly" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Psychobilly</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Punk blues" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Punk blues</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Punk jazz" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Punk jazz</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Punk metal" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Punk metal</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Queercore" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Queercore</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Riot Grrrl" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Riot Grrrl</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Ska punk and ska-core" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Ska punk and ska-core</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Skate punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Skate punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Street punk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Street punk</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="checkbox" name="genres" value="Synthpunk" class="genre-checkbox accent-pink-500" />
+              <span class="text-sm">Synthpunk</span>
+            </label>
           </div>
-          <div>
-            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">City</label>
-            <input type="text" name="city" class="punk-input" placeholder="City" />
-          </div>
+          <p class="text-xs text-gray-500 mt-2" id="genreCount">0 of 3 genres selected</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">City</label>
+          <input type="text" name="city" class="punk-input" placeholder="City" />
         </div>
 
         <div>
