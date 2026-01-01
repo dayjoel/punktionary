@@ -251,7 +251,8 @@
 
   <!-- Carousel Script -->
   <script>
-    const slides = [
+    // Fallback slides if API fails or returns no items
+    const fallbackSlides = [
       {
         image: '/images/home/Dead_Pioneers_carousel1.webp',
         caption: 'Dead Pioneers fundraising for new record',
@@ -290,39 +291,98 @@
       }
     ];
 
+    let slides = [];
     let currentIndex = 0;
+    let carouselInterval = null;
     const imageEl = document.getElementById('carouselImage');
     const captionWrapper = document.getElementById('captionWrapper');
     const captionEl = document.getElementById('carouselCaption');
     const linkEl = document.getElementById('carouselLink');
     const dotsContainer = document.getElementById('carouselDots');
 
-    // Create dots dynamically with punk style
-    slides.forEach((_, i) => {
-      const dot = document.createElement('div');
-      dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-      dot.addEventListener('click', () => showSlide(i));
-      dotsContainer.appendChild(dot);
-    });
+    // Load carousel items from API
+    async function loadCarouselItems() {
+      try {
+        const response = await fetch('/api/carousel_items.php');
+        const data = await response.json();
 
-    const dots = dotsContainer.querySelectorAll('div');
+        if (data.success && data.items && data.items.length > 0) {
+          // Convert API items to slide format
+          slides = data.items.map(item => ({
+            image: item.image_url,
+            caption: item.title,
+            link: item.link_url || '#',
+            linkText: item.link_url ? 'Learn More' : ''
+          }));
+        } else {
+          // Use fallback slides if no items from API
+          slides = fallbackSlides;
+        }
+      } catch (error) {
+        console.error('Error loading carousel items:', error);
+        // Use fallback slides on error
+        slides = fallbackSlides;
+      }
 
-    function showSlide(index) {
-      imageEl.classList.add('opacity-0');
-      captionWrapper.classList.remove('caption-enter-active');
+      // Initialize carousel with loaded slides
+      initializeCarousel();
+    }
+
+    function initializeCarousel() {
+      // Clear existing dots
+      dotsContainer.innerHTML = '';
+
+      // Create dots dynamically with punk style
+      slides.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.addEventListener('click', () => showSlide(i));
+        dotsContainer.appendChild(dot);
+      });
+
+      // Show first slide
+      if (slides.length > 0) {
+        showSlide(0, true); // true = initial load, no transition
+      }
+
+      // Start auto-rotation
+      if (carouselInterval) {
+        clearInterval(carouselInterval);
+      }
+      if (slides.length > 1) {
+        carouselInterval = setInterval(nextSlide, 5000);
+      }
+    }
+
+    function showSlide(index, isInitial = false) {
+      const dots = dotsContainer.querySelectorAll('div');
+
+      if (!isInitial) {
+        imageEl.classList.add('opacity-0');
+        captionWrapper.classList.remove('caption-enter-active');
+      }
+
       currentIndex = index;
 
-      setTimeout(() => {
+      const updateSlide = () => {
         const slide = slides[currentIndex];
         imageEl.src = slide.image;
         imageEl.alt = slide.caption;
         captionEl.textContent = slide.caption;
-        linkEl.href = slide.link;
-        linkEl.textContent = slide.linkText;
 
-        imageEl.classList.remove('opacity-0');
-        captionWrapper.classList.add('caption-enter');
-        setTimeout(() => captionWrapper.classList.add('caption-enter-active'), 10);
+        if (slide.link && slide.link !== '#') {
+          linkEl.href = slide.link;
+          linkEl.textContent = slide.linkText || 'Learn More';
+          linkEl.classList.remove('hidden');
+        } else {
+          linkEl.classList.add('hidden');
+        }
+
+        if (!isInitial) {
+          imageEl.classList.remove('opacity-0');
+          captionWrapper.classList.add('caption-enter');
+          setTimeout(() => captionWrapper.classList.add('caption-enter-active'), 10);
+        }
 
         dots.forEach((d, i) => {
           if (i === currentIndex) {
@@ -331,7 +391,13 @@
             d.classList.remove('active');
           }
         });
-      }, 1000);
+      };
+
+      if (isInitial) {
+        updateSlide();
+      } else {
+        setTimeout(updateSlide, 1000);
+      }
     }
 
     function nextSlide() {
@@ -339,7 +405,8 @@
       showSlide(nextIndex);
     }
 
-    setInterval(nextSlide, 5000); // rotate every 5 seconds
+    // Load carousel when page loads
+    loadCarouselItems();
   </script>
 
 </body>
