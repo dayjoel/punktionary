@@ -150,7 +150,7 @@ function get_user_data($user_id) {
     }
 
     $stmt = $conn->prepare(
-        "SELECT id, email, display_name, profile_picture_url, oauth_provider, created_at
+        "SELECT id, email, display_name, profile_picture_url, oauth_provider, created_at, account_type
          FROM users WHERE id = ?"
     );
     $stmt->bind_param('i', $user_id);

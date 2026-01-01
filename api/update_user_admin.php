@@ -1,5 +1,6 @@
 <?php
-// update_user_admin.php - Update user admin status
+// update_user_admin.php - Update user account type (permission level)
+// account_type: 0 = user, 1 = admin, 2 = god
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
@@ -23,45 +24,81 @@ try {
         throw new Exception('Database connection failed');
     }
 
-    // Check if current user is admin
-    $stmt = $conn->prepare("SELECT is_admin FROM users WHERE id = ?");
+    // Check if current user is admin or god (account_type >= 1)
+    $stmt = $conn->prepare("SELECT account_type FROM users WHERE id = ?");
     $stmt->bind_param('i', $admin_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $admin = $result->fetch_assoc();
     $stmt->close();
 
-    if (!$admin || !$admin['is_admin']) {
+    if (!$admin || $admin['account_type'] < 1) {
         http_response_code(403);
         die(json_encode(['success' => false, 'error' => 'Admin access required']));
     }
 
+    $current_account_type = $admin['account_type'];
+
     // Validate required fields
     $target_user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
-    $is_admin = isset($_POST['is_admin']) ? intval($_POST['is_admin']) : 0;
+    $new_account_type = isset($_POST['account_type']) ? intval($_POST['account_type']) : 0;
 
     if ($target_user_id <= 0) {
         http_response_code(400);
         die(json_encode(['success' => false, 'error' => 'Invalid user ID']));
     }
 
-    // Prevent admin from removing their own admin status
-    if ($target_user_id === $admin_id && $is_admin == 0) {
+    // Validate account_type is 0, 1, or 2
+    if ($new_account_type < 0 || $new_account_type > 2) {
         http_response_code(400);
-        die(json_encode(['success' => false, 'error' => 'You cannot remove your own admin privileges']));
+        die(json_encode(['success' => false, 'error' => 'Invalid account type']));
     }
 
-    // Update user admin status
-    $update_stmt = $conn->prepare("UPDATE users SET is_admin = ? WHERE id = ?");
-    $update_stmt->bind_param('ii', $is_admin, $target_user_id);
+    // Get target user's current account type
+    $target_stmt = $conn->prepare("SELECT account_type FROM users WHERE id = ?");
+    $target_stmt->bind_param('i', $target_user_id);
+    $target_stmt->execute();
+    $target_result = $target_stmt->get_result();
+    $target_user = $target_result->fetch_assoc();
+    $target_stmt->close();
+
+    if (!$target_user) {
+        http_response_code(404);
+        die(json_encode(['success' => false, 'error' => 'User not found']));
+    }
+
+    $target_current_type = $target_user['account_type'];
+
+    // Prevent admin from modifying their own privileges
+    if ($target_user_id === $admin_id) {
+        http_response_code(400);
+        die(json_encode(['success' => false, 'error' => 'You cannot modify your own privileges']));
+    }
+
+    // Admins (type 1) cannot modify god accounts (type 2) or create god accounts
+    if ($current_account_type < 2) {
+        if ($target_current_type == 2) {
+            http_response_code(403);
+            die(json_encode(['success' => false, 'error' => 'You cannot modify god-tier accounts']));
+        }
+        if ($new_account_type == 2) {
+            http_response_code(403);
+            die(json_encode(['success' => false, 'error' => 'You cannot create god-tier accounts']));
+        }
+    }
+
+    // Update user account type
+    $update_stmt = $conn->prepare("UPDATE users SET account_type = ? WHERE id = ?");
+    $update_stmt->bind_param('ii', $new_account_type, $target_user_id);
 
     if ($update_stmt->execute()) {
         $update_stmt->close();
         $conn->close();
 
+        $type_names = [0 => 'user', 1 => 'admin', 2 => 'god'];
         echo json_encode([
             'success' => true,
-            'message' => 'User privileges updated successfully'
+            'message' => "User privileges updated to {$type_names[$new_account_type]}"
         ]);
     } else {
         throw new Exception('Update failed: ' . $update_stmt->error);
