@@ -31,7 +31,7 @@ try {
     $user = $result->fetch_assoc();
     $stmt->close();
 
-    if (!$user || !$user['is_admin']) {
+    if (!$user || $user['account_type'] < 1) {
         http_response_code(403);
         die(json_encode(['success' => false, 'error' => 'Admin access required']));
     }
