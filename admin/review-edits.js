@@ -317,6 +317,11 @@ function formatFieldValueForDisplay(fieldName, value) {
         return '(empty)';
     }
 
+    // Format logo as image preview
+    if (fieldName === 'logo' && typeof value === 'string' && value.trim() !== '') {
+        return `<img src="${value}" alt="Logo" class="max-w-xs max-h-32 rounded border border-pink-500" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" /><span style="display:none;" class="text-gray-400">${value}</span>`;
+    }
+
     // Format links object as readable list
     if (fieldName === 'links' && typeof value === 'object' && !Array.isArray(value)) {
         const linkEntries = Object.entries(value)

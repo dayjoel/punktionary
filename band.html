@@ -177,6 +177,12 @@
           </div>
 
           <div>
+            <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Logo URL</label>
+            <input type="url" id="editLogo" name="logo" class="punk-input" placeholder="https://example.com/logo.jpg" />
+            <p class="text-xs text-gray-500 mt-1">Provide a URL to the band's logo image</p>
+          </div>
+
+          <div>
             <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Albums (comma-separated)</label>
             <input type="text" id="editAlbums" name="albums" class="punk-input" placeholder="Album One, Album Two, Album Three" />
           </div>
@@ -497,6 +503,7 @@
       document.getElementById('editName').value = band.name || '';
       document.getElementById('editCity').value = band.city || '';
       document.getElementById('editState').value = band.state || '';
+      document.getElementById('editLogo').value = band.logo || '';
 
       // Set genres
       if (band.genre) {
