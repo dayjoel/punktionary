@@ -151,7 +151,7 @@ function openReviewModal(edit) {
                     .map(([key, value]) => `
                         <div>
                             <strong class="text-gray-400">${formatFieldName(key)}:</strong>
-                            <p class="text-gray-200">${formatFieldValue(value)}</p>
+                            <p class="text-gray-200 break-words">${formatFieldValueForDisplay(key, value)}</p>
                         </div>
                     `).join('')}
             </div>
@@ -181,11 +181,11 @@ function openReviewModal(edit) {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <p class="text-xs text-gray-500 mb-1">OLD VALUE:</p>
-                            <p class="text-gray-400 line-through break-words">${formatFieldValue(oldValue)}</p>
+                            <p class="text-gray-400 line-through break-words">${formatFieldValueForDisplay(field, oldValue)}</p>
                         </div>
                         <div>
                             <p class="text-xs text-green-500 mb-1">NEW VALUE:</p>
-                            <p class="text-green-400 font-semibold break-words">${formatFieldValue(newValue)}</p>
+                            <p class="text-green-400 font-semibold break-words">${formatFieldValueForDisplay(field, newValue)}</p>
                         </div>
                     </div>
                 </div>
@@ -308,6 +308,39 @@ function formatFieldValue(value) {
     if (typeof value === 'object') {
         return JSON.stringify(value);
     }
+    return String(value);
+}
+
+function formatFieldValueForDisplay(fieldName, value) {
+    // Special formatting for specific fields
+    if (value === null || value === undefined || value === '') {
+        return '(empty)';
+    }
+
+    // Format links object as readable list
+    if (fieldName === 'links' && typeof value === 'object' && !Array.isArray(value)) {
+        const linkEntries = Object.entries(value)
+            .filter(([key, url]) => url && url.trim() !== '')
+            .map(([key, url]) => {
+                const displayName = key.charAt(0).toUpperCase() + key.slice(1);
+                return `${displayName}: ${url}`;
+            });
+        return linkEntries.length > 0 ? linkEntries.join('<br>') : '(empty)';
+    }
+
+    // Format arrays as comma-separated list
+    if (Array.isArray(value)) {
+        return value.length > 0 ? value.join(', ') : '(empty)';
+    }
+
+    if (typeof value === 'boolean') {
+        return value ? 'Yes' : 'No';
+    }
+
+    if (typeof value === 'object') {
+        return JSON.stringify(value);
+    }
+
     return String(value);
 }
 
