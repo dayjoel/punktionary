@@ -23,7 +23,7 @@ try {
         throw new Exception('Database connection failed');
     }
 
-    // Check if user is admin
+    // Check if user is admin or god (account_type >= 1)
     $stmt = $conn->prepare("SELECT account_type FROM users WHERE id = ?");
     $stmt->bind_param('i', $user_id);
     $stmt->execute();
@@ -31,7 +31,7 @@ try {
     $user = $result->fetch_assoc();
     $stmt->close();
 
-    if (!$user || !$user['is_admin']) {
+    if (!$user || $user['account_type'] < 1) {
         http_response_code(403);
         die(json_encode(['success' => false, 'error' => 'Admin access required']));
     }
