@@ -88,25 +88,31 @@
     <section class="lg:col-span-2 space-y-12">
 
       <!-- Image Carousel -->
-      <div class="carousel-container relative w-full h-64 sm:h-96 overflow-hidden">
+      <div class="carousel-container relative w-full h-64 sm:h-96 overflow-hidden bg-black">
+        <!-- Loading State -->
+        <div id="carouselLoading" class="absolute inset-0 flex items-center justify-center">
+          <div class="text-center">
+            <div class="inline-block w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+            <p class="text-gray-400 text-sm">Loading carousel...</p>
+          </div>
+        </div>
+
         <!-- Image -->
-        <img id="carouselImage" 
-             src="/images/home/Monstress_eugene_carousel5.png" 
+        <img id="carouselImage"
+             src=""
              alt="Featured content"
-             class="absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000" />
+             class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" />
 
         <!-- Overlay -->
-        <div id="carouselOverlay" class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/80 to-transparent p-6">
-          <div id="captionWrapper" class="caption-enter caption-enter-active">
+        <div id="carouselOverlay" class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/80 to-transparent p-6 opacity-0">
+          <div id="captionWrapper" class="caption-enter">
             <h2 id="carouselCaption" class="text-2xl font-bold mb-3 text-white" style="font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em;">
-              Monstress tours PNW with Pie.
             </h2>
-            <a id="carouselLink" 
-               href="https://www.instagram.com/monstress.labs/" 
+            <a id="carouselLink"
+               href="#"
                target="_blank"
                rel="noopener noreferrer"
                class="punk-button inline-block">
-              Instagram
             </a>
           </div>
         </div>
@@ -378,7 +384,17 @@
           linkEl.classList.add('hidden');
         }
 
-        if (!isInitial) {
+        if (isInitial) {
+          // Hide loading state and show carousel content
+          const loadingEl = document.getElementById('carouselLoading');
+          if (loadingEl) {
+            loadingEl.classList.add('hidden');
+          }
+          imageEl.classList.remove('opacity-0');
+          imageEl.classList.add('opacity-100');
+          document.getElementById('carouselOverlay').classList.remove('opacity-0');
+          document.getElementById('carouselOverlay').classList.add('opacity-100');
+        } else {
           imageEl.classList.remove('opacity-0');
           captionWrapper.classList.add('caption-enter');
           setTimeout(() => captionWrapper.classList.add('caption-enter-active'), 10);
