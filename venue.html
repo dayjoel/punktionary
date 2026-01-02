@@ -123,6 +123,76 @@
 
         </div>
       </div>
+
+      <!-- Reviews Section -->
+      <div id="reviewsSection" class="mt-12 hidden">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-4xl font-bold uppercase tracking-wider">Reviews</h2>
+          <button id="writeReviewBtn" class="punk-button hidden">Write a Review</button>
+        </div>
+
+        <!-- Average Rating Display -->
+        <div id="ratingDisplay" class="punk-card p-6 mb-6">
+          <div class="flex items-center gap-6">
+            <div class="text-center">
+              <div class="text-5xl font-black text-pink-500" id="averageRating">-</div>
+              <div class="flex items-center justify-center gap-1 mt-2" id="averageStars"></div>
+              <p class="text-sm text-gray-400 mt-1" id="reviewCount">No reviews yet</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews List -->
+        <div id="reviewsList" class="space-y-4"></div>
+
+        <!-- Empty State -->
+        <div id="noReviews" class="punk-card p-8 text-center hidden">
+          <p class="text-gray-500 italic">No reviews yet. Be the first to review this venue!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Write Review Modal -->
+    <div id="reviewModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="punk-card max-w-2xl w-full">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-3xl font-bold uppercase tracking-wider">Write a Review</h2>
+          <button id="closeReviewModal" class="text-pink-500 hover:text-pink-400 text-3xl leading-none">&times;</button>
+        </div>
+
+        <form id="reviewForm">
+          <div class="space-y-6">
+            <!-- Star Rating -->
+            <div>
+              <label class="block text-sm font-bold mb-3 text-pink-500 uppercase tracking-wide">Rating *</label>
+              <div class="flex gap-2" id="starRating">
+                <button type="button" class="star-btn text-4xl text-gray-600 hover:text-yellow-500 transition-colors" data-rating="1">★</button>
+                <button type="button" class="star-btn text-4xl text-gray-600 hover:text-yellow-500 transition-colors" data-rating="2">★</button>
+                <button type="button" class="star-btn text-4xl text-gray-600 hover:text-yellow-500 transition-colors" data-rating="3">★</button>
+                <button type="button" class="star-btn text-4xl text-gray-600 hover:text-yellow-500 transition-colors" data-rating="4">★</button>
+                <button type="button" class="star-btn text-4xl text-gray-600 hover:text-yellow-500 transition-colors" data-rating="5">★</button>
+              </div>
+              <input type="hidden" name="rating" id="ratingInput" required>
+            </div>
+
+            <!-- Review Text -->
+            <div>
+              <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">
+                Your Review <span id="reviewRequiredLabel" class="hidden">(Required for 3 stars or fewer)</span><span id="reviewOptionalLabel">(Optional)</span>
+              </label>
+              <textarea name="review_text" id="reviewText" class="punk-input w-full" rows="5" placeholder="Share your experience at this venue..."></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex gap-3">
+              <button type="submit" class="punk-button flex-1">Submit Review</button>
+              <button type="button" id="cancelReview" class="punk-button-outline flex-1">Cancel</button>
+            </div>
+          </div>
+        </form>
+
+        <div id="reviewMessage" class="hidden mt-4"></div>
+      </div>
     </div>
 
     <!-- Edit Suggestion Modal -->
@@ -562,6 +632,270 @@
         document.getElementById('editError').classList.remove('hidden');
       }
     });
+
+    // Review functionality
+    let selectedRating = 0;
+    let currentUser = null;
+
+    // Load reviews when venue loads
+    async function loadReviews(venueId) {
+      try {
+        const response = await fetch(`/api/get_venue_reviews.php?venue_id=${venueId}`);
+        const data = await response.json();
+
+        if (data.success) {
+          displayReviews(data.reviews, data.average_rating, data.review_count, data.user_has_reviewed);
+
+          // Show reviews section
+          document.getElementById('reviewsSection').classList.remove('hidden');
+
+          // Show write review button only if user hasn't reviewed
+          if (!data.user_has_reviewed) {
+            document.getElementById('writeReviewBtn').classList.remove('hidden');
+          }
+        }
+      } catch (error) {
+        console.error('Error loading reviews:', error);
+      }
+    }
+
+    function displayReviews(reviews, averageRating, reviewCount, userHasReviewed) {
+      // Display average rating
+      if (reviewCount > 0) {
+        document.getElementById('averageRating').textContent = averageRating.toFixed(1);
+        document.getElementById('averageStars').innerHTML = generateStars(averageRating);
+        document.getElementById('reviewCount').textContent = `${reviewCount} ${reviewCount === 1 ? 'review' : 'reviews'}`;
+        document.getElementById('noReviews').classList.add('hidden');
+      } else {
+        document.getElementById('averageRating').textContent = '-';
+        document.getElementById('averageStars').innerHTML = '';
+        document.getElementById('reviewCount').textContent = 'No reviews yet';
+        document.getElementById('noReviews').classList.remove('hidden');
+      }
+
+      // Display reviews list
+      const reviewsList = document.getElementById('reviewsList');
+      reviewsList.innerHTML = '';
+
+      reviews.forEach(review => {
+        const reviewCard = document.createElement('div');
+        reviewCard.className = 'punk-card p-6';
+        reviewCard.innerHTML = `
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <img src="${review.profile_picture_url || '/images/default-avatar.svg'}"
+                   alt="${review.user_name}"
+                   class="w-10 h-10 rounded-full border-2 border-pink-500">
+              <div>
+                <div class="font-bold">${escapeHtml(review.user_name)}</div>
+                <div class="flex items-center gap-2">
+                  <div class="flex">${generateStars(review.rating)}</div>
+                  <span class="text-sm text-gray-500">${formatDate(review.created_at)}</span>
+                </div>
+              </div>
+            </div>
+            ${review.can_delete ? `<button onclick="deleteReview(${review.id})" class="text-red-500 hover:text-red-400 text-sm font-bold">Delete</button>` : ''}
+          </div>
+          ${review.review_text ? `<p class="text-gray-300">${escapeHtml(review.review_text)}</p>` : ''}
+        `;
+        reviewsList.appendChild(reviewCard);
+      });
+    }
+
+    function generateStars(rating) {
+      const fullStars = Math.floor(rating);
+      const halfStar = rating % 1 >= 0.5;
+      let html = '';
+
+      for (let i = 0; i < fullStars; i++) {
+        html += '<span class="text-yellow-500">★</span>';
+      }
+      if (halfStar) {
+        html += '<span class="text-yellow-500">☆</span>';
+      }
+      for (let i = fullStars + (halfStar ? 1 : 0); i < 5; i++) {
+        html += '<span class="text-gray-600">★</span>';
+      }
+
+      return html;
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Star rating interaction
+    document.querySelectorAll('.star-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        selectedRating = parseInt(this.getAttribute('data-rating'));
+        document.getElementById('ratingInput').value = selectedRating;
+
+        // Update visual state
+        document.querySelectorAll('.star-btn').forEach((star, index) => {
+          if (index < selectedRating) {
+            star.classList.remove('text-gray-600');
+            star.classList.add('text-yellow-500');
+          } else {
+            star.classList.add('text-gray-600');
+            star.classList.remove('text-yellow-500');
+          }
+        });
+
+        // Update review text requirement label
+        const requiredLabel = document.getElementById('reviewRequiredLabel');
+        const optionalLabel = document.getElementById('reviewOptionalLabel');
+        if (selectedRating <= 3) {
+          requiredLabel.classList.remove('hidden');
+          optionalLabel.classList.add('hidden');
+        } else {
+          requiredLabel.classList.add('hidden');
+          optionalLabel.classList.remove('hidden');
+        }
+      });
+    });
+
+    // Open review modal
+    document.getElementById('writeReviewBtn').addEventListener('click', async function() {
+      // Check authentication
+      try {
+        const authResponse = await fetch('/auth/check_auth.php');
+        const authData = await authResponse.json();
+
+        if (!authData.authenticated) {
+          const loginOverlay = document.getElementById('loginOverlay');
+          if (loginOverlay) {
+            loginOverlay.classList.remove('hidden');
+          }
+          return;
+        }
+      } catch (error) {
+        alert('Please log in to write a review');
+        return;
+      }
+
+      document.getElementById('reviewModal').classList.remove('hidden');
+    });
+
+    // Close review modal
+    document.getElementById('closeReviewModal').addEventListener('click', function() {
+      document.getElementById('reviewModal').classList.add('hidden');
+      resetReviewForm();
+    });
+
+    document.getElementById('cancelReview').addEventListener('click', function() {
+      document.getElementById('reviewModal').classList.add('hidden');
+      resetReviewForm();
+    });
+
+    function resetReviewForm() {
+      document.getElementById('reviewForm').reset();
+      selectedRating = 0;
+      document.querySelectorAll('.star-btn').forEach(star => {
+        star.classList.add('text-gray-600');
+        star.classList.remove('text-yellow-500');
+      });
+      document.getElementById('reviewMessage').classList.add('hidden');
+    }
+
+    // Submit review
+    document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      if (selectedRating === 0) {
+        const messageDiv = document.getElementById('reviewMessage');
+        messageDiv.className = 'p-4 rounded bg-red-900/50 border border-red-500 text-red-400';
+        messageDiv.textContent = 'Please select a rating';
+        messageDiv.classList.remove('hidden');
+        return;
+      }
+
+      // Require review text for 3 stars or fewer
+      const reviewText = document.getElementById('reviewText').value.trim();
+      if (selectedRating <= 3 && !reviewText) {
+        const messageDiv = document.getElementById('reviewMessage');
+        messageDiv.className = 'p-4 rounded bg-red-900/50 border border-red-500 text-red-400';
+        messageDiv.textContent = 'Please provide a written review for ratings of 3 stars or fewer';
+        messageDiv.classList.remove('hidden');
+        return;
+      }
+
+      const formData = new FormData(this);
+      formData.append('venue_id', venueId);
+
+      try {
+        const response = await fetch('/api/submit_venue_review.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          const messageDiv = document.getElementById('reviewMessage');
+          messageDiv.className = 'p-4 rounded bg-green-900/50 border border-green-500 text-green-400';
+          messageDiv.textContent = 'Review submitted successfully!';
+          messageDiv.classList.remove('hidden');
+
+          setTimeout(() => {
+            document.getElementById('reviewModal').classList.add('hidden');
+            resetReviewForm();
+            loadReviews(venueId); // Reload reviews
+          }, 1500);
+        } else {
+          throw new Error(data.error || 'Failed to submit review');
+        }
+      } catch (error) {
+        const messageDiv = document.getElementById('reviewMessage');
+        messageDiv.className = 'p-4 rounded bg-red-900/50 border border-red-500 text-red-400';
+        messageDiv.textContent = error.message;
+        messageDiv.classList.remove('hidden');
+      }
+    });
+
+    // Delete review (admin only)
+    async function deleteReview(reviewId) {
+      if (!confirm('Are you sure you want to delete this review?')) {
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/delete_venue_review.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `review_id=${reviewId}`
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert('Review deleted successfully');
+          loadReviews(venueId); // Reload reviews
+        } else {
+          alert(data.error || 'Failed to delete review');
+        }
+      } catch (error) {
+        alert('Error deleting review');
+      }
+    }
+
+    // Make deleteReview available globally
+    window.deleteReview = deleteReview;
+
+    // Load reviews after venue details load
+    const originalLoadVenueDetails = loadVenueDetails;
+    loadVenueDetails = async function(id) {
+      await originalLoadVenueDetails(id);
+      loadReviews(id);
+    };
   </script>
 </body>
 </html>

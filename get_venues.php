@@ -24,71 +24,79 @@ $capacityMax = isset($_GET['capacity_max']) ? intval($_GET['capacity_max']) : 0;
 $featured = isset($_GET['featured']) ? filter_var($_GET['featured'], FILTER_VALIDATE_BOOLEAN) : false;
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'name_asc';
 
-// Build base query
-$sql = "SELECT id, name, type, city, state, capacity, age_restriction, links, street_address FROM venues WHERE 1=1";
-$countSql = "SELECT COUNT(*) as total FROM venues WHERE 1=1";
+// Build base query with rating data
+$sql = "SELECT v.id, v.name, v.type, v.city, v.state, v.capacity, v.age_restriction, v.links, v.street_address,
+        COUNT(vr.id) as review_count,
+        COALESCE(AVG(vr.rating), 0) as average_rating
+        FROM venues v
+        LEFT JOIN venue_reviews vr ON v.id = vr.venue_id
+        WHERE 1=1";
+$countSql = "SELECT COUNT(DISTINCT v.id) as total FROM venues v WHERE 1=1";
 $params = [];
 $types = '';
 
 // Add filters
 if ($name !== '') {
-    $sql .= " AND name COLLATE utf8mb4_general_ci LIKE ?";
-    $countSql .= " AND name COLLATE utf8mb4_general_ci LIKE ?";
+    $sql .= " AND v.name COLLATE utf8mb4_general_ci LIKE ?";
+    $countSql .= " AND v.name COLLATE utf8mb4_general_ci LIKE ?";
     $params[] = "%$name%";
     $types .= 's';
 }
 if ($type !== '') {
-    $sql .= " AND type COLLATE utf8mb4_general_ci LIKE ?";
-    $countSql .= " AND type COLLATE utf8mb4_general_ci LIKE ?";
+    $sql .= " AND v.type COLLATE utf8mb4_general_ci LIKE ?";
+    $countSql .= " AND v.type COLLATE utf8mb4_general_ci LIKE ?";
     $params[] = "%$type%";
     $types .= 's';
 }
 if ($city !== '') {
-    $sql .= " AND city COLLATE utf8mb4_general_ci LIKE ?";
-    $countSql .= " AND city COLLATE utf8mb4_general_ci LIKE ?";
+    $sql .= " AND v.city COLLATE utf8mb4_general_ci LIKE ?";
+    $countSql .= " AND v.city COLLATE utf8mb4_general_ci LIKE ?";
     $params[] = "%$city%";
     $types .= 's';
 }
 if ($state !== '') {
-    $sql .= " AND state COLLATE utf8mb4_general_ci LIKE ?";
-    $countSql .= " AND state COLLATE utf8mb4_general_ci LIKE ?";
+    $sql .= " AND v.state COLLATE utf8mb4_general_ci LIKE ?";
+    $countSql .= " AND v.state COLLATE utf8mb4_general_ci LIKE ?";
     $params[] = "%$state%";
     $types .= 's';
 }
 if ($age !== '') {
-    $sql .= " AND age_restriction = ?";
-    $countSql .= " AND age_restriction = ?";
+    $sql .= " AND v.age_restriction = ?";
+    $countSql .= " AND v.age_restriction = ?";
     $params[] = $age;
     $types .= 's';
 }
 if ($capacityMin > 0) {
-    $sql .= " AND capacity >= ?";
-    $countSql .= " AND capacity >= ?";
+    $sql .= " AND v.capacity >= ?";
+    $countSql .= " AND v.capacity >= ?";
     $params[] = $capacityMin;
     $types .= 'i';
 }
 if ($capacityMax > 0) {
-    $sql .= " AND capacity <= ?";
-    $countSql .= " AND capacity <= ?";
+    $sql .= " AND v.capacity <= ?";
+    $countSql .= " AND v.capacity <= ?";
     $params[] = $capacityMax;
     $types .= 'i';
 }
+
+// Group by venue to aggregate reviews
+$sql .= " GROUP BY v.id";
 
 // Order
 // Apply sorting
 switch ($sort) {
     case 'name_desc':
-        $sql .= " ORDER BY name DESC";
+        $sql .= " ORDER BY v.name DESC";
         break;
     case 'newest':
-        $sql .= " ORDER BY created_at DESC";
+        $sql .= " ORDER BY v.created_at DESC";
         break;
     case 'oldest':
-        $sql .= " ORDER BY created_at ASC";
+        $sql .= " ORDER BY v.created_at ASC";
         break;
     case 'name_asc':
     default:
-        $sql .= " ORDER BY name ASC";
+        $sql .= " ORDER BY v.name ASC";
         break;
 }
 
