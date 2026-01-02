@@ -67,6 +67,17 @@ async function loadStats() {
             console.error('Failed to load user count:', usersData.error);
             document.getElementById('totalUsersCount').innerHTML = '0';
         }
+
+        // Load pending news count
+        const pendingNewsResponse = await fetch('/api/get_pending_news_count.php');
+        const pendingNewsData = await pendingNewsResponse.json();
+
+        if (pendingNewsData.success) {
+            document.getElementById('pendingNewsCount').innerHTML = pendingNewsData.count;
+        } else {
+            console.error('Failed to load pending news count:', pendingNewsData.error);
+            document.getElementById('pendingNewsCount').innerHTML = '0';
+        }
     } catch (error) {
         console.error('Error loading stats:', error);
         document.getElementById('pendingCount').textContent = '?';
@@ -74,6 +85,7 @@ async function loadStats() {
         document.getElementById('rejectedCount').textContent = '?';
         document.getElementById('carouselCount').textContent = '?';
         document.getElementById('totalUsersCount').textContent = '?';
+        document.getElementById('pendingNewsCount').textContent = '?';
     }
 }
 

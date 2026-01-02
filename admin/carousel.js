@@ -4,6 +4,7 @@ let editingItemId = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     loadCarouselItems();
+    loadPendingNews();
     setupEventListeners();
 });
 
@@ -374,3 +375,136 @@ function formatDate(dateString) {
         day: 'numeric'
     });
 }
+
+// Pending News Functions
+async function loadPendingNews() {
+    const loadingState = document.getElementById('pendingNewsLoading');
+    const emptyState = document.getElementById('pendingNewsEmpty');
+    const newsList = document.getElementById('pendingNewsList');
+
+    loadingState.classList.remove('hidden');
+    emptyState.classList.add('hidden');
+    newsList.classList.add('hidden');
+
+    try {
+        const response = await fetch('/api/get_pending_news.php');
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.error || 'Failed to load pending news');
+        }
+
+        loadingState.classList.add('hidden');
+
+        if (data.items.length === 0) {
+            emptyState.classList.remove('hidden');
+            return;
+        }
+
+        // Display items
+        newsList.innerHTML = '';
+        data.items.forEach(item => {
+            newsList.appendChild(createPendingNewsCard(item));
+        });
+        newsList.classList.remove('hidden');
+
+    } catch (error) {
+        console.error('Error loading pending news:', error);
+        loadingState.classList.add('hidden');
+        newsList.innerHTML = `
+            <div class="punk-card bg-red-900/20 border-red-500 p-6 text-center">
+                <p class="text-red-400">Error loading pending news: ${error.message}</p>
+            </div>
+        `;
+        newsList.classList.remove('hidden');
+    }
+}
+
+function createPendingNewsCard(item) {
+    const card = document.createElement('div');
+    card.className = 'punk-card p-4';
+
+    const imageUrl = item.scraped_image_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22128%22 height=%2296%22%3E%3Crect width=%22128%22 height=%2296%22 fill=%22%23333%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23666%22%3ENo Image%3C/text%3E%3C/svg%3E';
+
+    card.innerHTML = `
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex-shrink-0">
+                <img src="${imageUrl}"
+                     alt="${item.scraped_title || 'News item'}"
+                     class="w-32 h-24 object-cover rounded border-2 border-yellow-500"
+                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22128%22 height=%2296%22%3E%3Crect width=%22128%22 height=%2296%22 fill=%22%23333%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23666%22%3ENo Image%3C/text%3E%3C/svg%3E'">
+            </div>
+            <div class="flex-1 min-w-0">
+                <h3 class="text-xl font-bold mb-2">${item.scraped_title || 'No title scraped'}</h3>
+                ${item.scraped_description ? `<p class="text-sm text-gray-400 mb-2 line-clamp-2">${item.scraped_description}</p>` : ''}
+                <div class="text-xs text-gray-500 space-y-1">
+                    <p>URL: <a href="${item.submitted_url}" target="_blank" class="text-pink-500 hover:underline break-all">${item.submitted_url}</a></p>
+                    <p>Submitted by: <strong>${item.submitted_by_name || 'Unknown'}</strong> (${item.submitted_by_email || 'no email'})</p>
+                    <p>Submitted: <strong>${formatDate(item.created_at)}</strong></p>
+                </div>
+            </div>
+            <div class="flex flex-col gap-2">
+                <button class="punk-button text-sm bg-green-600 hover:bg-green-700" onclick="reviewNews(${item.id}, 'approve')">
+                    Approve & Add
+                </button>
+                <button class="punk-button-outline text-sm text-red-500 border-red-500 hover:bg-red-500/20" onclick="reviewNews(${item.id}, 'reject')">
+                    Reject
+                </button>
+            </div>
+        </div>
+    `;
+
+    return card;
+}
+
+async function reviewNews(id, action) {
+    const actionText = action === 'approve' ? 'approve and add this news to the carousel' : 'reject this news submission';
+
+    if (!confirm(`Are you sure you want to ${actionText}?`)) {
+        return;
+    }
+
+    let notes = '';
+    if (action === 'reject') {
+        notes = prompt('Optional: Add a note about why this was rejected');
+        if (notes === null) {
+            return; // User cancelled
+        }
+    }
+
+    try {
+        const params = new URLSearchParams();
+        params.append('id', id);
+        params.append('action', action);
+        if (notes) {
+            params.append('notes', notes);
+        }
+
+        const response = await fetch('/api/review_pending_news.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params.toString()
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert(data.message);
+            // Reload both lists
+            loadPendingNews();
+            if (action === 'approve') {
+                loadCarouselItems();
+            }
+        } else {
+            throw new Error(data.error || 'Failed to review news');
+        }
+    } catch (error) {
+        console.error('Review error:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+// Make reviewNews available globally
+window.reviewNews = reviewNews;
