@@ -82,6 +82,46 @@
   <!-- Include Login Modal -->
   <div id="login-modal-container"></div>
 
+  <!-- Submit News Modal -->
+  <div id="submitNewsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="punk-card max-w-lg w-full">
+      <div class="flex justify-between items-start mb-6">
+        <h2 class="text-3xl font-bold uppercase tracking-wider" style="font-family: 'Bebas Neue', sans-serif;">
+          Submit News
+        </h2>
+        <button id="closeNewsModal" class="text-pink-500 hover:text-pink-400 text-3xl leading-none">&times;</button>
+      </div>
+
+      <p class="text-gray-300 mb-6">
+        Share punk scene news! Paste a link to an article, social media post, or announcement. We'll review and add it to the homepage carousel.
+      </p>
+
+      <form id="submitNewsForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">News URL *</label>
+          <input type="url"
+                 id="newsUrl"
+                 name="url"
+                 class="punk-input w-full"
+                 placeholder="https://example.com/punk-news"
+                 required />
+          <p class="text-xs text-gray-500 mt-1">Link to news article, social media post, or event announcement</p>
+        </div>
+
+        <button type="submit" class="punk-button w-full">
+          Submit for Review
+        </button>
+      </form>
+
+      <div id="newsSuccessMessage" class="hidden mt-4 p-4 bg-green-900/50 border border-green-500 text-green-400 rounded">
+        <p class="font-bold">Success!</p>
+        <p class="text-sm">Your news submission has been received and will be reviewed by our team.</p>
+      </div>
+
+      <div id="newsErrorMessage" class="hidden mt-4 p-4 bg-red-900/50 border border-red-500 text-red-400 rounded"></div>
+    </div>
+  </div>
+
   <main class="pt-24 max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-12">
 
     <!-- Primary Column -->
@@ -121,6 +161,11 @@
         <div id="carouselDots" class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-10">
           <!-- Dots will be added dynamically -->
         </div>
+
+        <!-- Submit News Link -->
+        <button id="submitNewsBtn" class="absolute bottom-4 right-4 text-xs text-pink-500 hover:text-pink-400 underline z-20 bg-black/50 px-2 py-1 rounded">
+          Submit Your News
+        </button>
       </div>
 
       <!-- Welcome Text -->
@@ -437,6 +482,80 @@
 
     // Load carousel when page loads
     loadCarouselItems();
+  </script>
+
+  <!-- Submit News Modal Script -->
+  <script>
+    // Modal controls
+    const submitNewsBtn = document.getElementById('submitNewsBtn');
+    const submitNewsModal = document.getElementById('submitNewsModal');
+    const closeNewsModal = document.getElementById('closeNewsModal');
+    const submitNewsForm = document.getElementById('submitNewsForm');
+    const newsSuccessMessage = document.getElementById('newsSuccessMessage');
+    const newsErrorMessage = document.getElementById('newsErrorMessage');
+
+    // Open modal
+    submitNewsBtn.addEventListener('click', function() {
+      submitNewsModal.classList.remove('hidden');
+    });
+
+    // Close modal
+    closeNewsModal.addEventListener('click', function() {
+      submitNewsModal.classList.add('hidden');
+      submitNewsForm.reset();
+      newsSuccessMessage.classList.add('hidden');
+      newsErrorMessage.classList.add('hidden');
+    });
+
+    // Close on backdrop click
+    submitNewsModal.addEventListener('click', function(e) {
+      if (e.target === submitNewsModal) {
+        closeNewsModal.click();
+      }
+    });
+
+    // Handle form submission
+    submitNewsForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const url = document.getElementById('newsUrl').value.trim();
+      const submitBtn = submitNewsForm.querySelector('button[type="submit"]');
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      newsSuccessMessage.classList.add('hidden');
+      newsErrorMessage.classList.add('hidden');
+
+      try {
+        const response = await fetch('/api/submit_carousel_news.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `url=${encodeURIComponent(url)}`
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          newsSuccessMessage.classList.remove('hidden');
+          submitNewsForm.reset();
+
+          setTimeout(() => {
+            closeNewsModal.click();
+          }, 3000);
+        } else {
+          throw new Error(data.error || 'Submission failed');
+        }
+      } catch (error) {
+        console.error('News submission error:', error);
+        newsErrorMessage.textContent = error.message || 'Failed to submit news. Please try again.';
+        newsErrorMessage.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit for Review';
+      }
+    });
   </script>
 
 </body>
