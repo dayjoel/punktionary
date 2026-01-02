@@ -890,12 +890,10 @@
     // Make deleteReview available globally
     window.deleteReview = deleteReview;
 
-    // Load reviews after venue details load
-    const originalLoadVenueDetails = loadVenueDetails;
-    loadVenueDetails = async function(id) {
-      await originalLoadVenueDetails(id);
-      loadReviews(id);
-    };
+    // Load reviews for the current venue
+    if (venueId) {
+      loadReviews(venueId);
+    }
   </script>
 </body>
 </html>
