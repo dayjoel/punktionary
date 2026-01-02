@@ -639,20 +639,27 @@
 
     // Load reviews when venue loads
     async function loadReviews(venueId) {
+      console.log('Loading reviews for venue:', venueId);
       try {
         const response = await fetch(`/api/get_venue_reviews.php?venue_id=${venueId}`);
+        console.log('Reviews response status:', response.status);
         const data = await response.json();
+        console.log('Reviews data:', data);
 
         if (data.success) {
           displayReviews(data.reviews, data.average_rating, data.review_count, data.user_has_reviewed);
 
           // Show reviews section
           document.getElementById('reviewsSection').classList.remove('hidden');
+          console.log('Reviews section shown');
 
           // Show write review button only if user hasn't reviewed
           if (!data.user_has_reviewed) {
             document.getElementById('writeReviewBtn').classList.remove('hidden');
+            console.log('Write review button shown');
           }
+        } else {
+          console.error('Reviews API returned success:false', data);
         }
       } catch (error) {
         console.error('Error loading reviews:', error);
