@@ -406,6 +406,8 @@
           imageEl.classList.add('opacity-100');
           document.getElementById('carouselOverlay').classList.remove('opacity-0');
           document.getElementById('carouselOverlay').classList.add('opacity-100');
+          // Also apply caption animation for initial load
+          captionWrapper.classList.add('caption-enter-active');
         } else {
           imageEl.classList.remove('opacity-0');
           captionWrapper.classList.add('caption-enter');
