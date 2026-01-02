@@ -111,6 +111,26 @@ function initSubmitPage() {
     });
   }
 
+  // Resource type "Other" toggle for custom field
+  const resourceTypeRadios = document.querySelectorAll('input[name="resource_type"]');
+  const customResourceTypeField = document.getElementById('customResourceTypeField');
+  const customResourceTypeInput = document.getElementById('customResourceType');
+
+  if (resourceTypeRadios.length > 0 && customResourceTypeField) {
+    resourceTypeRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        if (this.value === 'Other' && this.checked) {
+          customResourceTypeField.classList.remove('hidden');
+          customResourceTypeInput.required = true;
+        } else {
+          customResourceTypeField.classList.add('hidden');
+          customResourceTypeInput.required = false;
+          customResourceTypeInput.value = '';
+        }
+      });
+    });
+  }
+
   // Switch to band form
   selectBand.addEventListener('click', async function() {
     if (await checkAuthenticationBeforeForm()) {
@@ -499,16 +519,29 @@ async function submitForm(type, form) {
       }
     }
 
+    // Process resource type (use custom type if "Other" is selected)
+    if (type === 'resource') {
+      const resourceType = formData.get('resource_type');
+      if (resourceType === 'Other') {
+        const customType = formData.get('custom_resource_type');
+        if (customType && customType.trim()) {
+          formData.set('resource_type', customType.trim());
+        }
+      }
+      // Remove the custom field from formData
+      formData.delete('custom_resource_type');
+    }
+
     // Process link fields (convert to JSON object)
     const links = {};
     const linkFields = ['website', 'bandcamp', 'instagram', 'facebook', 'x'];
-    
+
     linkFields.forEach(platform => {
       const fieldName = `link_${platform}`;
       const url = formData.get(fieldName);
       if (url && url.trim()) {
         // Capitalize platform name properly
-        const platformName = platform === 'x' ? 'X' : 
+        const platformName = platform === 'x' ? 'X' :
                             platform.charAt(0).toUpperCase() + platform.slice(1);
         links[platformName] = url.trim();
       }

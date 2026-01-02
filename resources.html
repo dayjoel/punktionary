@@ -18,9 +18,39 @@
         Tools and guides for artists, managers, and promoters to grow in the music scene.
       </p>
 
-      <div class="punk-card p-8">
-        <p class="text-gray-500 italic text-center py-12">[Resource listings will appear here]</p>
+      <!-- Filter Section -->
+      <div class="punk-card p-6 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-pink-500 uppercase tracking-wide">Filter by Type</h2>
+        <div class="flex flex-wrap gap-2">
+          <button class="filter-btn active" data-type="all">All</button>
+          <button class="filter-btn" data-type="Shirts">Shirts</button>
+          <button class="filter-btn" data-type="Stickers">Stickers</button>
+          <button class="filter-btn" data-type="Vinyl">Vinyl</button>
+          <button class="filter-btn" data-type="CDs/Cassettes">CDs/Cassettes</button>
+          <button class="filter-btn" data-type="Zines">Zines</button>
+          <button class="filter-btn" data-type="Radio">Radio</button>
+          <button class="filter-btn" data-type="Distributors">Distributors</button>
+          <button class="filter-btn" data-type="Booking">Booking</button>
+          <button class="filter-btn" data-type="Studio">Studio</button>
+          <button class="filter-btn" data-type="Support">Support</button>
+          <button class="filter-btn" data-type="Mental/Physical Health">Mental/Physical Health</button>
+          <button class="filter-btn" data-type="Community">Community</button>
+          <button class="filter-btn" data-type="Other">Other</button>
+        </div>
       </div>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="punk-card p-8">
+        <p class="text-gray-400 text-center py-8">Loading resources...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="punk-card p-8 hidden">
+        <p class="text-gray-500 italic text-center py-12">No resources found</p>
+      </div>
+
+      <!-- Resources List -->
+      <div id="resourcesList" class="space-y-4 hidden"></div>
     </section>
   </main>
 
@@ -50,6 +80,144 @@
           initNavbar();
         }
       });
+  </script>
+
+  <style>
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      border: 2px solid #ec4899;
+      background: transparent;
+      color: #ec4899;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 0.25rem;
+    }
+
+    .filter-btn:hover {
+      background: rgba(236, 72, 153, 0.1);
+    }
+
+    .filter-btn.active {
+      background: #ec4899;
+      color: #000;
+    }
+  </style>
+
+  <script>
+    let allResources = [];
+    let currentFilter = 'all';
+
+    // Load resources on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      loadResources();
+      setupFilters();
+    });
+
+    async function loadResources() {
+      const loadingState = document.getElementById('loadingState');
+      const emptyState = document.getElementById('emptyState');
+      const resourcesList = document.getElementById('resourcesList');
+
+      try {
+        const response = await fetch('/api/get_resources.php');
+        const data = await response.json();
+
+        if (data.success && data.resources) {
+          allResources = data.resources;
+          loadingState.classList.add('hidden');
+
+          if (allResources.length === 0) {
+            emptyState.classList.remove('hidden');
+          } else {
+            displayResources(allResources);
+          }
+        } else {
+          throw new Error(data.error || 'Failed to load resources');
+        }
+      } catch (error) {
+        console.error('Error loading resources:', error);
+        loadingState.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+      }
+    }
+
+    function setupFilters() {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Update active state
+          filterButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+
+          // Apply filter
+          const type = this.getAttribute('data-type');
+          currentFilter = type;
+          filterResources(type);
+        });
+      });
+    }
+
+    function filterResources(type) {
+      if (type === 'all') {
+        displayResources(allResources);
+      } else {
+        const filtered = allResources.filter(r => r.resource_type === type);
+        displayResources(filtered);
+      }
+    }
+
+    function displayResources(resources) {
+      const resourcesList = document.getElementById('resourcesList');
+      const emptyState = document.getElementById('emptyState');
+
+      if (resources.length === 0) {
+        resourcesList.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      resourcesList.innerHTML = '';
+
+      resources.forEach(resource => {
+        const card = document.createElement('div');
+        card.className = 'punk-card p-6';
+        card.innerHTML = `
+          <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <h3 class="text-2xl font-bold">${escapeHtml(resource.name)}</h3>
+                <span class="text-xs px-2 py-1 rounded bg-pink-500/20 text-pink-500 uppercase font-bold">
+                  ${escapeHtml(resource.resource_type || 'Other')}
+                </span>
+              </div>
+              <p class="text-gray-400 mb-3">${escapeHtml(resource.description)}</p>
+              <a href="${escapeHtml(resource.link)}"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="punk-link inline-flex items-center gap-2">
+                Visit Resource
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        `;
+        resourcesList.appendChild(card);
+      });
+
+      resourcesList.classList.remove('hidden');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
   </script>
 
 </body>

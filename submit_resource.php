@@ -39,10 +39,16 @@ try {
         die(json_encode(['success' => false, 'error' => 'Description is required']));
     }
 
+    if (empty($_POST['resource_type'])) {
+        http_response_code(400);
+        die(json_encode(['success' => false, 'error' => 'Resource type is required']));
+    }
+
     // Collect and sanitize data
     $name = trim($_POST['name']);
     $link = trim($_POST['link']);
     $description = trim($_POST['description']);
+    $resource_type = trim($_POST['resource_type']);
 
     // Validate URL format
     if (!filter_var($link, FILTER_VALIDATE_URL)) {
@@ -51,15 +57,15 @@ try {
     }
 
     // Insert into database with user attribution
-    $sql = "INSERT INTO resources (submitted_by, name, link, description, created_at, updated_at)
-            VALUES (?, ?, ?, ?, NOW(), NOW())";
+    $sql = "INSERT INTO resources (submitted_by, name, link, description, resource_type, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, NOW(), NOW())";
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
 
-    $stmt->bind_param('isss', $user_id, $name, $link, $description);
+    $stmt->bind_param('issss', $user_id, $name, $link, $description, $resource_type);
 
     if ($stmt->execute()) {
         echo json_encode([
