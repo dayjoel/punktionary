@@ -314,12 +314,24 @@
 
         if (data.success && data.items && data.items.length > 0) {
           // Convert API items to slide format
-          slides = data.items.map(item => ({
-            image: item.image_url,
-            caption: item.title,
-            link: item.link_url || '#',
-            linkText: item.link_url ? 'Learn More' : ''
-          }));
+          slides = data.items.map(item => {
+            // Clean up link_url - trim whitespace and treat empty strings as null
+            const cleanLink = item.link_url ? item.link_url.trim() : null;
+
+            // Debug log for troubleshooting
+            console.log('Carousel item:', {
+              title: item.title,
+              link_url_raw: item.link_url,
+              link_url_cleaned: cleanLink
+            });
+
+            return {
+              image: item.image_url,
+              caption: item.title,
+              link: cleanLink || null,
+              linkText: cleanLink ? 'Learn More' : ''
+            };
+          });
         } else {
           // Use fallback slides if no items from API
           slides = fallbackSlides;
@@ -376,7 +388,7 @@
         imageEl.alt = slide.caption;
         captionEl.textContent = slide.caption;
 
-        if (slide.link && slide.link !== '#') {
+        if (slide.link) {
           linkEl.href = slide.link;
           linkEl.textContent = slide.linkText || 'Learn More';
           linkEl.classList.remove('hidden');
