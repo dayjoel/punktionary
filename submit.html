@@ -502,6 +502,69 @@
         </div>
 
         <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Resource Type *</label>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Shirts" class="accent-pink-500" required />
+              <span class="text-sm">Shirts</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Stickers" class="accent-pink-500" />
+              <span class="text-sm">Stickers</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Vinyl" class="accent-pink-500" />
+              <span class="text-sm">Vinyl</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="CDs/Cassettes" class="accent-pink-500" />
+              <span class="text-sm">CDs/Cassettes</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Zines" class="accent-pink-500" />
+              <span class="text-sm">Zines</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Radio" class="accent-pink-500" />
+              <span class="text-sm">Radio</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Distributors" class="accent-pink-500" />
+              <span class="text-sm">Distributors</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Booking" class="accent-pink-500" />
+              <span class="text-sm">Booking</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Studio" class="accent-pink-500" />
+              <span class="text-sm">Studio</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Support" class="accent-pink-500" />
+              <span class="text-sm">Support</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Mental/Physical Health" class="accent-pink-500" />
+              <span class="text-sm">Mental/Physical Health</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Community" class="accent-pink-500" />
+              <span class="text-sm">Community</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 transition-colors">
+              <input type="radio" name="resource_type" value="Other" id="resourceTypeOther" class="accent-pink-500" />
+              <span class="text-sm">Other</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="customResourceTypeField" class="hidden">
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Custom Resource Type *</label>
+          <input type="text" name="custom_resource_type" id="customResourceType" class="punk-input" placeholder="Enter custom resource type" />
+        </div>
+
+        <div>
           <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Link *</label>
           <input type="url" name="link" required class="punk-input" placeholder="https://..." />
         </div>
