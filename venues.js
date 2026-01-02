@@ -199,17 +199,29 @@ function createVenueCard(venue) {
   }
 
   // Age restriction badge
-  const ageBadge = venue.age_restriction ? 
+  const ageBadge = venue.age_restriction ?
     `<span class="punk-badge">${venue.age_restriction}</span>` : '';
+
+  // Rating display
+  const ratingDisplay = venue.review_count > 0 ?
+    `<div class="flex items-center gap-2 text-sm">
+      <span class="text-yellow-500">★</span>
+      <span class="font-bold text-yellow-500">${parseFloat(venue.average_rating).toFixed(1)}</span>
+      <span class="text-gray-500">(${venue.review_count} ${venue.review_count === 1 ? 'review' : 'reviews'})</span>
+    </div>` :
+    `<div class="text-sm text-gray-500">No rating</div>`;
 
   card.innerHTML = `
     <div class="mb-3">
       <h3 class="text-2xl font-bold mb-2" style="font-family: 'Bebas Neue', sans-serif;">
         ${venue.name}
       </h3>
-      ${ageBadge}
+      <div class="flex items-center gap-3 flex-wrap">
+        ${ageBadge}
+        ${ratingDisplay}
+      </div>
     </div>
-    
+
     <div class="space-y-2 text-sm">
       ${venue.type ? `<p class="text-gray-300"><span class="text-pink-500 font-bold">Type:</span> ${venue.type}</p>` : ''}
       ${venue.city || venue.state ? `<p class="text-gray-300"><span class="text-pink-500 font-bold">Location:</span> ${[venue.city, venue.state].filter(Boolean).join(', ')}</p>` : ''}
@@ -217,7 +229,7 @@ function createVenueCard(venue) {
     </div>
 
     ${socialLinks ? `<div class="mt-4 pt-4 border-t border-gray-700">${socialLinks}</div>` : ''}
-    
+
     <div class="mt-4">
       <a href="/venue.html?id=${venue.id}" class="punk-link text-sm font-bold">View Details →</a>
     </div>
