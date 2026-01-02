@@ -164,6 +164,18 @@ function get_user_data($user_id) {
 }
 
 /**
+ * Get current user's account type
+ */
+function get_user_account_type() {
+    if (!is_authenticated()) {
+        return 0; // Default to non-admin
+    }
+
+    $user_data = get_user_data(get_current_user_id());
+    return $user_data ? intval($user_data['account_type']) : 0;
+}
+
+/**
  * Require authentication - redirect to home if not logged in
  */
 function require_auth() {
