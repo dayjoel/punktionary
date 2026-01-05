@@ -39,7 +39,15 @@ try {
     $postal_code = isset($_POST['postal_code']) ? trim($_POST['postal_code']) : null;
     $country = isset($_POST['country']) ? trim($_POST['country']) : null;
     $age_restriction = isset($_POST['age_restriction']) ? trim($_POST['age_restriction']) : null;
+    $talent_buyer = isset($_POST['talent_buyer']) ? trim($_POST['talent_buyer']) : null;
     $booking_contact = isset($_POST['booking_contact']) ? trim($_POST['booking_contact']) : null;
+    $phone = isset($_POST['phone']) ? trim($_POST['phone']) : null;
+    $description = isset($_POST['description']) ? trim($_POST['description']) : null;
+    $link_website = isset($_POST['link_website']) ? trim($_POST['link_website']) : null;
+    $social_facebook = isset($_POST['social_facebook']) ? trim($_POST['social_facebook']) : null;
+    $social_instagram = isset($_POST['social_instagram']) ? trim($_POST['social_instagram']) : null;
+    $social_twitter = isset($_POST['social_twitter']) ? trim($_POST['social_twitter']) : null;
+    $social_youtube = isset($_POST['social_youtube']) ? trim($_POST['social_youtube']) : null;
     $links = isset($_POST['links']) ? trim($_POST['links']) : null;
 
     // Validate JSON fields if provided
@@ -51,16 +59,37 @@ try {
         }
     }
 
+    // Build links JSON for legacy field
+    $linksArray = [];
+    if ($link_website) $linksArray['website'] = $link_website;
+    if ($social_facebook) $linksArray['facebook'] = $social_facebook;
+    if ($social_instagram) $linksArray['instagram'] = $social_instagram;
+    if ($social_twitter) $linksArray['twitter'] = $social_twitter;
+    if ($social_youtube) $linksArray['youtube'] = $social_youtube;
+    $links = !empty($linksArray) ? json_encode($linksArray) : null;
+
     // Insert into database with user attribution
-    $sql = "INSERT INTO venues (submitted_by, name, type, capacity, street_address, city, state, postal_code, country, age_restriction, booking_contact, links, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+    $sql = "INSERT INTO venues (
+        submitted_by, name, type, capacity, description, phone,
+        street_address, city, state, postal_code,
+        age_restriction, talent_buyer, booking_contact,
+        social_facebook, social_instagram, social_twitter, social_youtube,
+        links, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
 
-    $stmt->bind_param('ississssssss', $user_id, $name, $type, $capacity, $street_address, $city, $state, $postal_code, $country, $age_restriction, $booking_contact, $links);
+    $stmt->bind_param(
+        'ississsssssssssss',
+        $user_id, $name, $type, $capacity, $description, $phone,
+        $street_address, $city, $state, $postal_code,
+        $age_restriction, $talent_buyer, $booking_contact,
+        $social_facebook, $social_instagram, $social_twitter, $social_youtube,
+        $links
+    );
 
     if ($stmt->execute()) {
         echo json_encode([

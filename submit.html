@@ -341,9 +341,25 @@
       </h2>
 
       <div class="space-y-4">
+        <!-- URL Scraper -->
+        <div class="p-4 bg-pink-500/10 border border-pink-500/30 rounded mb-6">
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Quick Fill from Website</label>
+          <p class="text-xs text-gray-400 mb-3">Have a venue website? Paste the URL and we'll try to extract the details for you!</p>
+          <div class="flex gap-2">
+            <input type="url" id="venueUrlInput" class="punk-input flex-1" placeholder="https://centralsaloon.com" />
+            <button type="button" id="fetchVenueInfo" class="punk-button-outline px-6 whitespace-nowrap">
+              <span class="fetch-btn-text">Fetch Info</span>
+              <span class="fetch-btn-loading hidden">Loading...</span>
+            </button>
+          </div>
+          <div id="fetchStatus" class="mt-2 text-sm hidden"></div>
+        </div>
+
+        <div class="punk-divider"></div>
+
         <div>
           <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Venue Name *</label>
-          <input type="text" name="name" required class="punk-input" placeholder="Enter venue name" />
+          <input type="text" name="name" id="venueName" required class="punk-input" placeholder="Enter venue name" />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -476,13 +492,38 @@
         </div>
 
         <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Talent Buyer</label>
+          <input type="text" name="talent_buyer" class="punk-input" placeholder="Name of talent buyer" />
+        </div>
+
+        <div>
           <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Booking Contact</label>
           <input type="text" name="booking_contact" class="punk-input" placeholder="Email or phone for booking" />
         </div>
 
         <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Phone</label>
+          <input type="tel" name="phone" class="punk-input" placeholder="Phone number" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Description</label>
+          <textarea name="description" class="punk-input" rows="4" placeholder="Brief description of the venue..."></textarea>
+        </div>
+
+        <div>
           <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Website</label>
           <input type="url" name="link_website" class="punk-input" placeholder="Website URL" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2 text-pink-500 uppercase tracking-wide">Social Media Links</label>
+          <div class="space-y-2">
+            <input type="url" name="social_facebook" class="punk-input" placeholder="Facebook URL" />
+            <input type="url" name="social_instagram" class="punk-input" placeholder="Instagram URL" />
+            <input type="url" name="social_twitter" class="punk-input" placeholder="Twitter/X URL" />
+            <input type="url" name="social_youtube" class="punk-input" placeholder="YouTube URL" />
+          </div>
         </div>
 
         <button type="submit" class="punk-button w-full mt-6">Submit Venue</button>

@@ -592,3 +592,141 @@ function hideMessages() {
   document.getElementById('successMessage').classList.add('hidden');
   document.getElementById('errorMessage').classList.add('hidden');
 }
+
+// Venue URL Scraper
+document.addEventListener('DOMContentLoaded', function() {
+  const fetchButton = document.getElementById('fetchVenueInfo');
+  if (fetchButton) {
+    fetchButton.addEventListener('click', async function() {
+      const urlInput = document.getElementById('venueUrlInput');
+      const statusDiv = document.getElementById('fetchStatus');
+      const fetchBtnText = document.querySelector('.fetch-btn-text');
+      const fetchBtnLoading = document.querySelector('.fetch-btn-loading');
+
+      const url = urlInput.value.trim();
+
+      if (!url) {
+        showFetchStatus('Please enter a URL', 'error');
+        return;
+      }
+
+      // Validate URL format
+      try {
+        new URL(url);
+      } catch (e) {
+        showFetchStatus('Please enter a valid URL', 'error');
+        return;
+      }
+
+      // Show loading state
+      fetchButton.disabled = true;
+      fetchBtnText.classList.add('hidden');
+      fetchBtnLoading.classList.remove('hidden');
+      statusDiv.classList.add('hidden');
+
+      try {
+        const response = await fetch('/api/scrape_venue_url.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ url })
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          // Populate form fields with extracted data
+          const data = result.data;
+
+          if (data.name) {
+            document.getElementById('venueName').value = data.name;
+          }
+          if (data.street_address) {
+            document.getElementById('street_address').value = data.street_address;
+          }
+          if (data.city) {
+            document.getElementById('city').value = data.city;
+          }
+          if (data.state) {
+            // Match state to select options (supports both full name and abbreviation)
+            const stateSelect = document.getElementById('state');
+            const stateUpper = data.state.toUpperCase();
+            for (let option of stateSelect.options) {
+              if (option.value === stateUpper || option.text.includes(stateUpper)) {
+                stateSelect.value = option.value;
+                break;
+              }
+            }
+          }
+          if (data.postal_code) {
+            document.getElementById('postal_code').value = data.postal_code;
+          }
+          if (data.website) {
+            const websiteInput = document.querySelector('#venueForm input[name="link_website"]');
+            if (websiteInput) {
+              websiteInput.value = data.website;
+            }
+          }
+          if (data.phone) {
+            const phoneInput = document.querySelector('#venueForm input[name="phone"]');
+            if (phoneInput) {
+              phoneInput.value = data.phone;
+            }
+          }
+          if (data.description) {
+            const descInput = document.querySelector('#venueForm textarea[name="description"]');
+            if (descInput) {
+              descInput.value = data.description;
+            }
+          }
+
+          // Populate social media links
+          if (data.social_links) {
+            if (data.social_links.facebook) {
+              const fbInput = document.querySelector('#venueForm input[name="social_facebook"]');
+              if (fbInput) fbInput.value = data.social_links.facebook;
+            }
+            if (data.social_links.instagram) {
+              const igInput = document.querySelector('#venueForm input[name="social_instagram"]');
+              if (igInput) igInput.value = data.social_links.instagram;
+            }
+            if (data.social_links.twitter) {
+              const twInput = document.querySelector('#venueForm input[name="social_twitter"]');
+              if (twInput) twInput.value = data.social_links.twitter;
+            }
+            if (data.social_links.youtube) {
+              const ytInput = document.querySelector('#venueForm input[name="social_youtube"]');
+              if (ytInput) ytInput.value = data.social_links.youtube;
+            }
+          }
+
+          showFetchStatus('Information extracted successfully! Please review and edit as needed.', 'success');
+        } else {
+          showFetchStatus(result.error || 'Could not extract venue information from this URL', 'error');
+        }
+
+      } catch (error) {
+        console.error('Fetch error:', error);
+        showFetchStatus('Network error. Please try again.', 'error');
+      } finally {
+        // Reset button state
+        fetchButton.disabled = false;
+        fetchBtnText.classList.remove('hidden');
+        fetchBtnLoading.classList.add('hidden');
+      }
+    });
+  }
+
+  function showFetchStatus(message, type) {
+    const statusDiv = document.getElementById('fetchStatus');
+    statusDiv.textContent = message;
+    statusDiv.classList.remove('hidden', 'text-green-400', 'text-red-400');
+
+    if (type === 'success') {
+      statusDiv.classList.add('text-green-400');
+    } else {
+      statusDiv.classList.add('text-red-400');
+    }
+  }
+});
