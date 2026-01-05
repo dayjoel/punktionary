@@ -65,11 +65,11 @@ echo ""
 # Merge to main using git push (works with worktrees)
 echo -e "${BLUE}Merging $BRANCH into main via GitHub...${NC}"
 
+# Store current branch
+CURRENT_BRANCH=$BRANCH
+
 # Fetch latest main
 git fetch origin main
-
-# Create a temporary merge commit locally
-MERGE_BASE=$(git merge-base origin/main $CURRENT_BRANCH)
 
 # Check if we can fast-forward
 if git merge-base --is-ancestor origin/main $CURRENT_BRANCH; then
