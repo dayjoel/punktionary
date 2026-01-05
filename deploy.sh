@@ -62,38 +62,50 @@ git push origin $BRANCH
 echo -e "${GREEN}✓ Pushed to GitHub${NC}"
 echo ""
 
-# Merge to main
-echo -e "${BLUE}Merging $BRANCH into main...${NC}"
-
-# Stash current branch info
-CURRENT_BRANCH=$BRANCH
+# Merge to main using git push (works with worktrees)
+echo -e "${BLUE}Merging $BRANCH into main via GitHub...${NC}"
 
 # Fetch latest main
 git fetch origin main
 
-# Switch to main
-git checkout main
+# Create a temporary merge commit locally
+MERGE_BASE=$(git merge-base origin/main $CURRENT_BRANCH)
 
-# Pull latest main
-git pull origin main
+# Check if we can fast-forward
+if git merge-base --is-ancestor origin/main $CURRENT_BRANCH; then
+    # Fast-forward merge - just push the branch ref to main
+    echo -e "${BLUE}Fast-forward merge possible, updating main...${NC}"
+    git push origin $CURRENT_BRANCH:main
+    echo -e "${GREEN}✓ Merged $CURRENT_BRANCH into main (fast-forward)${NC}"
+else
+    # Need to create a merge commit
+    echo -e "${BLUE}Creating merge commit...${NC}"
 
-# Merge the feature branch
-git merge $CURRENT_BRANCH -m "Merge $CURRENT_BRANCH into main
+    # Fetch both branches
+    git fetch origin main
+    git fetch origin $CURRENT_BRANCH
+
+    # Create a temporary branch from main for merging
+    TEMP_BRANCH="temp-merge-$(date +%s)"
+    git branch $TEMP_BRANCH origin/main
+
+    # Perform the merge on the temp branch
+    git checkout $TEMP_BRANCH
+    git merge $CURRENT_BRANCH --no-ff -m "Merge $CURRENT_BRANCH into main
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 
-echo -e "${GREEN}✓ Merged $CURRENT_BRANCH into main${NC}"
+    # Push the temp branch to main
+    git push origin $TEMP_BRANCH:main
 
-# Push main to GitHub
-echo -e "${BLUE}Pushing main to GitHub...${NC}"
-git push origin main
+    # Clean up temp branch and switch back
+    git checkout $CURRENT_BRANCH
+    git branch -D $TEMP_BRANCH
 
-echo -e "${GREEN}✓ Pushed main to GitHub${NC}"
-
-# Switch back to original branch
-git checkout $CURRENT_BRANCH
+    echo -e "${GREEN}✓ Merged $CURRENT_BRANCH into main${NC}"
+fi
 
 echo ""
 
