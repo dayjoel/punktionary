@@ -69,14 +69,14 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo ""
     echo -e "${YELLOW}Deployment to production skipped${NC}"
     echo "To deploy manually later, run:"
-    echo -e "${BLUE}ssh joeday1@punktionary.com 'cd ~/punktionary.com && git pull origin $BRANCH'${NC}"
+    echo -e "${BLUE}ssh joeday1@iad1-shared-b8-46.dreamhost.com 'cd ~/punktionary.com && git pull origin $BRANCH'${NC}"
     exit 0
 fi
 
 # Deploy to production
 echo ""
 echo -e "${BLUE}Deploying to production...${NC}"
-ssh joeday1@punktionary.com << EOF
+ssh joeday1@iad1-shared-b8-46.dreamhost.com << EOF
     set -e
     cd ~/punktionary.com
     echo "Pulling latest changes..."

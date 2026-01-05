@@ -137,7 +137,7 @@ git commit -m "Your message"
 git push origin elastic-hertz
 
 # 3. Deploy to production
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 cd ~/punktionary.com
 git pull origin elastic-hertz
 exit
@@ -181,7 +181,7 @@ mysql -u root punktionary_local
 
 **SSH Access:**
 ```bash
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 ```
 
 **Error Logs:**
