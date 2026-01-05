@@ -5,6 +5,10 @@
 client_secret_468094396453-vbt8dbmg2a8qrp0ahmv48qfj6srcp2dq.apps.googleusercontent.com.json
 google_api_config.php
 
+# local development config files
+../db_config.local.php
+../oauth_config.local.php
+
 # auth
 login_with_google.php
 
@@ -13,10 +17,12 @@ generate-icon.html
 FACEBOOK_APP_REVIEW_INSTRUCTIONS.md
 DEPLOYMENT_INSTRUCTIONS.md
 
-# database migrations (internal use)
+# database migrations - old/deprecated files (internal use)
 database_migration_oauth.sql
 database_migration_oauth_safe.sql
-db/migrations/*.sql
+
+# Note: db/migrations/*.sql files SHOULD be committed
+# Only exclude specific sensitive migration files if needed
 
 # debug/development files
 api/debug_session.php
