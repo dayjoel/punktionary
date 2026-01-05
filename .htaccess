@@ -1,29 +1,22 @@
 # Security: Block access to .git directory and files
 <DirectoryMatch "^/.*/\.git/">
-    Order deny,allow
-    Deny from all
+    Require all denied
 </DirectoryMatch>
 
 # Block access to .git files
 <FilesMatch "^\.git">
-    Order deny,allow
-    Deny from all
+    Require all denied
 </FilesMatch>
 
 # Block access to other sensitive files
 <FilesMatch "\.(env|sql|log|bak|backup|old)$">
-    Order deny,allow
-    Deny from all
+    Require all denied
 </FilesMatch>
 
 # Block access to config files (belt and suspenders - they're outside webroot anyway)
 <FilesMatch "^(db_config|oauth_config)">
-    Order deny,allow
-    Deny from all
+    Require all denied
 </FilesMatch>
-
-# Enable .htaccess overrides (usually enabled by default on DreamHost)
-Options -Indexes
 
 # Prevent directory browsing
 Options -Indexes
