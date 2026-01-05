@@ -47,19 +47,66 @@ git log origin/$BRANCH..$BRANCH --oneline
 echo ""
 
 # Confirm push
-read -p "Push to GitHub? (y/n) " -n 1 -r
+read -p "Push $BRANCH to GitHub and merge to main? (y/n) " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo -e "${RED}Deployment cancelled${NC}"
     exit 1
 fi
 
-# Push to GitHub
+# Push current branch to GitHub
 echo ""
-echo -e "${BLUE}Pushing to GitHub...${NC}"
+echo -e "${BLUE}Pushing $BRANCH to GitHub...${NC}"
 git push origin $BRANCH
 
 echo -e "${GREEN}✓ Pushed to GitHub${NC}"
+echo ""
+
+# Merge to main using git push (works with worktrees)
+echo -e "${BLUE}Merging $BRANCH into main via GitHub...${NC}"
+
+# Store current branch
+CURRENT_BRANCH=$BRANCH
+
+# Fetch latest main
+git fetch origin main
+
+# Check if we can fast-forward
+if git merge-base --is-ancestor origin/main $CURRENT_BRANCH; then
+    # Fast-forward merge - just push the branch ref to main
+    echo -e "${BLUE}Fast-forward merge possible, updating main...${NC}"
+    git push origin $CURRENT_BRANCH:main
+    echo -e "${GREEN}✓ Merged $CURRENT_BRANCH into main (fast-forward)${NC}"
+else
+    # Need to create a merge commit
+    echo -e "${BLUE}Creating merge commit...${NC}"
+
+    # Fetch both branches
+    git fetch origin main
+    git fetch origin $CURRENT_BRANCH
+
+    # Create a temporary branch from main for merging
+    TEMP_BRANCH="temp-merge-$(date +%s)"
+    git branch $TEMP_BRANCH origin/main
+
+    # Perform the merge on the temp branch
+    git checkout $TEMP_BRANCH
+    git merge $CURRENT_BRANCH --no-ff -m "Merge $CURRENT_BRANCH into main
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+
+    # Push the temp branch to main
+    git push origin $TEMP_BRANCH:main
+
+    # Clean up temp branch and switch back
+    git checkout $CURRENT_BRANCH
+    git branch -D $TEMP_BRANCH
+
+    echo -e "${GREEN}✓ Merged $CURRENT_BRANCH into main${NC}"
+fi
+
 echo ""
 
 # Ask about deploying to production
@@ -68,19 +115,19 @@ echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo ""
     echo -e "${YELLOW}Deployment to production skipped${NC}"
-    echo "To deploy manually later, run:"
-    echo -e "${BLUE}ssh joeday1@punktionary.com 'cd ~/punktionary.com && git pull origin $BRANCH'${NC}"
+    echo "Main branch has been updated. To deploy manually later, run:"
+    echo -e "${BLUE}ssh joeday1@iad1-shared-b8-46.dreamhost.com 'cd ~/punktionary.com && git pull origin main'${NC}"
     exit 0
 fi
 
 # Deploy to production
 echo ""
 echo -e "${BLUE}Deploying to production...${NC}"
-ssh joeday1@punktionary.com << EOF
+ssh joeday1@iad1-shared-b8-46.dreamhost.com << EOF
     set -e
     cd ~/punktionary.com
-    echo "Pulling latest changes..."
-    git pull origin $BRANCH
+    echo "Pulling latest changes from main..."
+    git pull origin main
     echo "Current commit:"
     git log -1 --oneline
 EOF
@@ -93,8 +140,7 @@ if [ $? -eq 0 ]; then
     echo "1. Visit https://punktionary.com to test"
     echo "2. Check browser console for errors"
     echo "3. If you added database migrations, run them:"
-    echo -e "   ${YELLOW}ssh joeday1@punktionary.com${NC}"
-    echo -e "   ${YELLOW}mysql -h sql.punktionary.com -u dayjoel -p prod_punk < ~/punktionary.com/db/migrations/YOUR_FILE.sql${NC}"
+    echo -e "   ${YELLOW}./run_migration.sh YOUR_FILE.sql production${NC}"
 else
     echo ""
     echo -e "${RED}✗ Deployment failed${NC}"

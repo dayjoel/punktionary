@@ -219,7 +219,7 @@ BEFORE PUSHING                         AFTER DEPLOYING
 │  Pre-push check              │  ./pre_push_checklist.sh          │
 │  Check git status            │  git status                       │
 │  View local database         │  mysql -u root punktionary_local  │
-│  SSH to production           │  ssh joeday1@punktionary.com      │
+│  SSH to production           │  ssh joeday1@iad1-shared-b8-46.dreamhost.com      │
 │  Test API locally            │  curl http://localhost:8000/api/  │
 │  View commit history         │  git log --oneline -10            │
 └──────────────────────────────┴───────────────────────────────────┘

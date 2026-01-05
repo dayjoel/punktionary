@@ -150,7 +150,7 @@ git push -u origin elastic-hertz
 
 ```bash
 # SSH into your DreamHost server
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 
 # Navigate to your web root
 cd ~/punktionary.com
@@ -180,7 +180,7 @@ Some DreamHost accounts have Git integration in the panel where you can trigger 
 
 1. **Database migrations** - If you added new tables or columns:
    ```bash
-   ssh joeday1@punktionary.com
+   ssh joeday1@iad1-shared-b8-46.dreamhost.com
    cd ~/punktionary.com
 
    # Run migrations if needed
@@ -220,7 +220,7 @@ Some DreamHost accounts have Git integration in the panel where you can trigger 
 
 4. **Check PHP error logs** (if you have access):
    ```bash
-   ssh joeday1@punktionary.com
+   ssh joeday1@iad1-shared-b8-46.dreamhost.com
    tail -f ~/logs/punktionary.com/http/error.log
    ```
 
@@ -259,7 +259,7 @@ git log --oneline -5
 ### Production Deployment
 ```bash
 # SSH to server
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 
 # Pull changes
 cd ~/punktionary.com && git pull origin elastic-hertz
@@ -284,7 +284,7 @@ ssh -T git@github.com
 ### Changes not appearing on production
 ```bash
 # SSH to server
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 
 # Check if pull actually happened
 cd ~/punktionary.com
@@ -298,7 +298,7 @@ git reset --hard origin/elastic-hertz
 ### Database migration needed
 ```bash
 # SSH to server
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 
 # Run the migration
 mysql -h sql.punktionary.com -u dayjoel -p prod_punk < db/migrations/YOUR_MIGRATION.sql
@@ -338,7 +338,7 @@ If something breaks in production:
 
 ```bash
 # SSH to server
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 cd ~/punktionary.com
 
 # Find the last working commit

@@ -109,7 +109,7 @@ curl "https://punktionary.com/api/get_venue_reviews.php?venue_id=1"
 # Errors appear in terminal where start_local_server.sh is running
 
 # Production error logs (if you have access)
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 tail -f ~/logs/punktionary.com/http/error.log
 ```
 
@@ -132,7 +132,7 @@ tail -f ~/logs/punktionary.com/http/error.log
 git push origin elastic-hertz
 
 # 2. SSH to production
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 
 # 3. Pull changes
 cd ~/punktionary.com
@@ -238,7 +238,7 @@ git push origin elastic-hertz
 ### Changes not showing on production
 ```bash
 # SSH to server
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 
 # Check current commit
 cd ~/punktionary.com
@@ -263,8 +263,8 @@ Add to `~/.zshrc` or `~/.bashrc`:
 alias punk-start='cd /Users/joelday/.claude-worktrees/punktionary/elastic-hertz && ./start_local_server.sh'
 alias punk-deploy='cd /Users/joelday/.claude-worktrees/punktionary/elastic-hertz && ./deploy.sh'
 alias punk-db='mysql -u root punktionary_local'
-alias punk-ssh='ssh joeday1@punktionary.com'
-alias punk-logs='ssh joeday1@punktionary.com "tail -f ~/logs/punktionary.com/http/error.log"'
+alias punk-ssh='ssh joeday1@iad1-shared-b8-46.dreamhost.com'
+alias punk-logs='ssh joeday1@iad1-shared-b8-46.dreamhost.com "tail -f ~/logs/punktionary.com/http/error.log"'
 ```
 
 Then reload: `source ~/.zshrc`
@@ -273,7 +273,7 @@ Then reload: `source ~/.zshrc`
 
 ### Rollback Production
 ```bash
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 cd ~/punktionary.com
 git log --oneline -5  # Find last good commit
 git reset --hard abc1234  # Use commit hash
@@ -281,14 +281,14 @@ git reset --hard abc1234  # Use commit hash
 
 ### Backup Production Database
 ```bash
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 mysqldump -h sql.punktionary.com -u dayjoel -p prod_punk > backup_$(date +%Y%m%d_%H%M%S).sql
 ```
 
 ### Restore Local Database from Production
 ```bash
 # 1. Dump production (on server)
-ssh joeday1@punktionary.com
+ssh joeday1@iad1-shared-b8-46.dreamhost.com
 mysqldump -h sql.punktionary.com -u dayjoel -p prod_punk > prod_backup.sql
 
 # 2. Download to local
