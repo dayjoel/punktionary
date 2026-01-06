@@ -108,11 +108,7 @@ git commit -m "Add venue review system with star ratings
 - Text review required for ratings ≤3 stars
 - Display average rating on venue cards
 - Admin can delete fraudulent reviews
-- Added get_user_account_type() helper function
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+- Added get_user_account_type() helper function"
 ```
 
 ### Review the commit

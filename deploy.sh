@@ -28,11 +28,7 @@ if [[ -n $(git status -s) ]]; then
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         read -p "Enter commit message: " COMMIT_MSG
         git add .
-        git commit -m "$COMMIT_MSG
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+        git commit -m "$COMMIT_MSG"
         echo -e "${GREEN}✓ Changes committed${NC}"
     else
         echo -e "${RED}Deployment cancelled${NC}"
@@ -91,11 +87,7 @@ else
 
     # Perform the merge on the temp branch
     git checkout $TEMP_BRANCH
-    git merge $CURRENT_BRANCH --no-ff -m "Merge $CURRENT_BRANCH into main
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+    git merge $CURRENT_BRANCH --no-ff -m "Merge $CURRENT_BRANCH into main"
 
     # Push the temp branch to main
     git push origin $TEMP_BRANCH:main
